@@ -7,9 +7,9 @@ public class Game {
     private TurnPhases turnPhase;
     private Card[] choosenCards;
 
-    public Game(Board newBoard)
+    public Game()
     {
-        this.boardGame = newBoard;
+        this.boardGame = new Board();
     }
 
     /**
