@@ -1,4 +1,3 @@
-
 package Model;
 
 public class Game {
@@ -57,8 +56,9 @@ public class Game {
 
     }
 
-
-
+    /**
+     * It changes the turnNumber, in order to allow the next player to make his moves
+     */
     public void nextTurnNumber()
     {
         if (players[2] != null)
@@ -67,7 +67,9 @@ public class Game {
             turnNumber = (turnNumber+1)%2;
     }
 
-
+    /**
+     *
+     */
     public void nextTurnPhase()
     {
         turnPhase = turnPhase.changeFrom();
@@ -77,7 +79,8 @@ public class Game {
 
     public Worker chooseInitialPosition(int x, int y)
     {
-        Worker w = new Worker(x,y);
+        Color c = Color();
+        Worker w = new Worker(x,y,c);
         boardGame.boardGame[x][y].workerBuilder = w;
         return w;
     }
@@ -91,7 +94,7 @@ public class Game {
      */
     public void moveWorker(Worker w, int x, int y)
     {
-        boardGame.boardGame[w.getx()][w.gety()].workerBuilder = null;
+        boardGame.boardGame[w.getPositionX()][w.getPositionY()].workerBuilder = null;
         boardGame.boardGame[x][y].workerBuilder = w;
         w.moveTo(x,y);
     }
