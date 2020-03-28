@@ -23,10 +23,30 @@ public class Board {
     public void reset(){
         for(int i=0;i<DIM;i++){
             for(int j=0;j<DIM;j++){
-                this.boardGame[i][j].setHeight(0);
-                this.boardGame[i][j].setWorker(null);
+                this.boardGame[i][j].setBoardCellHeight(0);
+                this.boardGame[i][j].setBoardCellWorker(null);
             }
         }
+    }
+
+    /***
+     * Call setBoardCellHeight to modify the cell's height in (i,j) on board
+     * @param i
+     * @param j
+     * @param height
+     */
+    public void setBoardHeight(int i, int j, int height){
+        this.boardGame[i][j].setBoardCellHeight(height);
+    }
+
+    /***
+     * Call setBoardCellWorker to modify the cell's worker in (i,j) on board
+     * @param i
+     * @param j
+     * @param w
+     */
+    public void setBoardWorker(int i, int j, Worker w){
+        this.boardGame[i][j].setBoardCellWorker(w);
     }
 
 }

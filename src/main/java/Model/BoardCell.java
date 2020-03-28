@@ -8,7 +8,7 @@ public class BoardCell {
      * Put a worker on this BoardCell
      * @param workerBuilder
      */
-    public void setWorker(Worker workerBuilder){
+    public void setBoardCellWorker(Worker workerBuilder){
         this.workerBuilder=workerBuilder;
     }
 
@@ -16,7 +16,7 @@ public class BoardCell {
      * Set height of current BoardCell to 0 (0 floor), 1 (1st floor), 2 (2nd floor), 3 (3rd floor) or 4 (dome)
      * @param height
      */
-    public void setHeight(int height){
+    public void setBoardCellHeight(int height){
         this.height=height;
     }
 
