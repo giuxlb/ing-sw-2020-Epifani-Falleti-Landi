@@ -77,11 +77,11 @@ public class Game {
             this.nextTurnNumber();
     }
 
-    public Worker chooseInitialPosition(int x, int y)
+    public Worker chooseInitialPosition(int x, int y, Color c)
     {
-        Color c = Color();
+
         Worker w = new Worker(x,y,c);
-        boardGame.boardGame[x][y].workerBuilder = w;
+        boardGame.setBoardWorker(x,y,w);
         return w;
     }
 
@@ -94,8 +94,8 @@ public class Game {
      */
     public void moveWorker(Worker w, int x, int y)
     {
-        boardGame.boardGame[w.getPositionX()][w.getPositionY()].workerBuilder = null;
-        boardGame.boardGame[x][y].workerBuilder = w;
+        boardGame.setBoardWorker(w.getPositionX(),w.getPositionY(),null);
+        boardGame.setBoardWorker(x,y,w);
         w.moveTo(x,y);
     }
 
@@ -103,7 +103,7 @@ public class Game {
 
     public void buildTo(int level,int x, int y)
     {
-        boardGame.boardGame[x][y].buildHere(level);
+        boardGame.setBoardHeight(x,y,level);
     }
 
 }
