@@ -49,4 +49,16 @@ public class Board {
         this.boardGame[i][j].setBoardCellWorker(w);
     }
 
+
+    public void printBoard(){
+        for(int i=0;i<DIM;i++){
+            for(int j=0;j<DIM;j++){
+                System.out.print(" "+this.boardGame[i][j].getHeight()+" ");
+                if(this.boardGame[i][j].getWorkerBuilder()!=null){
+                    System.out.print("x");
+                }
+            }
+            System.out.println();
+        }
+    }
 }

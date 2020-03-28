@@ -77,12 +77,16 @@ public class Game {
             this.nextTurnNumber();
     }
 
-    public Worker chooseInitialPosition(int x, int y, Color c)
+    public void chooseInitialPosition1(Player player,int x_1, int y_1)
     {
+        player.assignWorker1(x_1,y_1);
+        boardGame.setBoardWorker(x_1,y_1,player.getWorker1());
+    }
 
-        Worker w = new Worker(x,y,c);
-        boardGame.setBoardWorker(x,y,w);
-        return w;
+    public void chooseInitialPosition2(Player player,int x_2, int y_2)
+    {
+        player.assignWorker2(x_2,y_2);
+        boardGame.setBoardWorker(x_2,y_2,player.getWorker2());
     }
 
     /**
@@ -101,9 +105,28 @@ public class Game {
 
 
 
-    public void buildTo(int level,int x, int y)
+    public void buildTo(int x, int y,int level)
     {
         boardGame.setBoardHeight(x,y,level);
     }
 
+
+    /*public static void main(String[] args){
+        Game game = new Game();
+        Player player1 = new Player("Giux");
+        Player player2 = new Player("Alf");
+        game.addPlayer(player1);
+        game.addPlayer(player2);
+        game.chooseInitialPosition1(player1,1,1);
+        game.chooseInitialPosition2(player1,3,3);
+        game.chooseInitialPosition1(player2,4,4);
+        game.chooseInitialPosition2(player2,3,4);
+        game.boardGame.printBoard();
+        System.out.println("   ");
+        game.moveWorker(player1.getWorker1(),0,0);
+        game.boardGame.printBoard();
+        game.buildTo(1,0,1);
+        System.out.println("   ");
+        game.boardGame.printBoard();
+    }*/
 }

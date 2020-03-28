@@ -6,9 +6,7 @@ public class Worker {
     private int pos_y;
 
     /***
-     * Constructor of the worker class. TO MODIFY:
-     * in this state it can't notify to the Board that a new worker
-     * is added. It also can't check if the position is legal.
+     * Constructor of the Worker object
      * @param initial_x the position x on the board
      * @param initial_y the position y on the board
      * @param color the color of the worker

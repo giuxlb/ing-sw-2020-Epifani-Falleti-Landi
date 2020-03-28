@@ -28,4 +28,11 @@ public class BoardCell {
         this.workerBuilder=null;
     }
 
+    public Worker getWorkerBuilder(){
+        return this.workerBuilder;
+    }
+
+    public int getHeight() {
+        return height;
+    }
 }
