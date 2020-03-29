@@ -111,10 +111,10 @@ public class Game {
      * @param x
      * @param y
      */
-    public void chooseInitialPosition(Player player, int x, int y){
+    /*public void chooseInitialPosition(Player player, int x, int y){
         player.assignWorker(x,y);
         boardGame.setBoardWorker(x,y, player.getWorker());
-    }
+    }*/
 
     /**
      * It removes the worker from the BoardCell previously occupied by that worker and creates a new worker in the new BoardCell
@@ -138,7 +138,7 @@ public class Game {
     }
 
 
-    /*public static void main(String[] args){
+    public static void main(String[] args){
         Game game = new Game();
         Player player1 = new Player("Giux");
         Player player2 = new Player("Alf");
@@ -155,5 +155,5 @@ public class Game {
         game.buildTo(1,0,1);
         System.out.println("   ");
         game.boardGame.printBoard();
-    }*/
+    }
 }

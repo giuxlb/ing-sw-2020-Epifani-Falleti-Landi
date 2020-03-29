@@ -5,8 +5,6 @@ public class Player {
     private Worker[] workers;
     private Card gameCard;
     private Color color;
-    private int countforConstructor=0;
-    private int countforGetter=0;
 
     /***
      * Costruttore della classe Player
@@ -18,24 +16,19 @@ public class Player {
     }
 
     /***
-     * @author Alfredo Landi (to acknoledge some undebugged methods)
-     * Build two worker objects for each player, assign for each worker a position (x,y) on boardGame and his player's color
-     * @param x
-     * @param y
+     * Creates and set the initial position of the first worker
+     * @param x_1 x of the initial position
+     * @param y_1 y of the initial position
      */
-    public void assignWorker(int x,int y){
-        if(countforConstructor<2) {
-            this.workers[countforConstructor] = new Worker(x, y, this.color);
-            countforConstructor++;
-        } else{
-            countforConstructor=0;
-            this.workers[countforConstructor] = new Worker(x, y, this.color);
-        }
-    }
     public void assignWorker1(int x_1,int y_1){
         this.workers[0]= new Worker(x_1,y_1,this.color);
     }
 
+    /***
+     * Creates and set the initial position of the second worker
+     * @param x_2 x of the initial position
+     * @param y_2 y of the initial position
+     */
     public void assignWorker2(int x_2,int y_2){
         this.workers[1]= new Worker(x_2,y_2,this.color);
     }
@@ -63,7 +56,7 @@ public class Player {
      * Get needed player's worker
      * @return
      */
-    public Worker getWorker(){
+    /*public Worker getWorker(){
         if(countforGetter<2) {
             countforGetter++;
             return this.workers[countforGetter];
@@ -71,9 +64,18 @@ public class Player {
             countforGetter=0;
             return this.workers[countforGetter];
         }
-    }
+    }*/
+
+    /***
+     * Getter for the reference of the first worker
+     * @return the reference of the first worker
+     */
     public Worker getWorker1(){return this.workers[0];}
 
+    /***
+     * Getter for the reference of the second worker
+     * @return the reference of the second worker
+     */
     public Worker getWorker2(){return this.workers[1];}
 
 }
