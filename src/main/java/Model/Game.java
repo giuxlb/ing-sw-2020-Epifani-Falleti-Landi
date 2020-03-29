@@ -39,7 +39,7 @@ public class Game {
     }
 
     /**
-     * It manages the turns of the Game
+     * It manages the turns of a Game
      */
     public void startGame()
     {
@@ -49,7 +49,7 @@ public class Game {
     }
 
     /**
-     *
+     * it manages the end of a game
      */
     public void stopGame()
     {
@@ -68,7 +68,7 @@ public class Game {
     }
 
     /**
-     *
+     * it changes the phase of the turn of a player
      */
     public void nextTurnPhase()
     {
@@ -77,12 +77,27 @@ public class Game {
             this.nextTurnNumber();
     }
 
+    /**
+     * It instantiates a new worker for the object player calling the method Player.assignWorker and uploads tha state
+     * of the board
+     * @param player is the player who made the first move with his first worker
+     * @param x_1 x coordinate of the initial position of the worker
+     * @param y_1 y coordinate of the initial position of the worker
+     */
+
     public void chooseInitialPosition1(Player player,int x_1, int y_1)
     {
         player.assignWorker1(x_1,y_1);
         boardGame.setBoardWorker(x_1,y_1,player.getWorker1());
     }
 
+    /**
+     * It instantiates a new worker for the object player calling the method Player.assignWorker and uploads tha state
+     * of the board
+     * @param player is the player who made the first move with his second worker
+     * @param x_2 x coordinate of the initial position of the worker
+     * @param y_2 y coordinate of the initial position of the worker
+     */
     public void chooseInitialPosition2(Player player,int x_2, int y_2)
     {
         player.assignWorker2(x_2,y_2);
