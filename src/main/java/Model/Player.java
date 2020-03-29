@@ -18,7 +18,7 @@ public class Player {
     }
 
     /***
-     * @author (to acknoledge some untested methods)
+     * @author Alfredo Landi (to acknoledge some undebugged methods)
      * Build two worker objects for each player, assign for each worker a position (x,y) on boardGame and his player's color
      * @param x
      * @param y
@@ -59,7 +59,7 @@ public class Player {
     }
 
     /***
-     * @author Alfredo Landi (to acknoledge some untested methods)
+     * @author Alfredo Landi (to acknoledge some undebugged methods)
      * Get needed player's worker
      * @return
      */

@@ -105,7 +105,7 @@ public class Game {
     }
 
     /***
-     * @author Alfredo Landi (to acknoledge some untested methods)
+     * @author Alfredo Landi (to acknoledge some undebugged methods)
      * For each player's worker assign an initial position (x,y) on boardGame
      * @param player
      * @param x
