@@ -104,6 +104,18 @@ public class Game {
         boardGame.setBoardWorker(x_2,y_2,player.getWorker2());
     }
 
+    /***
+     * @author Alfredo Landi (to acknoledge some untested methods)
+     * For each player's worker assign an initial position (x,y) on boardGame
+     * @param player
+     * @param x
+     * @param y
+     */
+    public void chooseInitialPosition(Player player, int x, int y){
+        player.assignWorker(x,y);
+        boardGame.setBoardWorker(x,y, player.getWorker());
+    }
+
     /**
      * It removes the worker from the BoardCell previously occupied by that worker and creates a new worker in the new BoardCell
      * where the player moved the worker

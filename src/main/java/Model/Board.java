@@ -49,7 +49,9 @@ public class Board {
         this.boardGame[i][j].setBoardCellWorker(w);
     }
 
-
+    /***
+     * For each BoardCell of our Board print height and if there is a worker on
+     */
     public void printBoard(){
         for(int i=0;i<DIM;i++){
             for(int j=0;j<DIM;j++){
