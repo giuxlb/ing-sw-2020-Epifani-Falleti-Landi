@@ -78,4 +78,9 @@ public class Player {
      */
     public Worker getWorker2(){return this.workers[1];}
 
+    /***
+     *
+     * @return the card of this player
+     */
+    public Card getGameCard(){return this.gameCard;}
 }
