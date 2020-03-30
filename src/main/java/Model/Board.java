@@ -63,4 +63,8 @@ public class Board {
             System.out.println();
         }
     }
+
+    public BoardCell[][] getBoardGame() {
+        return boardGame;
+    }
 }

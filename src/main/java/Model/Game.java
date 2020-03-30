@@ -28,13 +28,14 @@ public class Game {
         }
         else if (turnNumber > 2)
         {
-            return;
+            turnNumber = 0;
         }
         else
         {
             //should control for other players with the same username of p
             players[turnNumber] = p;
             turnNumber++;
+
         }
     }
 
@@ -43,7 +44,8 @@ public class Game {
      */
     public void startGame()
     {
-
+        turnNumber = 0;
+        turnPhase = TurnPhases.MOVE;
 
 
     }
@@ -75,6 +77,7 @@ public class Game {
         turnPhase = turnPhase.changeFrom();
         if (turnPhase == TurnPhases.CHANGE_PLAYER)
             this.nextTurnNumber();
+
     }
 
     /**
@@ -130,13 +133,41 @@ public class Game {
         w.moveTo(x,y);
     }
 
-
+    /**
+     *
+     * @param x x coordinate of the position where player decided to built
+     * @param y  y coordinate of the position where player decided to built
+     * @param level level built
+     */
 
     public void buildTo(int x, int y,int level)
     {
         boardGame.setBoardHeight(x,y,level);
     }
 
+    /**
+     *
+     * @return the turnNUmber
+     */
+    public int getTurnNumber() {
+        return turnNumber;
+    }
+
+    /**
+     *
+     * @return the players of the game
+     */
+    public Player[] getPlayers() {
+        return players;
+    }
+
+    public Board getBoardGame() {
+        return boardGame;
+    }
+
+    public TurnPhases getTurnPhase() {
+        return turnPhase;
+    }
 
     public static void main(String[] args){
         Game game = new Game();
