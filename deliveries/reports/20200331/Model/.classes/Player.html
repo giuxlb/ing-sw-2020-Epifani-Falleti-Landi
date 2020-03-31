@@ -1,0 +1,169 @@
+
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html id="htmlId">
+<head>
+  <title>Coverage Report :: Player</title>
+  <style type="text/css">
+    @import "../../.css/coverage.css";
+  </style>
+</head>
+
+<body>
+<div class="header"></div>
+
+<div class="content">
+<div class="breadCrumbs">
+    [ <a href="../../index.html">all classes</a> ]
+    [ <a href="../index.html">Model</a> ]
+</div>
+
+<h1>Coverage Summary for Class: Player (Model)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Class, %
+</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">Player</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (1/ 1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (8/ 8)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (15/ 15)
+  </span>
+</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<div class="sourceCode"><i>1</i>&nbsp;package Model;
+<i>2</i>&nbsp;
+<i>3</i>&nbsp;public class Player {
+<i>4</i>&nbsp;    private String username;
+<i>5</i>&nbsp;    private Worker[] workers;
+<i>6</i>&nbsp;    private Card gameCard;
+<i>7</i>&nbsp;    private Color color;
+<i>8</i>&nbsp;
+<i>9</i>&nbsp;    /***
+<i>10</i>&nbsp;     * Costruttore della classe Player
+<i>11</i>&nbsp;     * @param name nome da assegnare al giocatore
+<i>12</i>&nbsp;     */
+<b class="fc"><i>13</i>&nbsp;    public Player (String name){</b>
+<b class="fc"><i>14</i>&nbsp;        this.username = name;</b>
+<b class="fc"><i>15</i>&nbsp;        this.workers = new Worker[2];</b>
+<b class="fc"><i>16</i>&nbsp;    }</b>
+<i>17</i>&nbsp;
+<i>18</i>&nbsp;    /***
+<i>19</i>&nbsp;     * Creates and set the initial position of the first worker
+<i>20</i>&nbsp;     * @param x_1 x of the initial position
+<i>21</i>&nbsp;     * @param y_1 y of the initial position
+<i>22</i>&nbsp;     */
+<i>23</i>&nbsp;    public void assignWorker1(int x_1,int y_1){
+<b class="fc"><i>24</i>&nbsp;        this.workers[0]= new Worker(x_1,y_1,this.color);</b>
+<b class="fc"><i>25</i>&nbsp;    }</b>
+<i>26</i>&nbsp;
+<i>27</i>&nbsp;    /***
+<i>28</i>&nbsp;     * Creates and set the initial position of the second worker
+<i>29</i>&nbsp;     * @param x_2 x of the initial position
+<i>30</i>&nbsp;     * @param y_2 y of the initial position
+<i>31</i>&nbsp;     */
+<i>32</i>&nbsp;    public void assignWorker2(int x_2,int y_2){
+<b class="fc"><i>33</i>&nbsp;        this.workers[1]= new Worker(x_2,y_2,this.color);</b>
+<b class="fc"><i>34</i>&nbsp;    }</b>
+<i>35</i>&nbsp;
+<i>36</i>&nbsp;    /***
+<i>37</i>&nbsp;     * Setter of the card
+<i>38</i>&nbsp;     * @param card the card to assigng to the Player
+<i>39</i>&nbsp;     */
+<i>40</i>&nbsp;    public void chooseCard(Card card){
+<b class="fc"><i>41</i>&nbsp;        this.gameCard=card;</b>
+<b class="fc"><i>42</i>&nbsp;    }</b>
+<i>43</i>&nbsp;
+<i>44</i>&nbsp;    /***
+<i>45</i>&nbsp;     * calls the method to move a worker.
+<i>46</i>&nbsp;     * @param worker the worker to move
+<i>47</i>&nbsp;     * @param x new position x of the worker
+<i>48</i>&nbsp;     * @param y new position y of the worker
+<i>49</i>&nbsp;     */
+<i>50</i>&nbsp;    public void moveWith(Worker worker,int x, int y){
+<b class="fc"><i>51</i>&nbsp;        worker.moveTo(x,y);</b>
+<b class="fc"><i>52</i>&nbsp;    }</b>
+<i>53</i>&nbsp;
+<i>54</i>&nbsp;    /***
+<i>55</i>&nbsp;     * @author Alfredo Landi (to acknoledge some undebugged methods)
+<i>56</i>&nbsp;     * Get needed player&#39;s worker
+<i>57</i>&nbsp;     * @return
+<i>58</i>&nbsp;     */
+<i>59</i>&nbsp;    /*public Worker getWorker(){
+<i>60</i>&nbsp;        if(countforGetter&lt;2) {
+<i>61</i>&nbsp;            countforGetter++;
+<i>62</i>&nbsp;            return this.workers[countforGetter];
+<i>63</i>&nbsp;        } else{
+<i>64</i>&nbsp;            countforGetter=0;
+<i>65</i>&nbsp;            return this.workers[countforGetter];
+<i>66</i>&nbsp;        }
+<i>67</i>&nbsp;    }*/
+<i>68</i>&nbsp;
+<i>69</i>&nbsp;    /***
+<i>70</i>&nbsp;     * Getter for the reference of the first worker
+<i>71</i>&nbsp;     * @return the reference of the first worker
+<i>72</i>&nbsp;     */
+<b class="fc"><i>73</i>&nbsp;    public Worker getWorker1(){return this.workers[0];}</b>
+<i>74</i>&nbsp;
+<i>75</i>&nbsp;    /***
+<i>76</i>&nbsp;     * Getter for the reference of the second worker
+<i>77</i>&nbsp;     * @return the reference of the second worker
+<i>78</i>&nbsp;     */
+<b class="fc"><i>79</i>&nbsp;    public Worker getWorker2(){return this.workers[1];}</b>
+<i>80</i>&nbsp;
+<i>81</i>&nbsp;    /***
+<i>82</i>&nbsp;     *
+<i>83</i>&nbsp;     * @return the card of this player
+<i>84</i>&nbsp;     */
+<b class="fc"><i>85</i>&nbsp;    public Card getGameCard(){return this.gameCard;}</b>
+<i>86</i>&nbsp;}
+</div>
+</div>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2020-03-31 12:43</div>
+</div>
+</body>
+</html>
