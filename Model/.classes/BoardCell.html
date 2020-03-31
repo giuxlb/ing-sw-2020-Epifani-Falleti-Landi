@@ -1,0 +1,129 @@
+
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html id="htmlId">
+<head>
+  <title>Coverage Report :: BoardCell</title>
+  <style type="text/css">
+    @import "../../.css/coverage.css";
+  </style>
+</head>
+
+<body>
+<div class="header"></div>
+
+<div class="content">
+<div class="breadCrumbs">
+    [ <a href="../../index.html">all classes</a> ]
+    [ <a href="../index.html">Model</a> ]
+</div>
+
+<h1>Coverage Summary for Class: BoardCell (Model)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Class, %
+</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">BoardCell</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (1/ 1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (5/ 5)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (10/ 10)
+  </span>
+</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<div class="sourceCode"><i>1</i>&nbsp;package Model;
+<i>2</i>&nbsp;
+<i>3</i>&nbsp;public class BoardCell {
+<i>4</i>&nbsp;    private int height;
+<i>5</i>&nbsp;    private Worker workerBuilder;
+<i>6</i>&nbsp;
+<i>7</i>&nbsp;    /***
+<i>8</i>&nbsp;     * Put a worker on this BoardCell
+<i>9</i>&nbsp;     * @param workerBuilder
+<i>10</i>&nbsp;     */
+<i>11</i>&nbsp;    public void setBoardCellWorker(Worker workerBuilder){
+<b class="fc"><i>12</i>&nbsp;        this.workerBuilder=workerBuilder;</b>
+<b class="fc"><i>13</i>&nbsp;    }</b>
+<i>14</i>&nbsp;
+<i>15</i>&nbsp;    /***
+<i>16</i>&nbsp;     * Set height of current BoardCell to 0 (0 floor), 1 (1st floor), 2 (2nd floor), 3 (3rd floor) or 4 (dome)
+<i>17</i>&nbsp;     * @param height
+<i>18</i>&nbsp;     */
+<i>19</i>&nbsp;    public void setBoardCellHeight(int height){
+<b class="fc"><i>20</i>&nbsp;        this.height=height;</b>
+<b class="fc"><i>21</i>&nbsp;    }</b>
+<i>22</i>&nbsp;
+<i>23</i>&nbsp;    /***
+<i>24</i>&nbsp;     * Constructor for this class
+<i>25</i>&nbsp;     */
+<b class="fc"><i>26</i>&nbsp;    public BoardCell(){</b>
+<b class="fc"><i>27</i>&nbsp;        this.height=0;</b>
+<b class="fc"><i>28</i>&nbsp;        this.workerBuilder=null;</b>
+<b class="fc"><i>29</i>&nbsp;    }</b>
+<i>30</i>&nbsp;
+<i>31</i>&nbsp;    /***
+<i>32</i>&nbsp;     *
+<i>33</i>&nbsp;     * @return
+<i>34</i>&nbsp;     */
+<i>35</i>&nbsp;    public Worker getWorkerBuilder(){
+<b class="fc"><i>36</i>&nbsp;        return this.workerBuilder;</b>
+<i>37</i>&nbsp;    }
+<i>38</i>&nbsp;
+<i>39</i>&nbsp;    /***
+<i>40</i>&nbsp;     *
+<i>41</i>&nbsp;     * @return
+<i>42</i>&nbsp;     */
+<i>43</i>&nbsp;    public int getHeight() {
+<b class="fc"><i>44</i>&nbsp;        return height;</b>
+<i>45</i>&nbsp;    }
+<i>46</i>&nbsp;}
+</div>
+</div>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2020-03-31 12:25</div>
+</div>
+</body>
+</html>
