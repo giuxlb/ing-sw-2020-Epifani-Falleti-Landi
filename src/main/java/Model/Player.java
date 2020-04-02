@@ -56,15 +56,9 @@ public class Player {
      * Get needed player's worker
      * @return
      */
-    /*public Worker getWorker(){
-        if(countforGetter<2) {
-            countforGetter++;
-            return this.workers[countforGetter];
-        } else{
-            countforGetter=0;
-            return this.workers[countforGetter];
-        }
-    }*/
+    public Worker getWorker(int p){
+        return this.workers[p];
+    }
 
     /***
      * Getter for the reference of the first worker
