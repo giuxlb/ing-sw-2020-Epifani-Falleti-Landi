@@ -21,7 +21,7 @@ public class PlayerTest {
 
     @Test
     public void setCard(){
-        Card card = new Card();
+        Card card = new Card("Artemis");
         player.chooseCard(card);
         assertEquals(card,player.getGameCard());
     }
