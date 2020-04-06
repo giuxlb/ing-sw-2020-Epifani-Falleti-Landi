@@ -20,6 +20,10 @@ public class BoardCell {
         this.height=height;
     }
 
+    public void buildOnBoarCell(){
+        this.height++;
+    }
+
     /***
      * Constructor for this class
      */

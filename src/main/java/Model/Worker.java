@@ -43,4 +43,12 @@ public class Worker {
         return this.pos_y;
     }
 
+    /***
+     *
+     * @param c
+     */
+    public void setColor(Color c){
+        this.color=c;
+    }
+
 }

@@ -8,7 +8,7 @@ import org.junit.BeforeClass;
 import static org.junit.Assert.assertEquals;
 
 
-public class GameTest {
+/*public class GameTest {
 
     static Game game;
 
@@ -136,4 +136,4 @@ public class GameTest {
         assertEquals(game.getTurnPhase(),TurnPhases.MOVE);
         assertEquals(game.getTurnNumber(),1);
     }
-}
+}*/

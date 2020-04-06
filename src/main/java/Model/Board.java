@@ -45,6 +45,16 @@ public class Board {
      * @param j
      * @param w
      */
+
+    /***
+     *
+     * @param i
+     * @param j
+     */
+    public void buildOnBoard(int i, int j){
+        boardGame[i][j].buildOnBoarCell();
+    }
+
     public void setBoardWorker(int i, int j, Worker w){
         this.boardGame[i][j].setBoardCellWorker(w);
     }
@@ -67,4 +77,15 @@ public class Board {
     public BoardCell[][] getBoardGame() {
         return boardGame;
     }
+
+    /***
+     *
+     * @param i
+     * @param j
+     */
+    public int getBoardHeight(int i, int j) {
+        return this.boardGame[i][j].getHeight();
+    }
+
+
 }

@@ -1,4 +1,4 @@
-package Model;
+/*package Model;
 
 import org.junit.After;
 import org.junit.Before;
@@ -47,4 +47,4 @@ public class PlayerTest {
         assertEquals(player.getWorker2().getPositionX(),2);
         assertEquals(player.getWorker2().getPositionY(),2);
     }
-}
+}*/

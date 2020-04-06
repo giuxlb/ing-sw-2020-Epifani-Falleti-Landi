@@ -1,4 +1,4 @@
-package Model;
+/*package Model;
 
 import org.junit.After;
 import org.junit.Test;
@@ -26,4 +26,4 @@ public class WorkerTest {
         assertEquals(worker.getPositionY(),2);
     }
 
-}
+}*/
