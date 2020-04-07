@@ -8,6 +8,7 @@ public class Prova
     public static void main(String[] args)
     {
 
+
         Player player = new Player("giux");
         Card card = new Card("Apollo");
         player.chooseCard(card);

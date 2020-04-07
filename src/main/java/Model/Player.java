@@ -15,24 +15,14 @@ public class Player {
         this.workers = new Worker[2];
     }
 
-    /***
-     * Creates and set the initial position of the first worker
-     * @param x_1 x of the initial position
-     * @param y_1 y of the initial position
-     */
-    public void assignWorker1(int x_1,int y_1){
-        this.workers[0]= new Worker(x_1,y_1,this.color);
-    }
 
     /***
-     * Creates and set the initial position of the second worker
-     * @param x_2 x of the initial position
-     * @param y_2 y of the initial position
+     * Creates and assign a worker to the player
+     * @param x pos x
+     * @param y pos y
+     * @param index index of the worker
      */
-    public void assignWorker2(int x_2,int y_2){
-        this.workers[1]= new Worker(x_2,y_2,this.color);
-    }
-
+    public void assignWorker(int x,int y,int index){this.workers[index]= new Worker(x,y,this.color);}
     /***
      * Setter of the card
      * @param card the card to assigng to the Player
@@ -60,17 +50,6 @@ public class Player {
         return this.workers[p];
     }
 
-    /***
-     * Getter for the reference of the first worker
-     * @return the reference of the first worker
-     */
-    public Worker getWorker1(){return this.workers[0];}
-
-    /***
-     * Getter for the reference of the second worker
-     * @return the reference of the second worker
-     */
-    public Worker getWorker2(){return this.workers[1];}
 
     /***
      *

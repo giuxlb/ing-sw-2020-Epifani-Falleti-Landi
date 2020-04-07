@@ -80,44 +80,17 @@ public class Game {
 
     }
 
-    /**
-     * It instantiates a new worker for the object player calling the method Player.assignWorker and uploads tha state
-     * of the board
-     * @param player is the player who made the first move with his first worker
-     * @param x_1 x coordinate of the initial position of the worker
-     * @param y_1 y coordinate of the initial position of the worker
-     */
-
-    public void chooseInitialPosition1(Player player,int x_1, int y_1)
-    {
-        player.assignWorker1(x_1,y_1);
-        boardGame.setBoardWorker(x_1,y_1,player.getWorker1());
-    }
-
-    /**
-     * It instantiates a new worker for the object player calling the method Player.assignWorker and uploads tha state
-     * of the board
-     * @param player is the player who made the first move with his second worker
-     * @param x_2 x coordinate of the initial position of the worker
-     * @param y_2 y coordinate of the initial position of the worker
-     */
-    public void chooseInitialPosition2(Player player,int x_2, int y_2)
-    {
-        player.assignWorker2(x_2,y_2);
-        boardGame.setBoardWorker(x_2,y_2,player.getWorker2());
-    }
-
     /***
-     * @author Alfredo Landi (to acknoledge some undebugged methods)
-     * For each player's worker assign an initial position (x,y) on boardGame
-     * @param player
-     * @param x
-     * @param y
+     * Create, assign and places a worker on the board
+     * @param player the player that places the worker
+     * @param x pos x
+     * @param y pos y
+     * @param index the worker index
      */
-    /*public void chooseInitialPosition(Player player, int x, int y){
-        player.assignWorker(x,y);
-        boardGame.setBoardWorker(x,y, player.getWorker());
-    }*/
+    public void chooseInitialPosition(Player player,int x,int y,int index){
+        player.assignWorker(x,y,index);
+        boardGame.setBoardWorker(x,y,player.getWorker(index));
+    }
 
     /**
      * It removes the worker from the BoardCell previously occupied by that worker and creates a new worker in the new BoardCell
@@ -175,16 +148,6 @@ public class Game {
         Player player2 = new Player("Alf");
         game.addPlayer(player1);
         game.addPlayer(player2);
-        game.chooseInitialPosition1(player1,1,1);
-        game.chooseInitialPosition2(player1,3,3);
-        game.chooseInitialPosition1(player2,4,4);
-        game.chooseInitialPosition2(player2,3,4);
-        game.boardGame.printBoard();
-        System.out.println("   ");
-        game.moveWorker(player1.getWorker1(),0,0);
-        game.boardGame.printBoard();
-        game.buildTo(1,0,1);
-        System.out.println("   ");
-        game.boardGame.printBoard();
+
     }
 }

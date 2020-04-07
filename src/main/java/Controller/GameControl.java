@@ -11,7 +11,6 @@ public class GameControl {
     private TurnControl turnControl;
     private Socket[] sockets;
     private Player[] players;
-    private int currentPlayer;
     private boolean athenaEffectTurn;
 
 
@@ -24,14 +23,12 @@ public class GameControl {
         players = new Player[3];
 
         //ricevo dal client nome 1
-        //players[0] = new Player(socket.getPlayerName());
+        players[0] = new Player(socket.getPlayerName());
         game.addPlayer(players[0]);
 
         //ricevo dal client nome 2
         //players[1] = new Player(socket.getPlayerName());
         game.addPlayer(players[1]);
-
-        currentPlayer=0;
 
 
     }
@@ -39,6 +36,13 @@ public class GameControl {
     public void startGame(){
         //chiedo pos iniz al player1
         //ricevo pos iniz player1
+
+        while(true){
+
+
+            startNextTurn();
+            game.nextTurnNumber();
+        }
 
 
     }
@@ -48,7 +52,8 @@ public class GameControl {
      * method will be inserted in a loop in startGame
      */
     public void startNextTurn(){
-        TurnControl turn = new TurnControl(players[currentPlayer],athenaEffectTurn);
+        TurnControl turn = new TurnControl(players[game.getTurnNumber()],athenaEffectTurn);
+        turn.start();
     }
 
     /***

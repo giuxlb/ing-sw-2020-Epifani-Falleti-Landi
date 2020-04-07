@@ -7,6 +7,7 @@ public class TurnControl {
     private boolean athenaEffect;
     private Card card;
 
+
     /***
      * Constructor of TurnControl, which is created every time a turn starts
      * @param player the player that his starting their turn
@@ -23,9 +24,10 @@ public class TurnControl {
         DivinityContext ctx = new DivinityContext();
 
         ctx.selectStrategy(this.card);
-
-        ctx.move();
-
+        //boolean hasMoved = false;
+        //while(!hasMoved){
+        //    ctx.move();
+        //}
         ctx.build();
     }
 
