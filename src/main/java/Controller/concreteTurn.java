@@ -118,7 +118,7 @@ public class concreteTurn implements Turn {
             System.out.println("Altezza della posizione in cui mi voglio spostare: " + posHeight );
             this.workerHeight=boardGame.getBoardHeight(p.getWorker(worker_index).getPositionX(),p.getWorker(worker_index).getPositionY());
             System.out.println("Altezza della posizione in cui mi trovo: " + workerHeight);
-            if(posHeight-workerHeight>=-1 && posHeight-workerHeight<=1){
+            if(workerHeight-posHeight<=1){
                 p.getWorker(worker_index).moveTo(x,y);
                 System.out.println("Movimento riuscito!");
             }else{
