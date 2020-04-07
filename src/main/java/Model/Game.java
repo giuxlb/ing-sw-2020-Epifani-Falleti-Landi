@@ -1,24 +1,24 @@
 package Model;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-
 public class Game {
-    private ArrayList<Player> players;
+    private Player[] players;
     private Board boardGame;
-    //private int turnNumber;
+    private int turnNumber;
     private TurnPhases turnPhase;
     private Card[] choosenCards;
 
     public Game()
     {
-        players=new ArrayList<Player>();
         this.boardGame = new Board();
     }
 
-
-    /*public void addPlayer(Player p)
+    /**
+     * It adds new players to the game. If turnNumber is equal to 0, it instantiates the array of players and add one to it.
+     * If turnNumber is 1 or 2, it simply adds a player to the array. If turnNumber is greater than 2, it stops, because Game can
+     * have maximum 3 players
+     * @param p is the player it has to add to the array of player
+     */
+    public void addPlayer(Player p)
     {
         if (turnNumber == 0)
         {
@@ -37,14 +37,6 @@ public class Game {
             turnNumber++;
 
         }
-    }*/
-
-    /***
-     *
-     * @param name
-     */
-    public void addPlayer(String name){
-        players.add(new Player(name));
     }
 
     /**
@@ -52,7 +44,7 @@ public class Game {
      */
     public void startGame()
     {
-        //turnNumber = 0;
+        turnNumber = 0;
         turnPhase = TurnPhases.MOVE;
 
 
@@ -69,36 +61,35 @@ public class Game {
     /**
      * It changes the turnNumber, in order to allow the next player to make his moves
      */
-    /*public void nextTurnNumber()
+    public void nextTurnNumber()
     {
         if (players[2] != null)
             turnNumber = (turnNumber+1)%3;
         else
             turnNumber = (turnNumber+1)%2;
-    }*/
+    }
 
     /**
      * it changes the phase of the turn of a player
      */
-    /*public void nextTurnPhase()
+    public void nextTurnPhase()
     {
         turnPhase = turnPhase.changeFrom();
         if (turnPhase == TurnPhases.CHANGE_PLAYER)
             this.nextTurnNumber();
 
-    }*/
-
+    }
 
     /***
-     * Choose an initail position for each player's worker
-     * @param player
-     * @param i worker index
-     * @param x x-position on boardGame
-     * @param y y-position on boardGame
+     * Create, assign and places a worker on the board
+     * @param player the player that places the worker
+     * @param x pos x
+     * @param y pos y
+     * @param index the worker index
      */
-    public void chooseInitialPosition(Player player, int i, int x, int y){
-        player.setWorker(i, x, y);
-        boardGame.setBoardWorker(x,y, player.getWorker(i));
+    public void chooseInitialPosition(Player player,int x,int y,int index){
+        player.assignWorker(x,y,index);
+        boardGame.setBoardWorker(x,y,player.getWorker(index));
     }
 
     /**
@@ -131,35 +122,32 @@ public class Game {
      *
      * @return the turnNUmber
      */
-    /*public int getTurnNumber() {
+    public int getTurnNumber() {
         return turnNumber;
-    }*/
-
-    public Player getPlayer(int i){
-        return this.players.get(i);
     }
+
     /**
      *
      * @return the players of the game
      */
-    public List<Player> getPlayers() {
-
-        return Collections.unmodifiableList(new ArrayList<>(players));
+    public Player[] getPlayers() {
+        return players;
     }
 
-    /***
-     *
-     * @return
-     */
     public Board getBoardGame() {
         return boardGame;
     }
 
-    /***
-     *
-     * @return
-     */
     public TurnPhases getTurnPhase() {
         return turnPhase;
+    }
+
+    public static void main(String[] args){
+        Game game = new Game();
+        Player player1 = new Player("Giux");
+        Player player2 = new Player("Alf");
+        game.addPlayer(player1);
+        game.addPlayer(player2);
+
     }
 }

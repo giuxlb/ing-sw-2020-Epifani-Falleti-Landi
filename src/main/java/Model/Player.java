@@ -10,27 +10,25 @@ public class Player {
      * Costruttore della classe Player
      * @param name nome da assegnare al giocatore
      */
-    public Player(String name) {
+    public Player (String name){
         this.username = name;
         this.workers = new Worker[2];
     }
 
-    /***
-     * Setter for i-worker
-     * @param i worker index
-     * @param x x-position on boardGame
-     * @param y y-position on boardGame
-     */
-    public void setWorker(int i, int x, int y) {
-        this.workers[i] = new Worker(x, y, this.color);
-    }
 
+    /***
+     * Creates and assign a worker to the player
+     * @param x pos x
+     * @param y pos y
+     * @param index index of the worker
+     */
+    public void assignWorker(int x,int y,int index){this.workers[index]= new Worker(x,y,this.color);}
     /***
      * Setter of the card
      * @param card the card to assigng to the Player
      */
-    public void chooseCard(Card card) {
-        this.gameCard = card;
+    public void chooseCard(Card card){
+        this.gameCard=card;
     }
 
     /***
@@ -39,41 +37,23 @@ public class Player {
      * @param x new position x of the worker
      * @param y new position y of the worker
      */
-    public void moveWith(Worker worker, int x, int y) {
-        worker.moveTo(x, y);
+    public void moveWith(Worker worker,int x, int y){
+        worker.moveTo(x,y);
     }
 
     /***
-     * Getter for i-worker
-     * @param i worker index
+     * @author Alfredo Landi (to acknoledge some undebugged methods)
+     * Get needed player's worker
      * @return
      */
-    public Worker getWorker(int i) {
-        return this.workers[i];
+    public Worker getWorker(int p){
+        return this.workers[p];
     }
 
-    /***
-     * Getter for the reference of the first worker
-     * @return the reference of the first worker
-     */
 
     /***
      *
-     * @return
+     * @return the card of this player
      */
-    public Card getGameCard() {
-        return this.gameCard;
-    }
-
-    /***
-     *
-     * @param c
-     */
-    public void setColor(Color c) {
-        this.color=c;
-        for(int i=0;i<2;i++){
-            workers[i].setColor(c);
-        }
-    }
-
+    public Card getGameCard(){return this.gameCard;}
 }
