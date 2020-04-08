@@ -17,6 +17,10 @@ public class DivinityContext {
         strategy.build();
     }
 
+    public void checkAvailableMoveSpots() {strategy.checkAvailableMoveSpots();}
+
+    public void checkAvailableBuildSpots() {strategy.checkAvailableBuildSpots();}
+
     /***
      * Select the strategy based on the card given in input
      * @param card the card associated to a player

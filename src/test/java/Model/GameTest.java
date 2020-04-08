@@ -80,7 +80,7 @@ public class GameTest {
 
     }
 
-    @Test
+    /*@Test
     public void chooseInitialPosition1_playerAndCoordinates_SetTheBoardAndCreateNewWorker()
     {
         Player p = new Player("player1");
@@ -135,5 +135,5 @@ public class GameTest {
         game.nextTurnPhase();
         assertEquals(game.getTurnPhase(),TurnPhases.MOVE);
         assertEquals(game.getTurnNumber(),1);
-    }
+    }*/
 }

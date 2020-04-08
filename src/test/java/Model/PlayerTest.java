@@ -26,7 +26,7 @@ public class PlayerTest {
         assertEquals(card,player.getGameCard());
     }
 
-    @Test
+    /*@Test
     public void setWorkers(){
         player.assignWorker1(0,0);
         player.assignWorker2(4,4);
@@ -46,5 +46,5 @@ public class PlayerTest {
         assertEquals(player.getWorker1().getPositionY(),1);
         assertEquals(player.getWorker2().getPositionX(),2);
         assertEquals(player.getWorker2().getPositionY(),2);
-    }
+    }*/
 }
