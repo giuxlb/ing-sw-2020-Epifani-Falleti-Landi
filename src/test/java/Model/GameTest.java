@@ -80,6 +80,21 @@ public class GameTest {
 
     }
 
+    @Test
+    public void chooseInitialPosition_playerCoordinatesAndIndex_SetBoardAndCreateWorker()
+    {
+        Player p = new Player("player1");
+        game.addPlayer(p);
+        game.chooseInitialPosition(p,1,1,0);
+
+        assertEquals(game.getBoardGame().getBoardGame()[1][1].getWorkerBuilder(),p.getWorker(0));
+
+        game.chooseInitialPosition(p,1,2,1);
+
+        assertEquals(game.getBoardGame().getBoardGame()[1][2].getWorkerBuilder(),p.getWorker(1));
+
+
+    }
     /*@Test
     public void chooseInitialPosition1_playerAndCoordinates_SetTheBoardAndCreateNewWorker()
     {
@@ -120,7 +135,7 @@ public class GameTest {
         game.chooseInitialPosition1(p,1,1);
         game.buildTo(1,2,1);
         assertEquals(game.getBoardGame().getBoardGame()[1][2].getHeight(),1);
-    }
+    }*/
 
     @Test
     public void nextTurnPhase_CurrentPhase_NextPhase()
@@ -135,5 +150,5 @@ public class GameTest {
         game.nextTurnPhase();
         assertEquals(game.getTurnPhase(),TurnPhases.MOVE);
         assertEquals(game.getTurnNumber(),1);
-    }*/
+    }
 }
