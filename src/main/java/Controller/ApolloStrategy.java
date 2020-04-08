@@ -5,4 +5,8 @@ public class ApolloStrategy extends DefaultStrategy implements TurnStrategy {
         //strategia movimento apollo
         System.out.println("Movimento di apollo");
     }
+
+    public void checkAvailableMoveSpots(){
+
+    }
 }

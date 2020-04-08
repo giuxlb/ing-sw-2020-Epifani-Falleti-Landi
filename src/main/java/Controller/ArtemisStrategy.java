@@ -6,4 +6,8 @@ public class ArtemisStrategy extends DefaultStrategy implements TurnStrategy{
         System.out.println("Movimento di Artemis");
     }
 
+    public void checkAvaibleMoveSpots(){
+
+    }
+
 }

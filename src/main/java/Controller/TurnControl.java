@@ -24,10 +24,9 @@ public class TurnControl {
         DivinityContext ctx = new DivinityContext();
 
         ctx.selectStrategy(this.card);
-        //boolean hasMoved = false;
-        //while(!hasMoved){
-        //    ctx.move();
-        //}
+
+        ctx.move();
+
         ctx.build();
     }
 

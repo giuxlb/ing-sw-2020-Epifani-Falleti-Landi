@@ -9,4 +9,13 @@ public class DefaultStrategy implements TurnStrategy {
         //default build
         System.out.println("Default build");
     }
+
+
+    public void checkAvailableMoveSpots() {
+
+    }
+
+    public void checkAvailableBuildSpots(){
+
+    }
 }

@@ -23,7 +23,7 @@ public class GameControl {
         players = new Player[3];
 
         //ricevo dal client nome 1
-        players[0] = new Player(socket.getPlayerName());
+        //players[0] = new Player(socket.getPlayerName());
         game.addPlayer(players[0]);
 
         //ricevo dal client nome 2

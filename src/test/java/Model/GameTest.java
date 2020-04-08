@@ -8,7 +8,7 @@ import org.junit.BeforeClass;
 import static org.junit.Assert.assertEquals;
 
 
-/*public class GameTest {
+public class GameTest {
 
     static Game game;
 
@@ -80,7 +80,7 @@ import static org.junit.Assert.assertEquals;
 
     }
 
-    @Test
+    /*@Test
     public void chooseInitialPosition1_playerAndCoordinates_SetTheBoardAndCreateNewWorker()
     {
         Player p = new Player("player1");
@@ -135,5 +135,5 @@ import static org.junit.Assert.assertEquals;
         game.nextTurnPhase();
         assertEquals(game.getTurnPhase(),TurnPhases.MOVE);
         assertEquals(game.getTurnNumber(),1);
-    }
-}*/
+    }*/
+}
