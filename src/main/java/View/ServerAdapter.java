@@ -23,20 +23,23 @@ public class ServerAdapter implements Runnable {
         this.server = server;
     }
 
+    public void setOutput(ObjectOutputStream output) {
+        this.output = output;
+    }
 
+    public void setInput(ObjectInputStream input) {
+        this.input = input;
+    }
 
     public void run()
     {
         try {
-            output = new ObjectOutputStream(server.getOutputStream());
-            input = new ObjectInputStream(server.getInputStream());
             handleServerConnection();
         } catch (IOException e) {
             System.out.println("server has died");
         } catch (ClassNotFoundException e) {
             e.printStackTrace();
         }
-
         try {
             server.close();
         } catch (IOException e) { }
@@ -49,8 +52,7 @@ public class ServerAdapter implements Runnable {
             observersCpy = new ArrayList<ServerObserver>(observers);
         }
 
-        while (true)
-        {
+        while (true) {
             VCEvent evento = (VCEvent) input.readObject();
             if (evento != null)
                 for (ServerObserver observer : observersCpy)
