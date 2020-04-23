@@ -39,6 +39,7 @@ public class Board {
         this.boardGame[i][j].setBoardCellHeight(height);
     }
 
+
     /***
      * Call setBoardCellWorker to modify the cell's worker in (i,j) on board
      * @param i

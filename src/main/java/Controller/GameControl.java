@@ -5,13 +5,15 @@ import Model.Player;
 
 import java.net.Socket;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
 
 public class GameControl {
     private Game game;
-    private TurnControl turnControl;
     private Socket[] sockets;
-    private Player[] players;
+    private ArrayList<Player> players;
     private boolean athenaEffectTurn;
+    private View virtualView;
 
 
     /***
@@ -20,16 +22,27 @@ public class GameControl {
      */
     public GameControl(){
         Game game = new Game();
-        players = new Player[3];
+        players = new ArrayList<Player>();
 
-        //ricevo dal client nome 1
-        //players[0] = new Player(socket.getPlayerName());
-        game.addPlayer(players[0]);
+        //ricevo dal client nome 1 e data
+        String player_name_0 = virtualView.askForUsername(0);
+        Calendar player_date = virtualView.askForDate(0);
+        this.addPlayer(new Player(player_name_0,player_date));
+        boolean flag = false;
+        String player_name_1;
 
-        //ricevo dal client nome 2
-        //players[1] = new Player(socket.getPlayerName());
-        game.addPlayer(players[1]);
+        //continuo a chiedere il nome al secondo giocatore finchè non è diverso dal primo
+        while (!flag) {
+            //ricevo dal client nome 2
+            player_name_1 = virtualView.askForUsername(1);
+            if(!player_name_1.equals(player_name_0)){ flag=true;}
 
+        }
+        player_date = virtualView.askForDate(1);
+        this.addPlayer(new Player(player_name_1,player_date));
+
+        //riordino i giocatori in base all'età
+        this.sortPlayersByAge();
 
     }
 
@@ -52,7 +65,7 @@ public class GameControl {
      * method will be inserted in a loop in startGame
      */
     public void startNextTurn(){
-        TurnControl turn = new TurnControl(players[game.getTurnNumber()],athenaEffectTurn);
+        TurnControl turn = new TurnControl(players.get(game.getTurnNumber()),athenaEffectTurn,game.getBoardGame(),game);
         turn.start();
     }
 
@@ -63,7 +76,7 @@ public class GameControl {
      * @return true if it is possible
      */
     private boolean checkValidInitialPosition(int x, int y){
-        //TODO controllo parametri dentro board
+        if(x>4 || x<0 || y>4 || y<0) return false;
 
         Player[] players = this.game.getPlayers();
 
@@ -85,4 +98,36 @@ public class GameControl {
 
     }
 
+    public void win(Player player){
+        virtualView.sendWinMessage(player);
+        game.win(player);
+    }
+
+    public void lose(Player player){
+        virtualView.sendLoseMessage(player);
+        game.lose(player);
+    }
+
+    /***
+     * Adds a player in both the model and the controller
+     * @param player the player to be added
+     */
+    public void addPlayer(Player player){
+        this.players.add(player);
+        this.game.addPlayer(player);
+    }
+
+
+    /***
+     * Sorts the Arraylist of players in the Controller by age, the younger first
+     */
+    public void sortPlayersByAge(){
+        //TODO da estendere per 3 giocatori
+
+        if(this.players.get(0).getBirthDate().compareTo(this.players.get(1).getBirthDate())<0){
+            Player copy = this.players.remove(0);
+            this.players.set(0,this.players.get(1));
+            this.players.set(1,copy);
+        }
+    }
 }

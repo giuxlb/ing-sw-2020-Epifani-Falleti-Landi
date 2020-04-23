@@ -51,4 +51,5 @@ public class Worker {
         this.color=c;
     }
 
+    public Color getColor(){return this.color;}
 }

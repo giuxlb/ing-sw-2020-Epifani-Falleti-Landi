@@ -1,5 +1,7 @@
 package Model;
 
+import java.util.Observer;
+
 public class Game {
     private Player[] players;
     private Board boardGame;
@@ -93,7 +95,7 @@ public class Game {
     }
 
     /**
-     * It removes the worker from the BoardCell previously occupied by that worker and creates a new worker in the new BoardCell
+     * It removes the worker from the BoardCell previously occupied by that worker and assign it in the new BoardCell
      * where the player moved the worker
      * @param w is the worker moved
      * @param x is the x coordinate of the new position
@@ -102,6 +104,18 @@ public class Game {
     public void moveWorker(Worker w, int x, int y)
     {
         boardGame.setBoardWorker(w.getPositionX(),w.getPositionY(),null);
+        boardGame.setBoardWorker(x,y,w);
+        w.moveTo(x,y);
+    }
+
+    /***
+     * Just assign a worker to a cell, without removing the reference of the previous spot
+     * Utility function to be used in strategies like Apollo
+     * @param w the worker moved
+     * @param x pos x
+     * @param y pos y
+     */
+    public void moveWorkerWithoutNull(Worker w, int x, int y){
         boardGame.setBoardWorker(x,y,w);
         w.moveTo(x,y);
     }
@@ -117,6 +131,13 @@ public class Game {
     {
         boardGame.setBoardHeight(x,y,level);
     }
+
+    /***
+     * Does a +1 on the height of the cell
+     * @param x pos x
+     * @param y pos y
+     */
+    public void buildUp(int x, int y){boardGame.buildOnBoard(x,y);}
 
     /**
      *
@@ -143,11 +164,7 @@ public class Game {
     }
 
     public static void main(String[] args){
-        Game game = new Game();
-        Player player1 = new Player("Giux");
-        Player player2 = new Player("Alf");
-        game.addPlayer(player1);
-        game.addPlayer(player2);
+
 
     }
 }
