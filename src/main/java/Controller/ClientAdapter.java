@@ -71,12 +71,24 @@ public class ClientAdapter implements Runnable {
         synchronized (observers) {
             observersCpy = new ArrayList<ClientObserver>(observers);
         }
+
         while (true)
         {
             VCEvent evento = (VCEvent) input.readObject();
-            if (evento != null)
-                for (ClientObserver observer : observersCpy)
-                    observer.didReceiveVCEventFrom(evento,this.number);
+            if (evento != null) {
+                if(evento.getCommand() != VCEvent.Event.ping) {
+                    for (ClientObserver observer : observersCpy)
+                        observer.didReceiveVCEventFrom(evento, this.number);
+                }
+                else
+                {
+                    for (ClientObserver observer : observersCpy)
+                        observer.didReceivePingFrom((Integer) evento.getBox(), this.number);
+                }
+            }
+
+
         }
     }
+
 }

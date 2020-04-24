@@ -19,6 +19,7 @@ public class ClientNetworkHandler implements Runnable, ServerObserver {
     private boolean endGame;
     private String winner;
     private boolean updateView;
+    private Integer ping;
 
     public ClientNetworkHandler(){this.run();}
 
@@ -40,12 +41,36 @@ public class ClientNetworkHandler implements Runnable, ServerObserver {
         /*qua creo un'istanza della View chiamando il suo costruttore e passandogli questo network handler
         in modo tale da poi permetterci di chiamare i metodi della View sotto che dovranno gestire l'input e l'output
         */
+        Runnable runPing = ()->{
+            while(true)
+            {
+                synchronized (this)
+                {
+                    ping = 0;
+                    while(ping == 0)
+                    {
+                        try{
+                            wait(10000);
+                        }catch(InterruptedException e)
+                        { }
+                    }
+                    if (ping == 0)
+                    {
+                        //avvisa la virtual view
+                    }
+                    sendPing();//appena riceve manda indietro il ping per fargli sapere che è ancora attivo
+                }
+            }
+        };
         adapter = new ServerAdapter(server);
         adapter.addObserver(this);
         adapter.setInput(input);
         adapter.setOutput(output);
         Thread thread = new Thread(adapter);
         thread.start();
+        Thread threadPing = new Thread(runPing);
+        threadPing.start();
+
 
         while (true)
         {
@@ -76,6 +101,11 @@ public class ClientNetworkHandler implements Runnable, ServerObserver {
         notifyAll();
     }
 
+    public synchronized void didReceivePing(Integer n)
+    {
+        ping = n;
+        notifyAll();;
+    }
     //questo metodo verrà chiamato dalla VIEW
     public void sendVCEvent(VCEvent eventToServer)
     {
@@ -86,4 +116,18 @@ public class ClientNetworkHandler implements Runnable, ServerObserver {
             System.out.println("server has died");
         }
     }
+
+
+    public void sendPing()
+    {
+        VCEvent pingEventResponse = new VCEvent(ping, VCEvent.Event.ping);
+        try {
+            output.writeObject(pingEventResponse);
+        }catch (IOException e)
+        {
+            System.out.println("server has died for ping");
+        }
+    }
+
+
 }

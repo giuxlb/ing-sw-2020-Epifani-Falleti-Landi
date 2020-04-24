@@ -10,17 +10,18 @@ public class VCEvent implements Serializable {
     private static final long serialVersionUID = 382104422531955291L;
 
     public enum Event{
-    setup_request,
-    username_request,
-    not_your_turn,
-    update,
-    send_cells_move,
-    send_cells_build,
-    you_lost,
-    send_all_cards,
-    send_chosen_cards
+        setup_request,
+        username_request,
+       not_your_turn,
+        update,
+        send_cells_move,
+        send_cells_build,
+        you_lost,
+        send_all_cards,
+        send_chosen_cards,
+        ping
 
-}
+    }
 
     private Object box; // potrà essere o una stringa o un array di celle, o un array di carte, o la board
     private Event command;
