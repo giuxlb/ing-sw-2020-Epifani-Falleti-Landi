@@ -29,6 +29,7 @@ public class ServerNetworkHandler implements Runnable, ClientObserver {
     private static Integer pingFromClient2;
     private static Integer pingFromClient3;
     private static VirtualView virtualView;
+    private static boolean[] canWrite;
 
     public ServerNetworkHandler(VirtualView vv)
     {
@@ -79,8 +80,18 @@ public class ServerNetworkHandler implements Runnable, ClientObserver {
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
+                synchronized (this)
+                {
+                    while (canWrite[0] == false)
+                    {
+                        try{
+                            wait();
+                        }catch(InterruptedException e){}
+                    }
+                }
                 VCEvent pingEvent = new VCEvent((Integer) 1, VCEvent.Event.ping);
-                sendPingTo(pingEvent,0);
+                if(canWrite[0] == true)
+                    sendPingTo(pingEvent,0);
                 synchronized (this)
                 {
                     pingFromClient1 = 0;
@@ -125,8 +136,18 @@ public class ServerNetworkHandler implements Runnable, ClientObserver {
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
+                synchronized (this)
+                {
+                    while (canWrite[1] == false)
+                    {
+                        try{
+                            wait();
+                        }catch(InterruptedException e){}
+                    }
+                }
                 VCEvent pingEvent = new VCEvent((Integer) 2, VCEvent.Event.ping);
-                sendPingTo(pingEvent,1);
+                if(canWrite[1] == true)
+                    sendPingTo(pingEvent,1);
                 synchronized (this)
                 {
                     pingFromClient2 = 0;
@@ -171,8 +192,18 @@ public class ServerNetworkHandler implements Runnable, ClientObserver {
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
+                synchronized (this)
+                {
+                    while (canWrite[2] == false)
+                    {
+                        try{
+                            wait();
+                        }catch(InterruptedException e){}
+                    }
+                }
                 VCEvent pingEvent = new VCEvent((Integer) 3, VCEvent.Event.ping);
-                sendPingTo(pingEvent,2);
+                if(canWrite[2] == true)
+                    sendPingTo(pingEvent,2);
                 synchronized (this)
                 {
                     pingFromClient3 = 0;
@@ -210,6 +241,7 @@ public class ServerNetworkHandler implements Runnable, ClientObserver {
             adapters[counter].addObserver(this);
             adapters[counter].setInput(inputs[counter]);
             adapters[counter].setOutput(outputs[counter]);
+            canWrite[counter] = true;
             Thread thread1 = new Thread(adapters[counter]);
             thread1.start();
             counter++;
@@ -261,6 +293,7 @@ public class ServerNetworkHandler implements Runnable, ClientObserver {
                 adapters[counter] = new ClientAdapter(clients[counter],counter);
                 adapters[counter].addObserver(this);
                 adapters[counter].setInput(inputs[counter]);
+                canWrite[counter] = true;
                 adapters[counter].setOutput(outputs[counter]);
                 Thread thread = new Thread(adapters[counter]);
                 thread.start();
@@ -333,17 +366,20 @@ public class ServerNetworkHandler implements Runnable, ClientObserver {
 
     public void sendVCEventTo(VCEvent eventToClient, int clientIndex)
     {
+        canWrite[clientIndex] = false;
         try {
             outputs[clientIndex].writeObject(eventToClient);
         }catch (IOException e)
         {
             System.out.println("server has died");
         }
+        canWrite[clientIndex] = true;
+        notifyAll();
     }
 
     public void sendPingTo(VCEvent pingEvent, int clientIndex)
     {
-
+        canWrite[clientIndex] = false;
         try {
             outputs[clientIndex].writeObject(pingEvent);
 
@@ -351,6 +387,8 @@ public class ServerNetworkHandler implements Runnable, ClientObserver {
         {
             System.out.println("client has died");
         }
+        canWrite[clientIndex] = true;
+        notifyAll();
     }
 
 

@@ -252,7 +252,7 @@ public class VirtualView {
         received = response;
         notifyAll();
     }
-    public synchronized void playerDisconnected(int playerIndex)
+    public  void playerDisconnected(int playerIndex)
     {
         if (numberOfPlayers == 3)
         {

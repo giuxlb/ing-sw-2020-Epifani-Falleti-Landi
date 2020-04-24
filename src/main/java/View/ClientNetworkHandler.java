@@ -20,6 +20,7 @@ public class ClientNetworkHandler implements Runnable, ServerObserver {
     private String winner;
     private boolean updateView;
     private Integer ping;
+    private boolean canWrite;
 
     public ClientNetworkHandler(){this.run();}
 
@@ -58,7 +59,17 @@ public class ClientNetworkHandler implements Runnable, ServerObserver {
                     {
                         //avvisa la virtual view
                     }
-                    sendPing();//appena riceve manda indietro il ping per fargli sapere che è ancora attivo
+                    synchronized (this)
+                    {
+                        while (canWrite == false)
+                        {
+                            try{
+                                wait();
+                            }catch(InterruptedException e){}
+                        }
+                    }
+                    if (canWrite == true)
+                        sendPing();//appena riceve manda indietro il ping per fargli sapere che è ancora attivo
                 }
             }
         };
@@ -107,19 +118,23 @@ public class ClientNetworkHandler implements Runnable, ServerObserver {
         notifyAll();;
     }
     //questo metodo verrà chiamato dalla VIEW
-    public void sendVCEvent(VCEvent eventToServer)
+    public synchronized void sendVCEvent(VCEvent eventToServer)
     {
+        canWrite = false;
         try {
             output.writeObject(eventToServer);
         }catch (IOException e)
         {
             System.out.println("server has died");
         }
+        canWrite = true;
+        notifyAll();
     }
 
 
     public void sendPing()
     {
+        canWrite = false;
         VCEvent pingEventResponse = new VCEvent(ping, VCEvent.Event.ping);
         try {
             output.writeObject(pingEventResponse);
@@ -127,6 +142,8 @@ public class ClientNetworkHandler implements Runnable, ServerObserver {
         {
             System.out.println("server has died for ping");
         }
+        canWrite = true;
+        notifyAll();
     }
 
 
