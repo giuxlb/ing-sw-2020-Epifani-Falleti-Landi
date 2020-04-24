@@ -54,6 +54,12 @@ public class Player {
         return this.workers[p];
     }
 
+    /***
+     * @author Adriano Falleti
+     * Get the attribute username
+     * @return
+     */
+    public String getUsername() {return username; }
 
     /***
      *
@@ -66,4 +72,5 @@ public class Player {
      * @return the birth date of this player
      */
     public Calendar getBirthDate(){return this.birthDate;}
+
 }

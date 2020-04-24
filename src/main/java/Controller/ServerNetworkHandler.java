@@ -8,6 +8,7 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.Socket;
 import java.net.ServerSocket;
+import java.util.Calendar;
 import java.util.concurrent.TimeUnit;
 
 public class ServerNetworkHandler implements Runnable, ClientObserver {
@@ -27,14 +28,16 @@ public class ServerNetworkHandler implements Runnable, ClientObserver {
     private static Integer pingFromClient1;
     private static Integer pingFromClient2;
     private static Integer pingFromClient3;
-    private static boolean ReadyForVirtualView;
+    private static VirtualView virtualView;
 
-    public ServerNetworkHandler()
+    public ServerNetworkHandler(VirtualView vv)
     {
         clients = new Socket[3];
         adapters = new ClientAdapter[3];
         outputs = new ObjectOutputStream[3];
         inputs = new ObjectInputStream[3];
+        virtualView = vv;
+
         this.run();
     }
 
@@ -61,6 +64,7 @@ public class ServerNetworkHandler implements Runnable, ClientObserver {
                         }
                     }
                     //qui ho un evento dal client 1 da mandare alla VirtualView
+                    virtualView.receivedResponse(fromClient1.getBox());
 
                 }
             }
@@ -106,7 +110,8 @@ public class ServerNetworkHandler implements Runnable, ClientObserver {
                         } catch (InterruptedException e) {
                         }
                     }
-                    //qui ho un evento dal client 2 da mandare alla VirtualView
+                    virtualView.receivedResponse(fromClient2.getBox());
+
                 }
             }
 
@@ -152,7 +157,8 @@ public class ServerNetworkHandler implements Runnable, ClientObserver {
                         } catch (InterruptedException e) {
                         }
                     }
-                    //qui ho un evento dal client 3 da mandare alla VirtualView
+                    virtualView.receivedResponse(fromClient3.getBox());
+
                 }
             }
 
@@ -217,6 +223,7 @@ public class ServerNetworkHandler implements Runnable, ClientObserver {
         VCEvent e1 = new VCEvent("Give me your username", VCEvent.Event.setup_request);
         while(true){
             sendVCEventTo(e1,0);
+
             synchronized (this)
             {
                 fromClient1 = null;
@@ -226,12 +233,22 @@ public class ServerNetworkHandler implements Runnable, ClientObserver {
                     } catch (InterruptedException e) { }
                 }
             }
-            e1 = null;
-            e1 = new VCEvent("Numero giocatori?", VCEvent.Event.setup_request);
+            if (fromClient1.getBox() instanceof String) {
+                virtualView.receivedResponse(fromClient1.getBox());
+                e1 = null;
+                e1 = new VCEvent("Data", VCEvent.Event.setup_request);
+            }
+            else if (fromClient1.getBox() instanceof Calendar)
+            {
+                virtualView.receivedResponse(fromClient1.getBox());
+                e1 = null;
+                e1 = new VCEvent("NumeroGiocatori", VCEvent.Event.setup_request);
+            }
             if (fromClient1.getBox() instanceof Integer) // se il box è un Integer allora vuol dire che ci avrà mandato il numero di giocatori
                 break;
         }
         //a questo punto ho in fromClient1 il numero dei giocatori
+        virtualView.receivedResponse(fromClient1.getBox());
         numberOfPlayers = (Integer) fromClient1.getBox();
         th1.start();
 
@@ -272,9 +289,6 @@ public class ServerNetworkHandler implements Runnable, ClientObserver {
 
     }
 
-    public static boolean isReadyForVirtualView() { // metodo usato dalla virtualView per capire che può ritornare qualcosa
-        return ReadyForVirtualView;
-    }
 
     public synchronized void didReceiveVCEventFrom(VCEvent eventFromClient, int n) {
         switch (n)

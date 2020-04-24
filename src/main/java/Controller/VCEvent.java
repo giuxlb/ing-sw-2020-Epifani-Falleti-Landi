@@ -12,11 +12,13 @@ public class VCEvent implements Serializable {
     public enum Event{
         setup_request,
         username_request,
+        date_request,
        not_your_turn,
         update,
         send_cells_move,
         send_cells_build,
         you_lost,
+        you_won,
         send_all_cards,
         send_chosen_cards,
         ping
