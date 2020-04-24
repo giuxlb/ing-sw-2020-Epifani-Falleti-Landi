@@ -92,7 +92,7 @@ public class ServerNetworkHandler implements Runnable, ClientObserver {
                     }
                     if(pingFromClient1 == 0)
                     {
-
+                        virtualView.playerDisconnected(0);
                     }
 
 
@@ -138,7 +138,7 @@ public class ServerNetworkHandler implements Runnable, ClientObserver {
                     }
                     if(pingFromClient2 == 0)
                     {
-
+                        virtualView.playerDisconnected(1);
                     }
                     System.out.println("Pong1");
 
@@ -184,7 +184,7 @@ public class ServerNetworkHandler implements Runnable, ClientObserver {
                     }
                     if(pingFromClient3 == 0)
                     {
-
+                        virtualView.playerDisconnected(2);
                     }
 
 

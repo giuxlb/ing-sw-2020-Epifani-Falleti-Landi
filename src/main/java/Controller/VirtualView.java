@@ -11,18 +11,19 @@ import java.util.Calendar;
 
 public class VirtualView {
     private ServerNetworkHandler serverHandler;
-    private Player[] players;
-    private String[] usernames;
+    private ArrayList<Player> players;
+    private ArrayList<String> usernames;
     private String firstUsername;
     private Calendar firstDate;
     private Integer numberOfPlayers;
     private Object received;
     private boolean setUpisReady;
 
+
     public VirtualView()
     {
-        players = new Player[3];
-        usernames = new String[3];
+        players = new ArrayList<Player>();
+        usernames = new ArrayList<String>();
         serverHandler = new ServerNetworkHandler(this);
         while(true) {
             synchronized (this) {
@@ -35,6 +36,7 @@ public class VirtualView {
                 }
                 if (received instanceof String) {
                     firstUsername = (String) received;
+                    usernames.add(firstUsername);
                 } else if (received instanceof Calendar) {
                     firstDate = (Calendar) received;
                 } else if (received instanceof Integer) {
@@ -69,6 +71,7 @@ public class VirtualView {
         }
         if (received instanceof String)
             return (String) received;
+        usernames.add((String) received);
         received = null;
         return "";
 
@@ -101,7 +104,7 @@ public class VirtualView {
         VCEvent evento = new VCEvent("Wait", VCEvent.Event.not_your_turn);
         for (int i = 0; i <numberOfPlayers ; i++) {
             for (int j = 0; j < numberOfPlayers-1; j++) {
-                if (players[i].getUsername().equals(playersNotPlaying[j].getUsername()))
+                if (players.get(i).getUsername().equals(playersNotPlaying[j].getUsername()))
                 {
                     serverHandler.sendVCEventTo(evento,i);
                 }
@@ -115,7 +118,7 @@ public class VirtualView {
         VCEvent evento = new VCEvent(board, VCEvent.Event.update);
         for (int i = 0; i <numberOfPlayers ; i++) {
             for (int j = 0; j < numberOfPlayers-1; j++) {
-                if (players[i].getUsername().equals(playersToUpdate[j].getUsername()))
+                if (players.get(i).getUsername().equals(playersToUpdate[j].getUsername()))
                 {
                     serverHandler.sendVCEventTo(evento,i);
                 }
@@ -127,7 +130,7 @@ public class VirtualView {
     {
         VCEvent evento = new VCEvent(cards, VCEvent.Event.send_all_cards);
         for (int i = 0; i <numberOfPlayers ; i++) {
-            if (p.getUsername().equals(players[i].getUsername()))
+            if (p.getUsername().equals(players.get(i).getUsername()))
                 serverHandler.sendVCEventTo(evento,i);
         }
         synchronized(this) {
@@ -150,7 +153,7 @@ public class VirtualView {
     {
         VCEvent evento = new VCEvent(chosenCards, VCEvent.Event.send_chosen_cards);
         for (int i = 0; i <numberOfPlayers ; i++) {
-            if (p.getUsername().equals(players[i].getUsername()))
+            if (p.getUsername().equals(players.get(i).getUsername()))
                 serverHandler.sendVCEventTo(evento,i);
         }
         synchronized(this) {
@@ -174,7 +177,7 @@ public class VirtualView {
     {
         VCEvent evento = new VCEvent(move_spots, VCEvent.Event.send_cells_move);
         for (int i = 0; i <numberOfPlayers ; i++) {
-            if (p.getUsername().equals(players[i].getUsername()))
+            if (p.getUsername().equals(players.get(i).getUsername()))
                 serverHandler.sendVCEventTo(evento,i);
         }
         synchronized(this) {
@@ -200,7 +203,7 @@ public class VirtualView {
     {
         VCEvent evento = new VCEvent(build_spots, VCEvent.Event.send_cells_build);
         for (int i = 0; i <numberOfPlayers ; i++) {
-            if (p.getUsername().equals(players[i].getUsername()))
+            if (p.getUsername().equals(players.get(i).getUsername()))
                 serverHandler.sendVCEventTo(evento,i);
         }
         synchronized(this) {
@@ -226,7 +229,7 @@ public class VirtualView {
     {
         VCEvent evento = new VCEvent("Loser", VCEvent.Event.you_lost);
         for (int i = 0; i <numberOfPlayers ; i++) {
-            if (p.getUsername().equals(players[i].getUsername()))
+            if (p.getUsername().equals(players.get(i).getUsername()))
                 serverHandler.sendVCEventTo(evento,i);
         }
 
@@ -236,7 +239,7 @@ public class VirtualView {
     {
         VCEvent evento = new VCEvent("Winner", VCEvent.Event.you_won);
         for (int i = 0; i <numberOfPlayers ; i++) {
-            if (p.getUsername().equals(players[i].getUsername()))
+            if (p.getUsername().equals(players.get(i).getUsername()))
                 serverHandler.sendVCEventTo(evento,i);
         }
     }
@@ -248,6 +251,18 @@ public class VirtualView {
     {
         received = response;
         notifyAll();
+    }
+    public synchronized void playerDisconnected(int playerIndex)
+    {
+        if (numberOfPlayers == 3)
+        {
+            players.remove(playerIndex);
+            //lo faccio sapere al controller
+        }
+        else{
+            players.remove(playerIndex);
+            //facciamo sapere al controller che c'è un solo giocatore e quindi deve chiamare la Win su l'unico giocatore
+        }
     }
 
 }

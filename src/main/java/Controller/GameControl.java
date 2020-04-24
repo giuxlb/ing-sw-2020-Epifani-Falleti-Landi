@@ -13,7 +13,7 @@ public class GameControl {
     private Socket[] sockets;
     private ArrayList<Player> players;
     private boolean athenaEffectTurn;
-    private View virtualView;
+    private VirtualView virtualView;
 
 
     /***
