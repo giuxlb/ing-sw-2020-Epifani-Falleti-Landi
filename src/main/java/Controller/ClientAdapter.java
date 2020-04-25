@@ -74,18 +74,18 @@ public class ClientAdapter implements Runnable {
 
         while (true)
         {
-            VCEvent evento = (VCEvent) input.readObject();
-            if (evento != null) {
-                if(evento.getCommand() != VCEvent.Event.ping) {
-                    for (ClientObserver observer : observersCpy)
-                        observer.didReceiveVCEventFrom(evento, this.number);
+
+                VCEvent evento = (VCEvent) input.readObject();
+                if (evento != null) {
+                    if (evento.getCommand() != VCEvent.Event.ping) {
+                        for (ClientObserver observer : observersCpy)
+                            observer.didReceiveVCEventFrom(evento, this.number);
+                    } else {
+                        for (ClientObserver observer : observersCpy)
+                            observer.didReceivePingFrom((Integer) evento.getBox(), this.number);
+                    }
                 }
-                else
-                {
-                    for (ClientObserver observer : observersCpy)
-                        observer.didReceivePingFrom((Integer) evento.getBox(), this.number);
-                }
-            }
+
 
 
         }

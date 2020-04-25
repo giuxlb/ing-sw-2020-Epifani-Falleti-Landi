@@ -81,7 +81,7 @@ public class ClientNetworkHandler implements Runnable, ServerObserver {
         thread.start();
         Thread threadPing = new Thread(runPing);
         threadPing.start();
-
+        canWrite = true;
 
         while (true)
         {

@@ -54,17 +54,18 @@ public class ServerAdapter implements Runnable {
 
 
         while (true) {
-            VCEvent evento = (VCEvent) input.readObject();
-            if (evento != null) {
-                if (evento.getCommand() != Event.ping)
-                    for (ServerObserver observer : observersCpy)
-                        observer.didReceiveVCEvent(evento);
-                else
-                {
-                    for (ServerObserver observer : observersCpy)
-                        observer.didReceivePing((Integer) evento.getBox());
+
+                VCEvent evento = (VCEvent) input.readObject();
+                if (evento != null) {
+                    if (evento.getCommand() != Event.ping)
+                        for (ServerObserver observer : observersCpy)
+                            observer.didReceiveVCEvent(evento);
+                    else {
+                        for (ServerObserver observer : observersCpy)
+                            observer.didReceivePing((Integer) evento.getBox());
+                    }
                 }
-            }
+
 
         }
 
