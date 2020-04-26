@@ -57,19 +57,10 @@ public class ClientNetworkHandler implements Runnable, ServerObserver {
                     }
                     if (ping == 0)
                     {
-                        //avvisa la virtual view
+
                     }
-                    synchronized (this)
-                    {
-                        while (canWrite == false)
-                        {
-                            try{
-                                wait();
-                            }catch(InterruptedException e){}
-                        }
-                    }
-                    if (canWrite == true)
-                        sendPing();//appena riceve manda indietro il ping per fargli sapere che è ancora attivo
+
+                    sendPing();//appena riceve manda indietro il ping per fargli sapere che è ancora attivo
                 }
             }
         };
@@ -85,23 +76,24 @@ public class ClientNetworkHandler implements Runnable, ServerObserver {
 
         while (true)
         {
-            synchronized (this)
-            {
+            synchronized (this) {
                 fromServer = null;
                 while (fromServer == null) {
                     updateView = false;
                     try {
                         wait();
-                    } catch (InterruptedException e) { }
+                    } catch (InterruptedException e) {
+                    }
 
                 }
+            }
                 updateView = true;
                 //qui l'evento dal server sarà arrivato e ora devo gestirlo con una switch sul suo comando per chiamare il metodo
                 //della view corrispondente. Poi la view chiamerà il metodo sendVCEvent passandogli il VCEvent da mandare al Server
 
                 //UNA SOLUZIONE ALTERNATIVA POTREBBE ESSERE ANCHE MANDARE DIRETTAMENTE L'EVENTO ALLA VIEW, MA DIPENDE
                 //DA COME ALFREDO VUOLE IMPLEMENTARE LA CLI/GUI
-            }
+
         }
 
     }
@@ -120,12 +112,22 @@ public class ClientNetworkHandler implements Runnable, ServerObserver {
     //questo metodo verrà chiamato dalla VIEW
     public synchronized void sendVCEvent(VCEvent eventToServer)
     {
+        synchronized (this)
+        {
+            while (canWrite == false)
+            {
+                try {
+                    wait();
+                }catch(InterruptedException e){}
+            }
+        }
+        // qui avrò che la canWrite sarà true, quindi lo pongo a false
         canWrite = false;
+
         try {
             output.writeObject(eventToServer);
-        }catch (IOException e)
-        {
-            System.out.println("server has died");
+        } catch (IOException e) {
+            System.out.println("server has died for vcevent");
         }
         canWrite = true;
         notifyAll();
@@ -134,16 +136,29 @@ public class ClientNetworkHandler implements Runnable, ServerObserver {
 
     public void sendPing()
     {
+        synchronized (this)
+        {
+            while (canWrite == false)
+            {
+                try {
+                    wait();
+                }catch(InterruptedException e){}
+            }
+        }
+        // qui avrò che la canWrite sarà true, quindi lo pongo a false
         canWrite = false;
+
         VCEvent pingEventResponse = new VCEvent(ping, VCEvent.Event.ping);
         try {
             output.writeObject(pingEventResponse);
-        }catch (IOException e)
-        {
+        } catch (IOException e) {
             System.out.println("server has died for ping");
         }
+
         canWrite = true;
         notifyAll();
+
+
     }
 
 

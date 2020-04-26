@@ -55,8 +55,7 @@ public class ServerNetworkHandler implements Runnable, ClientObserver {
         Runnable runClient1 = ()->{
             while(true)
             {
-                synchronized (this)
-                {
+                synchronized (this) {
                     fromClient1 = null;
                     while (fromClient1 == null) {
                         try {
@@ -64,10 +63,11 @@ public class ServerNetworkHandler implements Runnable, ClientObserver {
                         } catch (InterruptedException e) {
                         }
                     }
+                }
                     //qui ho un evento dal client 1 da mandare alla VirtualView
                     virtualView.receivedResponse(fromClient1.getBox());
 
-                }
+
             }
 
         };
@@ -80,20 +80,10 @@ public class ServerNetworkHandler implements Runnable, ClientObserver {
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
-                synchronized (this)
-                {
-                    while (canWrite[0] == false)
-                    {
-                        try{
-                            wait();
-                        }catch(InterruptedException e){}
-                    }
-                }
+
                 VCEvent pingEvent = new VCEvent((Integer) 1, VCEvent.Event.ping);
-                if(canWrite[0] == true)
-                    sendPingTo(pingEvent,0);
-                synchronized (this)
-                {
+                sendPingTo(pingEvent,0);
+                synchronized (this) {
                     pingFromClient1 = 0;
                     while (pingFromClient1 == 0) {
                         try {
@@ -101,13 +91,14 @@ public class ServerNetworkHandler implements Runnable, ClientObserver {
                         } catch (InterruptedException e) {
                         }
                     }
+                }
                     if(pingFromClient1 == 0)
                     {
                         virtualView.playerDisconnected(0);
                     }
 
 
-                }
+
             }
 
         };
@@ -121,9 +112,10 @@ public class ServerNetworkHandler implements Runnable, ClientObserver {
                         } catch (InterruptedException e) {
                         }
                     }
+                }
                     virtualView.receivedResponse(fromClient2.getBox());
 
-                }
+
             }
 
         };
@@ -136,27 +128,18 @@ public class ServerNetworkHandler implements Runnable, ClientObserver {
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
-                synchronized (this)
-                {
-                    while (canWrite[1] == false)
-                    {
-                        try{
-                            wait();
-                        }catch(InterruptedException e){}
-                    }
-                }
+
                 VCEvent pingEvent = new VCEvent((Integer) 2, VCEvent.Event.ping);
-                if(canWrite[1] == true)
-                    sendPingTo(pingEvent,1);
-                synchronized (this)
-                {
+
+                sendPingTo(pingEvent,1);
+                synchronized (this) {
                     pingFromClient2 = 0;
                     while (pingFromClient2 == 0) {
                         try {
                             wait(10000);
-                        } catch (InterruptedException e) {
-                        }
+                        } catch (InterruptedException e) { }
                     }
+                }
                     if(pingFromClient2 == 0)
                     {
                         virtualView.playerDisconnected(1);
@@ -164,7 +147,7 @@ public class ServerNetworkHandler implements Runnable, ClientObserver {
                     System.out.println("Pong1");
 
 
-                }
+
             }
 
         };
@@ -175,12 +158,12 @@ public class ServerNetworkHandler implements Runnable, ClientObserver {
                     while (fromClient3 == null) {
                         try {
                             wait();
-                        } catch (InterruptedException e) {
-                        }
+                        } catch (InterruptedException e) { }
                     }
+                }
                     virtualView.receivedResponse(fromClient3.getBox());
 
-                }
+
             }
 
         };
@@ -192,20 +175,10 @@ public class ServerNetworkHandler implements Runnable, ClientObserver {
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
-                synchronized (this)
-                {
-                    while (canWrite[2] == false)
-                    {
-                        try{
-                            wait();
-                        }catch(InterruptedException e){}
-                    }
-                }
+
                 VCEvent pingEvent = new VCEvent((Integer) 3, VCEvent.Event.ping);
-                if(canWrite[2] == true)
-                    sendPingTo(pingEvent,2);
-                synchronized (this)
-                {
+                sendPingTo(pingEvent,2);
+                synchronized (this) {
                     pingFromClient3 = 0;
                     while (pingFromClient3 == 0) {
                         try {
@@ -213,6 +186,7 @@ public class ServerNetworkHandler implements Runnable, ClientObserver {
                         } catch (InterruptedException e) {
                         }
                     }
+                }
                     if(pingFromClient3 == 0)
                     {
                         virtualView.playerDisconnected(2);
@@ -220,7 +194,7 @@ public class ServerNetworkHandler implements Runnable, ClientObserver {
 
 
 
-                }
+
             }
 
         };
@@ -366,12 +340,22 @@ public class ServerNetworkHandler implements Runnable, ClientObserver {
 
     public void sendVCEventTo(VCEvent eventToClient, int clientIndex)
     {
+        synchronized (this)
+        {
+            while (canWrite[clientIndex] == false)
+            {
+                try {
+                    wait();
+                }catch(InterruptedException e){}
+            }
+        }
+        // qui avrò che la canWrite sarà true, quindi lo pongo a false
         canWrite[clientIndex] = false;
+
         try {
             outputs[clientIndex].writeObject(eventToClient);
-        }catch (IOException e)
-        {
-            System.out.println("server has died");
+        } catch (IOException e) {
+            System.out.println("client has died");
         }
         canWrite[clientIndex] = true;
         notifyAll();
@@ -379,16 +363,26 @@ public class ServerNetworkHandler implements Runnable, ClientObserver {
 
     public void sendPingTo(VCEvent pingEvent, int clientIndex)
     {
+        synchronized (this)
+        {
+            while (canWrite[clientIndex] == false)
+            {
+                try {
+                    wait();
+                }catch(InterruptedException e){}
+            }
+        }
+        // qui avrò che la canWrite sarà true, quindi lo pongo a false
         canWrite[clientIndex] = false;
+
         try {
             outputs[clientIndex].writeObject(pingEvent);
-
-        }catch (IOException e)
-        {
+        } catch (IOException e) {
             System.out.println("client has died");
         }
         canWrite[clientIndex] = true;
         notifyAll();
+
     }
 
 

@@ -1,9 +1,6 @@
 package Controller;
 
-import Model.Board;
-import Model.BoardCell;
-import Model.Card;
-import Model.Player;
+import Model.*;
 import jdk.jfr.Event;
 
 import java.util.ArrayList;
@@ -56,7 +53,14 @@ public class VirtualView {
 
     public String askForUsername(int index)
     {
-        VCEvent evento = new VCEvent("Username", VCEvent.Event.username_request);
+        Color colore;
+        if (index == 1)
+            colore = Color.WHITE;
+        else {
+            colore = Color.BROWN;
+        }
+
+        VCEvent evento = new VCEvent(colore, VCEvent.Event.username_request);
         serverHandler.sendVCEventTo(evento,index);
         synchronized(this) {
             received = null;
