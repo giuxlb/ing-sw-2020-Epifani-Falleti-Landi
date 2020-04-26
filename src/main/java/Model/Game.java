@@ -39,6 +39,7 @@ public class Game {
             turnNumber++;
 
         }
+        p.setColor(turnNumber);
     }
 
     /**

@@ -4,9 +4,8 @@ import Model.Game;
 import Model.Player;
 
 import java.net.Socket;
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Date;
+import java.util.*;
+import java.util.concurrent.TimeUnit;
 
 public class GameControl {
     private Game game;
@@ -20,16 +19,29 @@ public class GameControl {
      * Costructor of GameControl, it creates a new Game and,
      * after receiving the names from the clients, it creates and inserts the player
      */
-    public GameControl(){
+    public GameControl() {
         Game game = new Game();
+        //View virtualview = new View();
         players = new ArrayList<Player>();
 
-        //ricevo dal client nome 1 e data
-        String player_name_0 = virtualView.askForUsername(0);
-        Calendar player_date = virtualView.askForDate(0);
-        this.addPlayer(new Player(player_name_0,player_date));
+        //aspetto che SetupItReady sia true
+        while(virtualView.getSetupIsReady()==false){
+            try{
+                TimeUnit.MILLISECONDS.sleep(10);}
+            catch (InterruptedException e){System.out.println("Interrupted exception");};
+        }
+
+        //prendo nome, data, e numero giocatori dal client 0
+        String player_name_0 = virtualView.getUsername();
+        Calendar player_date_0 = virtualView.getDate();
+        int player_number = virtualView.getPlayerNumber();
+
+        //aggiungo il player 0
+        this.addPlayer(new Player(player_name_0,player_date_0));
+
         boolean flag = false;
-        String player_name_1;
+        String player_name_1 = null;
+
 
         //continuo a chiedere il nome al secondo giocatore finchè non è diverso dal primo
         while (!flag) {
@@ -38,13 +50,33 @@ public class GameControl {
             if(!player_name_1.equals(player_name_0)){ flag=true;}
 
         }
-        player_date = virtualView.askForDate(1);
-        this.addPlayer(new Player(player_name_1,player_date));
+        Calendar player_date_1 = virtualView.askForDate(1);
+        this.addPlayer(new Player(player_name_1,player_date_1));
+
+        //se il numero di player è 3, chiedo i dati del terzo giocatore
+        if(player_number==3){
+            flag=false;
+            String player_name_2 = null;
+
+            while (!flag){
+                player_name_2 = virtualView.askForUsername(2);
+                if(!player_name_2.equals(player_name_1) && !player_name_2.equals(player_name_0)){flag=true;}
+            }
+            Calendar player_date_2 = virtualView.askForDate(2);
+            this.addPlayer(new Player(player_name_2,player_date_2));
+        }
+
+        //mando alla virtualview l'array dei player non ordinato
+        virtualView.sendPlayerArray(players);
 
         //riordino i giocatori in base all'età
         this.sortPlayersByAge();
 
     }
+
+//TODO aggiungere fase iniziale turno
+//TODO implementare insertInitialPosition
+//TODO creare test per classi in model e controller ove possibile
 
     public void startGame(){
         //chiedo pos iniz al player1
@@ -122,12 +154,21 @@ public class GameControl {
      * Sorts the Arraylist of players in the Controller by age, the younger first
      */
     public void sortPlayersByAge(){
-        //TODO da estendere per 3 giocatori
-
-        if(this.players.get(0).getBirthDate().compareTo(this.players.get(1).getBirthDate())<0){
-            Player copy = this.players.remove(0);
-            this.players.set(0,this.players.get(1));
-            this.players.set(1,copy);
+        if(this.players.size()==3){
+            if(this.players.get(0).getBirthDate().compareTo(this.players.get(1).getBirthDate()) < 0){
+                Collections.swap(players,0,1);
+            }
+            if (this.players.get(1).getBirthDate().compareTo(this.players.get(2).getBirthDate()) < 0){
+                Collections.swap(players,1,2);
+            }
+            if (this.players.get(0).getBirthDate().compareTo(this.players.get(1).getBirthDate()) < 0){
+                Collections.swap(players,0,1);
+            }
+        }
+        else {
+            if (this.players.get(0).getBirthDate().compareTo(this.players.get(1).getBirthDate()) < 0) {
+                Collections.swap(players,0,1);
+            }
         }
     }
 }

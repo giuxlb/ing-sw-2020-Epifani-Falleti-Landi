@@ -27,6 +27,13 @@ public class Player {
      * @param index index of the worker
      */
     public void assignWorker(int x,int y,int index){this.workers[index]= new Worker(x,y,this.color);}
+
+    /***
+     * Setter of the color
+     * @param index the index of the color in the Color Enum
+     */
+    public void setColor(int index){this.color = Color.values()[index];}
+
     /***
      * Setter of the card
      * @param card the card to assigng to the Player
