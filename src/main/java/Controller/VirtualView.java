@@ -49,7 +49,7 @@ public class VirtualView {
         //una volta qui abbiamo settato tutto e settiamo setUpisReady e così il gameControl può leggere
         //firstUsername, firstDate e numberOfPlayers
         setUpisReady = true;
-        received = null;
+
 
 
     }
@@ -80,7 +80,7 @@ public class VirtualView {
         if (received instanceof String)
             return (String) received;
         usernames.add((String) received);
-        received = null;
+
         return "";
 
     }
@@ -102,7 +102,7 @@ public class VirtualView {
         }
         if (received instanceof Calendar)
             return (Calendar) received;
-        received = null;
+
 
         return null;
     }
@@ -153,7 +153,7 @@ public class VirtualView {
 
         }
         ArrayList<Card> chosenCards = (ArrayList<Card>) received;
-        received = null;
+
         return chosenCards;
     }
 
@@ -177,11 +177,54 @@ public class VirtualView {
         }
         if (received instanceof Card)
             return (Card) received;
-        received = null;
+
         return null;
     }
 
-    public Integer sendAvailableMove(Player p, ArrayList<Coordinates> move_spots)
+    public void sendYourCard(Player p, Card c)
+    {
+        VCEvent evento = new VCEvent(c, VCEvent.Event.send_chosen_cards);
+        for (int i = 0; i <numberOfPlayers ; i++) {
+            if (p.getUsername().equals(players.get(i).getUsername()))
+                serverHandler.sendVCEventTo(evento,i);
+        }
+    }
+
+    public Coordinates askInitialPosition(Player p, int worker_Index)
+    {
+        Integer workerIndex = Integer.valueOf(worker_Index);
+        VCEvent evento = new VCEvent(worker_Index, VCEvent.Event.choose_initial_position);
+        for (int i = 0; i <numberOfPlayers ; i++) {
+            if (p.getUsername().equals(players.get(i).getUsername()))
+                serverHandler.sendVCEventTo(evento,i);
+        }
+        synchronized(this) {
+            received = null;
+            while(received == null)
+            {
+                try{
+                    wait();
+                }
+                catch(InterruptedException e){}
+            }
+
+        }
+        if (received instanceof Coordinates)
+            return (Coordinates) received;
+        return null;
+
+    }
+
+    public void sendMessageWrongPosition(Player p)
+    {
+        VCEvent evento = new VCEvent("ERRORE", VCEvent.Event.wrongInitialPositionMessage);
+        for (int i = 0; i <numberOfPlayers ; i++) {
+            if (p.getUsername().equals(players.get(i).getUsername()))
+                serverHandler.sendVCEventTo(evento,i);
+        }
+
+    }
+    public int sendAvailableMove(Player p, ArrayList<Coordinates> move_spots)
     {
         VCEvent evento = new VCEvent(move_spots, VCEvent.Event.send_cells_move);
         for (int i = 0; i <numberOfPlayers ; i++) {
@@ -199,15 +242,17 @@ public class VirtualView {
             }
 
         }
-        if (received instanceof Integer)
-            return (Integer) received;
-        received = null;
+        if (received instanceof Integer) {
+            int x = ((Integer) received).intValue();
+            return x;
+        }
+
 
         return -1;
 
     }
 
-    public Integer sendAvailableBuild(Player p, ArrayList<Coordinates> build_spots)
+    public int sendAvailableBuild(Player p, ArrayList<Coordinates> build_spots)
     {
         VCEvent evento = new VCEvent(build_spots, VCEvent.Event.send_cells_build);
         for (int i = 0; i <numberOfPlayers ; i++) {
@@ -225,9 +270,11 @@ public class VirtualView {
             }
 
         }
-        if (received instanceof Integer)
-            return (Integer) received;
-        received = null;
+        if (received instanceof Integer) {
+            int x = ((Integer) received).intValue();
+            return x;
+        }
+
 
         return -1;
 
