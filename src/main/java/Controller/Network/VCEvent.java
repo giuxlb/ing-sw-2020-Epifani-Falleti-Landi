@@ -5,6 +5,9 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.Serializable;
 
+/**
+ * @author Adriano Falleti
+ */
 public class VCEvent implements Serializable {
 
     private static final long serialVersionUID = 382104422531955291L;
@@ -30,6 +33,11 @@ public class VCEvent implements Serializable {
     private Object box; // potrà essere o una stringa o un array di celle, o un array di carte, o la board
     private Event command;
 
+    /**
+     * Constructor for the VCEvent
+     * @param arg
+     * @param command
+     */
     public VCEvent(Object arg, Event command)
     {
         this.box = arg;

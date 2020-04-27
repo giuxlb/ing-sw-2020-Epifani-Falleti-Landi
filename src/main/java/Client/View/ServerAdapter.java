@@ -7,6 +7,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.io.*;
 
+/**
+ * @author Adriano Falleti
+ */
 public class ServerAdapter implements Runnable {
 
 
@@ -23,14 +26,24 @@ public class ServerAdapter implements Runnable {
         this.server = server;
     }
 
+    /**
+     * It set the output stream used to send messages to the server
+     * @param output
+     */
     public void setOutput(ObjectOutputStream output) {
         this.output = output;
     }
 
+    /**
+     * It set the input stream to receive messages from the server
+     * @param input
+     */
     public void setInput(ObjectInputStream input) {
         this.input = input;
     }
-
+    /**
+     * It starts the handling of the connection with the server
+     */
     public void run()
     {
         List<ServerObserver> observersCpy;
@@ -50,6 +63,11 @@ public class ServerAdapter implements Runnable {
         } catch (IOException e) { }
     }
 
+    /**
+     * It notifies the observers for a VCEvent
+     * @throws IOException
+     * @throws ClassNotFoundException
+     */
     private synchronized void handleServerConnection() throws IOException, ClassNotFoundException
     {
         List<ServerObserver> observersCpy;
@@ -79,7 +97,10 @@ public class ServerAdapter implements Runnable {
     }
 
 
-
+    /**
+     * It adds an observer to the Client Adapter
+     * @param observer
+     */
     public void addObserver(ServerObserver observer)
     {
         synchronized (observers) {
@@ -87,6 +108,10 @@ public class ServerAdapter implements Runnable {
         }
     }
 
+    /**
+     * It removes an observer to the Client Adapter
+     * @param observer
+     */
     public void removeObserver(ServerObserver observer)
     {
         synchronized (observers) {

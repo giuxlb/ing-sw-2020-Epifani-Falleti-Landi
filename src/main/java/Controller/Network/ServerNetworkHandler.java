@@ -12,6 +12,10 @@ import java.net.ServerSocket;
 import java.util.Calendar;
 import java.util.concurrent.TimeUnit;
 
+/**
+ * @author Adriano Falleti
+ */
+
 public class ServerNetworkHandler implements Runnable, ClientObserver {
 
 
@@ -43,7 +47,10 @@ public class ServerNetworkHandler implements Runnable, ClientObserver {
         this.run();
     }
 
-
+    /**
+     * It accepts the first client from who receive the number of players for the game and then set up the server
+     * to communicate with clients
+     */
     public void run() {
         try{
             server = new ServerSocket(SOCKET_PORT);
@@ -293,7 +300,11 @@ public class ServerNetworkHandler implements Runnable, ClientObserver {
 
     }
 
-
+    /**
+     * Notifies the threads in the server when an event arrives from a client
+     * @param eventFromClient is the event arrived
+     * @param n is the index that identifies the client who sent the event
+     */
     public synchronized void didReceiveVCEventFrom(VCEvent eventFromClient, int n) {
         switch (n)
         {
@@ -314,6 +325,11 @@ public class ServerNetworkHandler implements Runnable, ClientObserver {
 
     }
 
+    /**
+     *
+     * @param p is the integer sent between the nth client and server
+     * @param n is the index that identifies the client who sent the ping
+     */
     public synchronized void didReceivePingFrom(Integer p,int n)
     {
         switch (n)
@@ -335,11 +351,20 @@ public class ServerNetworkHandler implements Runnable, ClientObserver {
 
     }
 
+    /**
+     * It notifies the Virtual view that a player has just disconnected from the server
+     * @param index identifies the client disconnected
+     */
     @Override
     public void playerDisconnectedNumber(int index) {
         virtualView.playerDisconnected(index);
     }
 
+    /**
+     * It is used to send an evento to a client
+     * @param eventToClient is the event which will be sent to the client
+     * @param clientIndex identifies the client who will receive the event
+     */
     public void sendVCEventTo(VCEvent eventToClient, int clientIndex)
     {
         synchronized (this)
@@ -363,6 +388,11 @@ public class ServerNetworkHandler implements Runnable, ClientObserver {
         notifyAll();
     }
 
+    /**
+     * It sends the ping to a client
+     * @param pingEvent is the event with the attribute command set to .ping
+     * @param clientIndex identifies the client who will receive the ping
+     */
     public void sendPingTo(VCEvent pingEvent, int clientIndex)
     {
         synchronized (this)

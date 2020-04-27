@@ -8,7 +8,9 @@ import java.io.ObjectOutputStream;
 import java.net.*;
 import java.io.IOException;
 
-
+/**
+ * @author Adriano Falleti
+ */
 public class ClientNetworkHandler implements Runnable, ServerObserver {
 
     private VCEvent fromServer;
@@ -29,6 +31,10 @@ public class ClientNetworkHandler implements Runnable, ServerObserver {
         return updateView;
     }
 
+    /**
+     * It sets up the connection with the server and prepare the client to receive ping and events from the server and to answer those
+     *
+     */
     public void run() {
 
         try {
@@ -99,24 +105,37 @@ public class ClientNetworkHandler implements Runnable, ServerObserver {
 
     }
 
-
+    /**
+     * It notifies the Client Network Handler that an event has arrived from the server
+     * @param eventFromServer is the event
+     */
     public synchronized void didReceiveVCEvent(VCEvent eventFromServer) {
         fromServer = eventFromServer;
         notifyAll();
     }
 
+    /**
+     * It notifies the Client Network Handler that a ping has arrived from the server
+     * @param n is the integer exchanged between the client and the server
+     */
     public synchronized void didReceivePing(Integer n)
     {
         ping = n;
         notifyAll();;
     }
 
+    /**
+     * It sets the attribute serverDied to true, which will be observed by the view in order to alert the client
+     */
     @Override
     public void serverDied() {
         serverIsDied = true;
     }
 
-    //questo metodo verrà chiamato dalla VIEW
+    /**
+     * It send a VCEvent to the server
+     * @param eventToServer is the event sent to the server
+     */
     public synchronized void sendVCEvent(VCEvent eventToServer)
     {
         synchronized (this)
@@ -140,7 +159,9 @@ public class ClientNetworkHandler implements Runnable, ServerObserver {
         notifyAll();
     }
 
-
+    /**
+     * It answers to the ping sent by the server
+     */
     public void sendPing()
     {
         synchronized (this)
@@ -168,17 +189,27 @@ public class ClientNetworkHandler implements Runnable, ServerObserver {
 
     }
 
-    //getters for the view
 
-
+    /**
+     * Getter for the attribute endGame
+     * @return
+     */
     public boolean isEndGame() {
         return endGame;
     }
 
+    /**
+     * Getter for the attribute serverIsDied
+     * @return
+     */
     public boolean isServerIsDied() {
         return serverIsDied;
     }
 
+    /**
+     * Getter for the attribute winner
+     * @return
+     */
     public String getWinner() {
         return winner;
     }
