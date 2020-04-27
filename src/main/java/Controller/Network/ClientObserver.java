@@ -1,4 +1,4 @@
-package Controller;
+package Controller.Network;
 
 
 public interface ClientObserver {

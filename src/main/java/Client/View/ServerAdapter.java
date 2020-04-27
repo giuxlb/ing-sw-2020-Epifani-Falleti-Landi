@@ -1,7 +1,7 @@
-package View;
+package Client.View;
 
-import Controller.VCEvent;
-import Controller.VCEvent.Event;
+import Controller.Network.VCEvent;
+import Controller.Network.VCEvent.Event;
 import java.net.*;
 import java.util.ArrayList;
 import java.util.List;

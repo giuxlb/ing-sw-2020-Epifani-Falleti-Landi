@@ -22,20 +22,21 @@ public class GameControl {
      */
     public GameControl() {
         Game game = new Game();
-        //View virtualview = new View();
+        VirtualView virtualview = new VirtualView();
         players = new ArrayList<Player>();
 
         //aspetto che SetupItReady sia true
-        while(virtualView.getSetupIsReady()==false){
+
+        while(!virtualView.isSetUpisReady()){
             try{
                 TimeUnit.MILLISECONDS.sleep(10);}
             catch (InterruptedException e){System.out.println("Interrupted exception");};
         }
 
         //prendo nome, data, e numero giocatori dal client 0
-        String player_name_0 = virtualView.getUsername();
-        Calendar player_date_0 = virtualView.getDate();
-        int player_number = virtualView.getPlayerNumber();
+        String player_name_0 = virtualView.getFirstUsername();
+        Calendar player_date_0 = virtualView.getFirstDate();
+        int player_number = virtualView.getNumberOfPlayers();
 
         //aggiungo il player 0
         this.addPlayer(new Player(player_name_0,player_date_0));
@@ -68,7 +69,7 @@ public class GameControl {
         }
 
         //mando alla virtualview l'array dei player non ordinato
-        virtualView.sendPlayerArray(players);
+        virtualView.setPlayers(players);
 
         //riordino i giocatori in base all'età
         this.sortPlayersByAge();
@@ -102,23 +103,23 @@ public class GameControl {
         //setto l'ultima carta rimasta al primo player
         players.get(game.getTurnNumber()).chooseCard(chosenCards.get(0));
 
-        //mando a tutti i player le loro carte
+        /*//mando a tutti i player le loro carte
         do{
             virtualView.sendYourCard(players.get(game.getTurnNumber()),players.get(game.getTurnNumber()).getGameCard());
             game.nextTurnNumber();
-        }while (game.getTurnNumber()!=0);
+        }while (game.getTurnNumber()!=0);*/
 
         //chiedo a tutti i player le posizioni iniziali
-        do{
+        /*do{
             boolean valid_pos = false;
             Coordinates initial_pos;
 
-            for(int worker = 0;worker<2;worker++) {
+            for(int worker_index = 0;worker_index<2;worker_index++) {
                 while (!valid_pos) {
-                    initial_pos = virtualView.askInitialPosition(players.get(game.getTurnNumber()),worker);
+                    initial_pos = virtualView.askInitialPosition(players.get(game.getTurnNumber()),worker_index);
                     valid_pos = checkValidInitialPosition(initial_pos.getX(), initial_pos.getY());
                     if (valid_pos) {
-                        insertInitialPosition(game.getTurnNumber(), initial_pos.getX(), initial_pos.getY(),worker);
+                        insertInitialPosition(game.getTurnNumber(), initial_pos.getX(), initial_pos.getY(),worker_index);
                     } else {
                         virtualView.sendMessageWrongPosition(players.get(game.getTurnNumber()));
                     }
@@ -126,7 +127,7 @@ public class GameControl {
             }
 
             game.nextTurnNumber();
-        }while(game.getTurnNumber()!=0);
+        }while(game.getTurnNumber()!=0);*/
 
         while(true){
 
@@ -143,7 +144,7 @@ public class GameControl {
      * method will be inserted in a loop in startGame
      */
     public void startNextTurn(){
-        TurnControl turn = new TurnControl(players.get(game.getTurnNumber()),athenaEffectTurn,game.getBoardGame(),game);
+        TurnControl turn = new TurnControl(players.get(game.getTurnNumber()),athenaEffectTurn,game.getBoardGame(),game,virtualView);
         turn.start();
     }
 
@@ -176,15 +177,15 @@ public class GameControl {
         game.chooseInitialPosition(players.get(currentPlayer),x,y,index);
     }
 
-    public void win(Player player){
+    /*public void win(Player player){
         virtualView.sendWinMessage(player);
         game.win(player);
-    }
+    }*/
 
-    public void lose(Player player){
+    /*public void lose(Player player){
         virtualView.sendLoseMessage(player);
         game.lose(player);
-    }
+    }*/
 
     /***
      * Adds a player in both the model and the controller

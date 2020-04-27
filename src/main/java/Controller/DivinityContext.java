@@ -12,7 +12,7 @@ public class DivinityContext {
         this.strategy=strategy;
     }
 
-    public void turn(Player player, Worker worker, Board board,Game game, boolean athenaeffect,View virtualview){strategy.turn(player,worker,board,game,athenaeffect,virtualview);}
+    public void turn(Player player, Worker worker, Board board,Game game, boolean athenaeffect,VirtualView virtualview){strategy.turn(player,worker,board,game,athenaeffect,virtualview);}
 
     public void move(Worker worker, ArrayList<Coordinates> valid_positions, int index, Game game, Board board){ strategy.move(worker,valid_positions,index,game,board); }
 

@@ -1,7 +1,8 @@
-package Controller;
+package Controller.Network;
 
 
-import com.sun.security.ntlm.Server;
+import Controller.VirtualView;
+import Model.Color;
 
 import java.io.IOException;
 import java.io.ObjectInputStream;
@@ -221,7 +222,7 @@ public class ServerNetworkHandler implements Runnable, ClientObserver {
         }
         thPing1.start();
         //qui dovrò aspettare un VCEvent dal primo client connesso con il numero di giocatori perchè poi mi serve per accettare gli altri
-        VCEvent e1 = new VCEvent("Give me your username", VCEvent.Event.setup_request);
+        VCEvent e1 = new VCEvent(Color.ANSI_YELLOW , VCEvent.Event.setup_request);
         while(true){
             sendVCEventTo(e1,0);
 

@@ -1,7 +1,5 @@
-package Controller;
-import View.ServerObserver;
+package Controller.Network;
 
-import java.io.EOFException;
 import java.io.IOException;
 import java.net.Socket;
 import java.io.ObjectInputStream;

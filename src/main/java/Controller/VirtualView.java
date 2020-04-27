@@ -1,7 +1,8 @@
 package Controller;
 
+import Controller.Network.ServerNetworkHandler;
+import Controller.Network.VCEvent;
 import Model.*;
-import jdk.jfr.Event;
 
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -58,9 +59,9 @@ public class VirtualView {
     {
         Color colore;
         if (index == 1)
-            colore = Color.WHITE;
+            colore = Color.ANSI_GREEN;
         else {
-            colore = Color.BROWN;
+            colore = Color.ANSI_PURPLE;
         }
 
         VCEvent evento = new VCEvent(colore, VCEvent.Event.username_request);
@@ -180,7 +181,7 @@ public class VirtualView {
         return null;
     }
 
-    public Integer sendAvailableMove(Player p, ArrayList<BoardCell> move_spots)
+    public Integer sendAvailableMove(Player p, ArrayList<Coordinates> move_spots)
     {
         VCEvent evento = new VCEvent(move_spots, VCEvent.Event.send_cells_move);
         for (int i = 0; i <numberOfPlayers ; i++) {
@@ -206,7 +207,7 @@ public class VirtualView {
 
     }
 
-    public Integer sendAvailableBuild(Player p, ArrayList<BoardCell> build_spots)
+    public Integer sendAvailableBuild(Player p, ArrayList<Coordinates> build_spots)
     {
         VCEvent evento = new VCEvent(build_spots, VCEvent.Event.send_cells_build);
         for (int i = 0; i <numberOfPlayers ; i++) {

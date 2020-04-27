@@ -1,6 +1,6 @@
-package View;
+package Client.View;
 
-import Controller.VCEvent;
+import Controller.Network.VCEvent;
 
 
 import java.io.ObjectInputStream;

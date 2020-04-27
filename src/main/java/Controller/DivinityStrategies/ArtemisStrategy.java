@@ -2,6 +2,7 @@ package Controller.DivinityStrategies;
 
 import Controller.Coordinates;
 import Controller.TurnStrategy;
+import Controller.VirtualView;
 import Model.Board;
 import Model.Game;
 import Model.Player;
@@ -25,7 +26,7 @@ public class ArtemisStrategy extends DefaultStrategy implements TurnStrategy {
      * @param game game
      * @param athenaeffect athena effect
      */
-    public void turn(Player player, Worker worker, Board board, Game game, boolean athenaeffect,View vview){
+    public void turn(Player player, Worker worker, Board board, Game game, boolean athenaeffect, VirtualView vview){
 
         /*Salvo le coordinate iniziali*/
         Coordinates starting_position = new Coordinates(worker.getPositionX(),worker.getPositionY());
@@ -34,7 +35,7 @@ public class ArtemisStrategy extends DefaultStrategy implements TurnStrategy {
         ArrayList<Coordinates> move_spots = checkAvailableMoveSpots(player,worker,board,athenaeffect);
 
         /*Se l'array è vuoto, il worker non puo spostarsi, quindi il player ha perso*/
-        if (move_spots.size()==0) {game.lose(player);}
+        //if (move_spots.size()==0) {game.lose(player);}
 
         /*Mando le caselle al client, ricevo l'indice dello spostamento*/
         int index = vview.sendAvailableMove(player,move_spots);
@@ -47,7 +48,7 @@ public class ArtemisStrategy extends DefaultStrategy implements TurnStrategy {
 
         /*Controllo se il giocatore ha vinto*/
         boolean win = checkWinCondition(starting_position,middle_position,board);
-        if (win) {game.win(player);}
+        //if (win) {game.win(player);}
 
         /*Calcolo le caselle disponibili per il secondo spostamento*/
         move_spots = checkAvailableMoveSpots(player,worker,board,athenaeffect);
@@ -60,7 +61,7 @@ public class ArtemisStrategy extends DefaultStrategy implements TurnStrategy {
         }
 
         /*Se l'array è vuoto, il worker non puo spostarsi, quindi il player ha perso*/
-        if (move_spots.size()==0) {game.lose(player);}
+        //if (move_spots.size()==0) {game.lose(player);}
 
         /*Mando le caselle al client, ricevo l'indice dello spostamento*/
         index = vview.sendAvailableMove(player,move_spots);
@@ -73,7 +74,7 @@ public class ArtemisStrategy extends DefaultStrategy implements TurnStrategy {
 
         /*Controllo se il giocatore ha vinto*/
          win = checkWinCondition(middle_position,final_position,board);
-        if (win) {game.win(player);}
+        //if (win) {game.win(player);}
 
         /*Calcolo le caselle disponibili per la costruzione*/
         ArrayList<Coordinates> build_spots = checkAvailableBuildSpots(player,worker,board);

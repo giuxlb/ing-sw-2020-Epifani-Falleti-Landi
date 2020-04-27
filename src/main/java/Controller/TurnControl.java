@@ -9,7 +9,7 @@ public class TurnControl {
     private DivinityContext ctx;
     private Board boardGame;
     private Game game;
-    private View virtualView;
+    private VirtualView virtualView;
 
     /***
      * Constructor of TurnControl, which is created every time a turn starts
@@ -17,7 +17,7 @@ public class TurnControl {
      * @param athenaEffect boolean that indicates the fact that another player
      *                     can interfere in this turn with the Athena effect
      */
-    public TurnControl(Player player,boolean athenaEffect,Board boardGame,Game game,View virtualView){
+    public TurnControl(Player player,boolean athenaEffect,Board boardGame,Game game,VirtualView virtualView){
         this.player = player;
         this.athenaEffect = athenaEffect;
         this.card = this.player.getGameCard();

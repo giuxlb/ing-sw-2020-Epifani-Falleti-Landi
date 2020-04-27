@@ -46,7 +46,7 @@ public class PlayerTest {
         player.assignWorker(4,4,1);
         player.moveWith(player.getWorker(0),1,1);
         player.moveWith(player.getWorker(1),2,2);
-        assertEquals(player.getWorker(9).getPositionX(),1);
+        assertEquals(player.getWorker(0).getPositionX(),1);
         assertEquals(player.getWorker(0).getPositionY(),1);
         assertEquals(player.getWorker(1).getPositionX(),2);
         assertEquals(player.getWorker(1).getPositionY(),2);
