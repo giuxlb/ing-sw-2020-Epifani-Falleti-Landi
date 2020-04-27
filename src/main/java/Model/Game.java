@@ -175,9 +175,4 @@ public class Game {
     public ArrayList<Card> getAvailableCards() {
         return availableCards;
     }
-
-    public static void main(String[] args){
-
-
-    }
 }
