@@ -20,7 +20,7 @@ public class VirtualView {
 
     public VirtualView()
     {
-        players = new ArrayList<Player>();
+          players = new ArrayList<Player>();
         usernames = new ArrayList<String>();
         serverHandler = new ServerNetworkHandler(this);
         while(true) {
