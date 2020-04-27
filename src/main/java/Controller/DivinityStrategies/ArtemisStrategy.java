@@ -25,7 +25,7 @@ public class ArtemisStrategy extends DefaultStrategy implements TurnStrategy {
      * @param game game
      * @param athenaeffect athena effect
      */
-    public void turn(Player player, Worker worker, Board board, Game game, boolean athenaeffect){
+    public void turn(Player player, Worker worker, Board board, Game game, boolean athenaeffect,View vview){
 
         /*Salvo le coordinate iniziali*/
         Coordinates starting_position = new Coordinates(worker.getPositionX(),worker.getPositionY());

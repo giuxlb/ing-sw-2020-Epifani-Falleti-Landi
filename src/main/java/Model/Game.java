@@ -1,17 +1,24 @@
 package Model;
 
-import java.util.Observer;
+import java.util.ArrayList;
+import java.util.Arrays;
 
 public class Game {
     private Player[] players;
     private Board boardGame;
     private int turnNumber;
     private TurnPhases turnPhase;
-    private Card[] choosenCards;
+    private ArrayList<Card> availableCards;
+    private ArrayList<Card> choosenCards;
+
 
     public Game()
     {
         this.boardGame = new Board();
+
+        //aggiungo tutte le carte implementate ad un array
+        availableCards = new ArrayList<Card>();
+        availableCards.addAll(Arrays.asList(Card.values()));
     }
 
     /**
@@ -48,9 +55,6 @@ public class Game {
     public void startGame()
     {
         turnNumber = 0;
-        turnPhase = TurnPhases.MOVE;
-
-
     }
 
     /**
@@ -162,6 +166,14 @@ public class Game {
 
     public TurnPhases getTurnPhase() {
         return turnPhase;
+    }
+
+    public void setChoosenCards(ArrayList<Card> choosenCards) {
+        this.choosenCards = choosenCards;
+    }
+
+    public ArrayList<Card> getAvailableCards() {
+        return availableCards;
     }
 
     public static void main(String[] args){

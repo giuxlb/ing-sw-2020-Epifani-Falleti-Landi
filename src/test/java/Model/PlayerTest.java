@@ -4,6 +4,8 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
+import java.util.Calendar;
+
 import static org.junit.Assert.*;
 
 public class PlayerTest {
@@ -11,8 +13,10 @@ public class PlayerTest {
     private static Player player = null;
 
     @Before
-    public void setUp() throws Exception {
-        player = new Player("Giux");
+    public void setUp() {
+        Calendar data = Calendar.getInstance();
+        data.set(1998, Calendar.NOVEMBER,30);
+        player = new Player("Giux", data);
     }
 
     @After
@@ -21,30 +25,30 @@ public class PlayerTest {
 
     @Test
     public void setCard(){
-        Card card = new Card("Artemis");
+        Card card =  Card.ARTEMIS;
         player.chooseCard(card);
         assertEquals(card,player.getGameCard());
     }
 
-    /*@Test
+    @Test
     public void setWorkers(){
-        player.assignWorker1(0,0);
-        player.assignWorker2(4,4);
-        assertEquals(player.getWorker1().getPositionX(),0);
-        assertEquals(player.getWorker1().getPositionY(),0);
-        assertEquals(player.getWorker2().getPositionX(),4);
-        assertEquals(player.getWorker2().getPositionY(),4);
+        player.assignWorker(0,0,0);
+        player.assignWorker(4,4,1);
+        assertEquals(player.getWorker(0).getPositionX(),0);
+        assertEquals(player.getWorker(0).getPositionY(),0);
+        assertEquals(player.getWorker(1).getPositionX(),4);
+        assertEquals(player.getWorker(1).getPositionY(),4);
     }
 
     @Test
     public void moveWorker(){
-        player.assignWorker1(0,0);
-        player.assignWorker2(4,4);
-        player.moveWith(player.getWorker1(),1,1);
-        player.moveWith(player.getWorker2(),2,2);
-        assertEquals(player.getWorker1().getPositionX(),1);
-        assertEquals(player.getWorker1().getPositionY(),1);
-        assertEquals(player.getWorker2().getPositionX(),2);
-        assertEquals(player.getWorker2().getPositionY(),2);
-    }*/
+        player.assignWorker(0,0,0);
+        player.assignWorker(4,4,1);
+        player.moveWith(player.getWorker(0),1,1);
+        player.moveWith(player.getWorker(1),2,2);
+        assertEquals(player.getWorker(9).getPositionX(),1);
+        assertEquals(player.getWorker(0).getPositionY(),1);
+        assertEquals(player.getWorker(1).getPositionX(),2);
+        assertEquals(player.getWorker(1).getPositionY(),2);
+    }
 }

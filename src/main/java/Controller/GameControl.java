@@ -1,5 +1,6 @@
 package Controller;
 
+import Model.Card;
 import Model.Game;
 import Model.Player;
 
@@ -74,13 +75,58 @@ public class GameControl {
 
     }
 
-//TODO aggiungere fase iniziale turno
-//TODO implementare insertInitialPosition
 //TODO creare test per classi in model e controller ove possibile
+//TODO gestione dello scollegamento di un client
 
     public void startGame(){
-        //chiedo pos iniz al player1
-        //ricevo pos iniz player1
+        game.startGame();
+
+        //scelta delle carte del primo player
+
+        ArrayList<Card> chosenCards = virtualView.sendAllCards(players.get(game.getTurnNumber()),game.getAvailableCards());
+        game.setChoosenCards(chosenCards);
+        game.nextTurnNumber();
+
+
+
+        Card cardChoice;
+
+        //mando array delle carte scelte dal primo player al secondo player
+        while(game.getTurnNumber()!=0) {
+            cardChoice = virtualView.sendChosenCards(players.get(game.getTurnNumber()), chosenCards);
+            players.get(game.getTurnNumber()).chooseCard(cardChoice);
+            chosenCards.remove(cardChoice);
+            game.nextTurnNumber();
+        }
+
+        //setto l'ultima carta rimasta al primo player
+        players.get(game.getTurnNumber()).chooseCard(chosenCards.get(0));
+
+        //mando a tutti i player le loro carte
+        do{
+            virtualView.sendYourCard(players.get(game.getTurnNumber()),players.get(game.getTurnNumber()).getGameCard());
+            game.nextTurnNumber();
+        }while (game.getTurnNumber()!=0);
+
+        //chiedo a tutti i player le posizioni iniziali
+        do{
+            boolean valid_pos = false;
+            Coordinates initial_pos;
+
+            for(int worker = 0;worker<2;worker++) {
+                while (!valid_pos) {
+                    initial_pos = virtualView.askInitialPosition(players.get(game.getTurnNumber()),worker);
+                    valid_pos = checkValidInitialPosition(initial_pos.getX(), initial_pos.getY());
+                    if (valid_pos) {
+                        insertInitialPosition(game.getTurnNumber(), initial_pos.getX(), initial_pos.getY(),worker);
+                    } else {
+                        virtualView.sendMessageWrongPosition(players.get(game.getTurnNumber()));
+                    }
+                }
+            }
+
+            game.nextTurnNumber();
+        }while(game.getTurnNumber()!=0);
 
         while(true){
 
@@ -126,8 +172,8 @@ public class GameControl {
         return true;
     }
 
-    private void insertInitialPosition(int currentPlayer, int x, int y){
-
+    private void insertInitialPosition(int currentPlayer, int x, int y, int index){
+        game.chooseInitialPosition(players.get(currentPlayer),x,y,index);
     }
 
     public void win(Player player){

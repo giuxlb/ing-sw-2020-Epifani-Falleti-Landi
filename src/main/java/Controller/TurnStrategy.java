@@ -8,7 +8,7 @@ import Model.Worker;
 import java.util.ArrayList;
 
 public interface TurnStrategy {
-    public void turn(Player player,Worker worker,Board board,Game game,boolean athenaeffect);
+    public void turn(Player player,Worker worker,Board board,Game game,boolean athenaeffect,View virtualView);
     public void move(Worker worker, ArrayList<Coordinates> valid_positions, int index, Game game, Board board);
     public void build(Worker worker, ArrayList<Coordinates> valid_positions, int index, Game game, Board board);
     public ArrayList<Coordinates> checkAvailableMoveSpots(Player player, Worker worker, Board board,boolean athenaeffect);

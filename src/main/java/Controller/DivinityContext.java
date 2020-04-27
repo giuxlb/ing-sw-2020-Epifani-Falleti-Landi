@@ -12,7 +12,7 @@ public class DivinityContext {
         this.strategy=strategy;
     }
 
-    public void turn(Player player, Worker worker, Board board,Game game, boolean athenaeffect){strategy.turn(player,worker,board,game,athenaeffect);}
+    public void turn(Player player, Worker worker, Board board,Game game, boolean athenaeffect,View virtualview){strategy.turn(player,worker,board,game,athenaeffect,virtualview);}
 
     public void move(Worker worker, ArrayList<Coordinates> valid_positions, int index, Game game, Board board){ strategy.move(worker,valid_positions,index,game,board); }
 
@@ -27,7 +27,7 @@ public class DivinityContext {
      * @param card the card associated to a player
      */
     public void selectStrategy(Card card){
-        switch(card.getName().toUpperCase()){
+        switch(card.toString().toUpperCase()){
             case "APOLLO": this.setTurnStrategy(new ApolloStrategy());
                 break;
             case "ARTEMIS": this.setTurnStrategy(new ArtemisStrategy());

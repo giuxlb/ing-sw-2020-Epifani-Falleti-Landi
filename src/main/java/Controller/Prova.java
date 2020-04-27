@@ -3,16 +3,14 @@ package Controller;
 import Model.Card;
 import Model.Player;
 
-import java.util.ArrayList;
-
 public class Prova
 {
-    public static void main(String[] args)
+    /*public static void main(String[] args)
     {
 
 
         Player player = new Player("giux");
-        Card card = new Card("Apollo");
+        Card card = Card.APOLLO;
         player.chooseCard(card);
 
         TurnControl turn = new TurnControl(player, false);
@@ -26,5 +24,5 @@ public class Prova
         move(Player,Worker,Coordinates);
 
         move(Player,Worker,ArrayList<Coordinates>,int n); //n indica l'indice della coordinata da prendere.
-    }
+    }*/
 }

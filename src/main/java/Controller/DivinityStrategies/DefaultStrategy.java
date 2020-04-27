@@ -23,7 +23,7 @@ public class DefaultStrategy implements TurnStrategy {
      * @param game the game
      * @param athenaeffect athena effect, used in the checkAvailableMoveSpots method
      */
-    public void turn(Player player,Worker worker,Board board,Game game,boolean athenaeffect){
+    public void turn(Player player,Worker worker,Board board,Game game,boolean athenaeffect,View vview){
         /*Salvo la posizione iniziale*/
         Coordinates starting_position = new Coordinates(worker.getPositionX(),worker.getPositionY());
 
