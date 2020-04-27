@@ -31,60 +31,59 @@ public class Board {
 
     /***
      * Call setBoardCellHeight to modify the cell's height in (i,j) on board
-     * @param i
-     * @param j
-     * @param height
+     * @param i i-position of needed boardCell
+     * @param j j-position of needed boardCell
+     * @param height new height value of boardCell height
      */
     public void setBoardHeight(int i, int j, int height){
         this.boardGame[i][j].setBoardCellHeight(height);
     }
 
     /***
-     * Call setBoardCellWorker to modify the cell's worker in (i,j) on board
-     * @param i
-     * @param j
-     * @param w
-     */
-
-    /***
-     *
-     * @param i
-     * @param j
+     * Build a new level on boardCell (i,j)
+     * @param i i-position of needed boardCell
+     * @param j j-position of needed boardCell
      */
     public void buildOnBoard(int i, int j){
         boardGame[i][j].buildOnBoarCell();
     }
 
+    /***
+     * Put a worker on boardCell (i,j)
+     * @param i i-position of needed boardCell
+     * @param j j-position of needed boardCell
+     * @param w worker reference for needed worker
+     */
     public void setBoardWorker(int i, int j, Worker w){
         this.boardGame[i][j].setBoardCellWorker(w);
     }
 
     /***
-     * For each BoardCell of our Board print height and if there is a worker on
+     * Get reference of boardGame
+     * @return reference of boardGame
      */
-    public void printBoard(){
-        for(int i=0;i<DIM;i++){
-            for(int j=0;j<DIM;j++){
-                System.out.print(" "+this.boardGame[i][j].getHeight()+" ");
-                if(this.boardGame[i][j].getWorkerBuilder()!=null){
-                    System.out.print("x");
-                }
-            }
-            System.out.println();
-        }
-    }
-
     public BoardCell[][] getBoardGame() {
         return boardGame;
     }
 
     /***
-     *
-     * @param i
-     * @param j
+     * Get height from boardCell (i,j)
+     * @param i i-position of needed boardCell
+     * @param j j-position of needed boardCell
+     * @return height of boardCell(i,j)
      */
     public int getBoardHeight(int i, int j) {
         return this.boardGame[i][j].getHeight();
+    }
+
+    /***
+     * Get worker from boardCell (i,j)
+     * @param i i-position of needed boardCell
+     * @param j j-position of needed boardCell
+     * @return pointer to needed worker
+     */
+    public Worker getBoardWorker(int i, int j){
+        return this.boardGame[i][j].getWorkerBuilder();
     }
 
 

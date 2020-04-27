@@ -6,7 +6,7 @@ public class BoardCell {
 
     /***
      * Put a worker on this BoardCell
-     * @param workerBuilder
+     * @param workerBuilder is a pointer to a worker object
      */
     public void setBoardCellWorker(Worker workerBuilder){
         this.workerBuilder=workerBuilder;
@@ -14,12 +14,15 @@ public class BoardCell {
 
     /***
      * Set height of current BoardCell to 0 (0 floor), 1 (1st floor), 2 (2nd floor), 3 (3rd floor) or 4 (dome)
-     * @param height
+     * @param height represents height of boardCell
      */
     public void setBoardCellHeight(int height){
         this.height=height;
     }
 
+    /***
+     * It builds one more level on boardCell
+     */
     public void buildOnBoarCell(){
         this.height++;
     }
@@ -33,16 +36,16 @@ public class BoardCell {
     }
 
     /***
-     *
-     * @return
+     * Get worker on BoardCell
+     * @return pointer to worker on boardCell
      */
     public Worker getWorkerBuilder(){
         return this.workerBuilder;
     }
 
     /***
-     *
-     * @return
+     * Get height of boardCell
+     * @return height of boarCell
      */
     public int getHeight() {
         return height;
