@@ -21,7 +21,9 @@ public class VCEvent implements Serializable {
         you_won,
         send_all_cards,
         send_chosen_cards,
-        ping
+        ping,
+        wrongInitialPositionMessage,
+        choose_initial_position
 
     }
 

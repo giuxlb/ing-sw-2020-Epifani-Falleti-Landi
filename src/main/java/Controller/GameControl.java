@@ -103,14 +103,14 @@ public class GameControl {
         //setto l'ultima carta rimasta al primo player
         players.get(game.getTurnNumber()).chooseCard(chosenCards.get(0));
 
-        /*//mando a tutti i player le loro carte
+        //mando a tutti i player le loro carte
         do{
             virtualView.sendYourCard(players.get(game.getTurnNumber()),players.get(game.getTurnNumber()).getGameCard());
             game.nextTurnNumber();
-        }while (game.getTurnNumber()!=0);*/
+        }while (game.getTurnNumber()!=0);
 
         //chiedo a tutti i player le posizioni iniziali
-        /*do{
+        do{
             boolean valid_pos = false;
             Coordinates initial_pos;
 
@@ -127,7 +127,7 @@ public class GameControl {
             }
 
             game.nextTurnNumber();
-        }while(game.getTurnNumber()!=0);*/
+        }while(game.getTurnNumber()!=0);
 
         while(true){
 
