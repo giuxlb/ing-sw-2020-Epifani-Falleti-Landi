@@ -1,4 +1,4 @@
-/*package Model;
+package Model;
 
 import org.junit.After;
 import org.junit.Test;
@@ -12,7 +12,7 @@ public class WorkerTest {
 
     @Before
     public void setUp() {
-        worker = new Worker(0,0,Color.WHITE);
+        worker = new Worker(0,0,Color.ANSI_YELLOW);
     }
 
     @After
@@ -26,4 +26,4 @@ public class WorkerTest {
         assertEquals(worker.getPositionY(),2);
     }
 
-}*/
+}
