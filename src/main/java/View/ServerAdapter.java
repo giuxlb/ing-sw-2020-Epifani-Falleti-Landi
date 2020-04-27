@@ -33,10 +33,15 @@ public class ServerAdapter implements Runnable {
 
     public void run()
     {
+        List<ServerObserver> observersCpy;
+        synchronized (observers) {
+            observersCpy = new ArrayList<ServerObserver>(observers);
+        }
         try {
             handleServerConnection();
         } catch (IOException e) {
-            System.out.println("server has died");
+            for(ServerObserver obs: observersCpy)
+                obs.serverDied();
         } catch (ClassNotFoundException e) {
             e.printStackTrace();
         }

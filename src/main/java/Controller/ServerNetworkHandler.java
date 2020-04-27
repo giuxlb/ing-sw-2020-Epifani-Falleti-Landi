@@ -55,7 +55,8 @@ public class ServerNetworkHandler implements Runnable, ClientObserver {
         Runnable runClient1 = ()->{
             while(true)
             {
-                synchronized (this) {
+                synchronized (this)
+                {
                     fromClient1 = null;
                     while (fromClient1 == null) {
                         try {
@@ -66,8 +67,6 @@ public class ServerNetworkHandler implements Runnable, ClientObserver {
                 }
                     //qui ho un evento dal client 1 da mandare alla VirtualView
                     virtualView.receivedResponse(fromClient1.getBox());
-
-
             }
 
         };
@@ -80,10 +79,10 @@ public class ServerNetworkHandler implements Runnable, ClientObserver {
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
-
                 VCEvent pingEvent = new VCEvent((Integer) 1, VCEvent.Event.ping);
                 sendPingTo(pingEvent,0);
-                synchronized (this) {
+                synchronized (this)
+                {
                     pingFromClient1 = 0;
                     while (pingFromClient1 == 0) {
                         try {
@@ -92,10 +91,10 @@ public class ServerNetworkHandler implements Runnable, ClientObserver {
                         }
                     }
                 }
-                    if(pingFromClient1 == 0)
-                    {
-                        virtualView.playerDisconnected(0);
-                    }
+                if(pingFromClient1 == 0)
+                {
+                    virtualView.playerDisconnected(0);
+                }
 
 
 
@@ -104,7 +103,8 @@ public class ServerNetworkHandler implements Runnable, ClientObserver {
         };
         Runnable runClient2 = ()->{
             while (true) {
-                synchronized (this) {
+                synchronized (this)
+                {
                     fromClient2 = null;
                     while (fromClient2 == null) {
                         try {
@@ -113,9 +113,7 @@ public class ServerNetworkHandler implements Runnable, ClientObserver {
                         }
                     }
                 }
-                    virtualView.receivedResponse(fromClient2.getBox());
-
-
+                virtualView.receivedResponse(fromClient2.getBox());
             }
 
         };
@@ -128,11 +126,10 @@ public class ServerNetworkHandler implements Runnable, ClientObserver {
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
-
                 VCEvent pingEvent = new VCEvent((Integer) 2, VCEvent.Event.ping);
-
                 sendPingTo(pingEvent,1);
-                synchronized (this) {
+                synchronized (this)
+                {
                     pingFromClient2 = 0;
                     while (pingFromClient2 == 0) {
                         try {
@@ -145,15 +142,13 @@ public class ServerNetworkHandler implements Runnable, ClientObserver {
                         virtualView.playerDisconnected(1);
                     }
                     System.out.println("Pong1");
-
-
-
             }
 
         };
         Runnable runClient3 = ()->{
             while(true) {
-                synchronized (this) {
+                synchronized (this)
+                {
                     fromClient3 = null;
                     while (fromClient3 == null) {
                         try {
@@ -161,9 +156,7 @@ public class ServerNetworkHandler implements Runnable, ClientObserver {
                         } catch (InterruptedException e) { }
                     }
                 }
-                    virtualView.receivedResponse(fromClient3.getBox());
-
-
+                virtualView.receivedResponse(fromClient3.getBox());
             }
 
         };
@@ -178,7 +171,8 @@ public class ServerNetworkHandler implements Runnable, ClientObserver {
 
                 VCEvent pingEvent = new VCEvent((Integer) 3, VCEvent.Event.ping);
                 sendPingTo(pingEvent,2);
-                synchronized (this) {
+                synchronized (this)
+                {
                     pingFromClient3 = 0;
                     while (pingFromClient3 == 0) {
                         try {
@@ -209,6 +203,7 @@ public class ServerNetworkHandler implements Runnable, ClientObserver {
         try {
             clients[counter] = server.accept();
             clients[counter].setSoTimeout(20000);
+            virtualView.setConnectedIndexToTrue(counter);
             outputs[counter] = (ObjectOutputStream) clients[counter].getOutputStream();
             inputs[counter] = (ObjectInputStream) clients[counter].getInputStream();
             adapters[counter] = new ClientAdapter(clients[counter], counter);
@@ -262,6 +257,7 @@ public class ServerNetworkHandler implements Runnable, ClientObserver {
             try{
                 clients[counter] = server.accept();
                 clients[counter].setSoTimeout(20000);
+                virtualView.setConnectedIndexToTrue(counter);
                 outputs[counter] = (ObjectOutputStream) clients[counter].getOutputStream();
                 inputs[counter] = (ObjectInputStream) clients[counter].getInputStream();
                 adapters[counter] = new ClientAdapter(clients[counter],counter);
@@ -336,6 +332,11 @@ public class ServerNetworkHandler implements Runnable, ClientObserver {
                 break;
         }
 
+    }
+
+    @Override
+    public void playerDisconnectedNumber(int index) {
+        virtualView.playerDisconnected(index);
     }
 
     public void sendVCEventTo(VCEvent eventToClient, int clientIndex)

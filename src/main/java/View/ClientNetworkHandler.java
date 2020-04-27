@@ -21,6 +21,7 @@ public class ClientNetworkHandler implements Runnable, ServerObserver {
     private boolean updateView;
     private Integer ping;
     private boolean canWrite;
+    private boolean serverIsDied;
 
     public ClientNetworkHandler(){this.run();}
 
@@ -109,6 +110,12 @@ public class ClientNetworkHandler implements Runnable, ServerObserver {
         ping = n;
         notifyAll();;
     }
+
+    @Override
+    public void serverDied() {
+        serverIsDied = true;
+    }
+
     //questo metodo verrà chiamato dalla VIEW
     public synchronized void sendVCEvent(VCEvent eventToServer)
     {
@@ -159,6 +166,21 @@ public class ClientNetworkHandler implements Runnable, ServerObserver {
         notifyAll();
 
 
+    }
+
+    //getters for the view
+
+
+    public boolean isEndGame() {
+        return endGame;
+    }
+
+    public boolean isServerIsDied() {
+        return serverIsDied;
+    }
+
+    public String getWinner() {
+        return winner;
     }
 
 

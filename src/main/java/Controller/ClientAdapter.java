@@ -1,6 +1,7 @@
 package Controller;
 import View.ServerObserver;
 
+import java.io.EOFException;
 import java.io.IOException;
 import java.net.Socket;
 import java.io.ObjectInputStream;
@@ -50,14 +51,19 @@ public class ClientAdapter implements Runnable {
 
 
     public void run() {
+        List<ClientObserver> observersCpy;
+        synchronized (observers) {
+            observersCpy = new ArrayList<ClientObserver>(observers);
+        }
+
         try {
             handleClientConnection();
         } catch (IOException e) {
-            System.out.println("Client has died");
+           for(ClientObserver obs : observersCpy)
+               obs.playerDisconnectedNumber(number);
         }
         catch (ClassNotFoundException e)
         {
-
         }
         try {
             client.close();

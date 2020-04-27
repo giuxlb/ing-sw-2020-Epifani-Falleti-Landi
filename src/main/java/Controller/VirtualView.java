@@ -15,6 +15,7 @@ public class VirtualView {
     private Integer numberOfPlayers;
     private Object received;
     private boolean setUpisReady;
+    private boolean[] connected;
 
 
     public VirtualView()
@@ -34,8 +35,10 @@ public class VirtualView {
                 if (received instanceof String) {
                     firstUsername = (String) received;
                     usernames.add(firstUsername);
+                    received = null;
                 } else if (received instanceof Calendar) {
                     firstDate = (Calendar) received;
+                    received = null;
                 } else if (received instanceof Integer) {
                     numberOfPlayers = (Integer) received;
                     break;//esce dal loop
@@ -148,7 +151,7 @@ public class VirtualView {
             }
 
         }
-       ArrayList<Card> chosenCards = (ArrayList<Card>) received;
+        ArrayList<Card> chosenCards = (ArrayList<Card>) received;
         received = null;
         return chosenCards;
     }
@@ -256,17 +259,39 @@ public class VirtualView {
         received = response;
         notifyAll();
     }
+
     public  void playerDisconnected(int playerIndex)
     {
-        if (numberOfPlayers == 3)
-        {
-            players.remove(playerIndex);
-            //lo faccio sapere al controller
-        }
-        else{
-            players.remove(playerIndex);
-            //facciamo sapere al controller che c'è un solo giocatore e quindi deve chiamare la Win su l'unico giocatore
-        }
+
+            connected[playerIndex] = false;
+            notifyAll();
+
     }
+
+    public void setConnectedIndexToTrue(int index) {
+       this.connected[index] = true;
+    }
+
+    public String getFirstUsername() {
+        return firstUsername;
+    }
+
+    public Calendar getFirstDate() {
+        return firstDate;
+    }
+
+    public Integer getNumberOfPlayers() {
+        return numberOfPlayers;
+    }
+
+    public boolean isSetUpisReady()
+    {
+        return setUpisReady;
+    }
+
+    public void setPlayers(ArrayList<Player> players) {
+        this.players = players;
+    }
+
 
 }
