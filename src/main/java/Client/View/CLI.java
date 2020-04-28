@@ -16,8 +16,12 @@ public class CLI {
         Scanner s= new Scanner(System.in);
         Board b= new Board();
         Controller clientController = new Controller();
+
         //Costruzione oggetto clientNetworkHandler
         ClientNetworkHandler cnh = new ClientNetworkHandler();
+        Thread clientNetworkHandlerThread = new Thread(cnh);
+        clientNetworkHandlerThread.start();
+
         System.out.println("Inserisci il tuo nome utente");
         s.nextLine();
         //sendUsername to Server

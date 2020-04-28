@@ -26,7 +26,7 @@ public class ClientNetworkHandler implements Runnable, ServerObserver {
     private boolean serverIsDied;
     private int PlayerID;//can be 0,1 or 2
 
-    public ClientNetworkHandler(){this.run();}
+
 
     public boolean isUpdateView() {
         return updateView;
@@ -53,23 +53,20 @@ public class ClientNetworkHandler implements Runnable, ServerObserver {
         Runnable runPing = ()->{
             while(true)
             {
-                synchronized (this)
-                {
+                synchronized (this) {
                     ping = 0;
-                    while(ping == 0)
-                    {
-                        try{
+                    while (ping == 0) {
+                        try {
                             wait(10000);
-                        }catch(InterruptedException e)
-                        { }
+                        } catch (InterruptedException e) {
+                        }
                     }
-                    if (ping == 0)
-                    {
+                    if (ping == 0) {
 
                     }
-
-                    sendPing();//appena riceve manda indietro il ping per fargli sapere che è ancora attivo
                 }
+                    sendPing();//appena riceve manda indietro il ping per fargli sapere che è ancora attivo
+
             }
         };
         adapter = new ServerAdapter(server);
@@ -85,15 +82,15 @@ public class ClientNetworkHandler implements Runnable, ServerObserver {
         while (true)
         {
             synchronized (this) {
-                fromServer = null;
-                while (fromServer == null) {
-                    updateView = false;
-                    try {
-                        wait();
-                    } catch (InterruptedException e) {
-                    }
+                    fromServer = null;
+                    while (fromServer == null) {
+                        updateView = false;
+                        try {
+                            wait();
+                        } catch (InterruptedException e) {
+                        }
 
-                }
+                    }
             }
                 updateView = true;
 
