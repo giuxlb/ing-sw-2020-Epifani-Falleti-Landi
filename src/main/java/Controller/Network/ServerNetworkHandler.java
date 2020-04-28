@@ -23,7 +23,6 @@ public class ServerNetworkHandler implements Runnable, ClientObserver {
     private static Socket[] clients;
     private static ClientAdapter[] adapters;
     private static VCEvent fromClient1;
-    private static String[] usernames;
     private static Integer numberOfPlayers;
     public final static int SOCKET_PORT = 7777;
     private static  ObjectOutputStream[] outputs;
@@ -162,7 +161,7 @@ public class ServerNetworkHandler implements Runnable, ClientObserver {
     }
 
     /**
-     * Notifies the threads in the server when an event arrives from a client
+     * Notifies the threads built with ClientEventReceiver when an event arrives from a client
      * @param eventFromClient is the event arrived
      * @param n is the index that identifies the client who sent the event
      */
@@ -218,7 +217,7 @@ public class ServerNetworkHandler implements Runnable, ClientObserver {
     }
 
     /**
-     * It is used to send an evento to a client
+     * It sends an event to a client
      * @param eventToClient is the event which will be sent to the client
      * @param clientIndex identifies the client who will receive the event
      */

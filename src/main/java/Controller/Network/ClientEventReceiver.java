@@ -2,7 +2,9 @@ package Controller.Network;
 
 import java.util.concurrent.TimeUnit;
 
-
+/**
+ * @author Adriano Falleti
+ */
 public class ClientEventReceiver implements Runnable {
 
     private VCEvent fromClient;
@@ -11,7 +13,11 @@ public class ClientEventReceiver implements Runnable {
     private Integer clientIndex;
     private boolean startReceivingEvents;
 
-
+    /**
+     * Constructor for ClientEventReceiver
+     * @param server
+     * @param index
+     */
     public ClientEventReceiver(ServerNetworkHandler server,int index)
     {
         this.clientIndex = index;
@@ -89,23 +95,29 @@ public class ClientEventReceiver implements Runnable {
     }
 
 
-
-    public void setClientIndex(Integer clientIndex) {
-        this.clientIndex = clientIndex;
-    }
-
+    /**
+     * It allows the receiver to receive events
+     */
     public synchronized void canReceiveEvents()
     {
         startReceivingEvents = true;
         notifyAll();
     }
 
+    /**
+     * It notifies the receiver that a event is arrived
+     * @param event is the event arrived from the client
+     */
     public synchronized void didReceiveEvent(VCEvent event)
     {
         fromClient = event;
         notifyAll();
     }
 
+    /**
+     * It notifies the receiver that a event is arrived
+     * @param ping is the ping that server and clients send to each other
+     */
     public synchronized void didReceivePing(Integer ping)
     {
         pingFromClient = ping;
