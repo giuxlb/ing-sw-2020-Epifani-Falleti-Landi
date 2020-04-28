@@ -26,4 +26,9 @@ public class WorkerTest {
         assertEquals(worker.getPositionY(),2);
     }
 
+    @Test
+    public void setColor(){
+        worker.setColor(Color.ANSI_YELLOW);
+        assertEquals(worker.getColor(),Color.ANSI_YELLOW);
+    }
 }

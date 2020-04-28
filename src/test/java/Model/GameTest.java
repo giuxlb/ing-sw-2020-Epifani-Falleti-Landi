@@ -154,5 +154,19 @@ public class GameTest {
         assertEquals(game.getBoardGame().getBoardGame()[1][2].getHeight(),1);
     }
 
+    @Test
+    public void moveWorkerWithoutNull(){
+        Calendar date = Calendar.getInstance();
+        date.set(1998, Calendar.NOVEMBER,30);
+
+        Player p = new Player("player1",date);
+        game.addPlayer(p);
+        game.chooseInitialPosition(p,0,0,0);
+        game.moveWorkerWithoutNull(p.getWorker(0),1,1);
+        assertEquals(game.getBoardGame().getBoardGame()[0][0].getWorkerBuilder(),p.getWorker(0));
+        assertEquals(game.getBoardGame().getBoardGame()[1][1].getWorkerBuilder(),p.getWorker(0));
+
+    }
+
 
 }
