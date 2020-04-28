@@ -386,7 +386,7 @@ public class VirtualView {
      * It notifies the GameControl that a player has disconnected
      * @param playerIndex
      */
-    public  void playerDisconnected(int playerIndex)
+    public synchronized void playerDisconnected(int playerIndex)
     {
 
             connected[playerIndex] = false;
