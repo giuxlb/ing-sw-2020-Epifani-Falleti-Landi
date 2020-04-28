@@ -96,7 +96,7 @@ public class ClientNetworkHandler implements Runnable, ServerObserver {
                 }
             }
                 updateView = true;
-            System.out.println("è arrivato qualcosa dal server");
+
                 //qui l'evento dal server sarà arrivato e ora devo gestirlo con una switch sul suo comando per chiamare il metodo
                 //della view corrispondente. Poi la view chiamerà il metodo sendVCEvent passandogli il VCEvent da mandare al Server
 
