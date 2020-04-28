@@ -23,18 +23,16 @@ public class ServerNetworkHandler implements Runnable, ClientObserver {
     private static Socket[] clients;
     private static ClientAdapter[] adapters;
     private static VCEvent fromClient1;
-    private static VCEvent fromClient2;
-    private static VCEvent fromClient3;
     private static String[] usernames;
     private static Integer numberOfPlayers;
     public final static int SOCKET_PORT = 7777;
     private static  ObjectOutputStream[] outputs;
     private static ObjectInputStream[] inputs;
-    private static Integer pingFromClient1;
-    private static Integer pingFromClient2;
-    private static Integer pingFromClient3;
-    private static VirtualView virtualView;
+    public static VirtualView virtualView;
     private static boolean[] canWrite;
+    private static ClientEventReceiver receiver1;
+    private static ClientEventReceiver receiver2;
+    private static ClientEventReceiver receiver3;
 
     public ServerNetworkHandler(VirtualView vv)
     {
@@ -44,8 +42,10 @@ public class ServerNetworkHandler implements Runnable, ClientObserver {
         inputs = new ObjectInputStream[3];
         canWrite = new boolean[3];
         virtualView = vv;
-
-        this.run();
+        receiver1 = new ClientEventReceiver(this,0);
+        receiver2 = new ClientEventReceiver(this,1);
+        receiver3 = new ClientEventReceiver(this,2);
+        //la run deve essere chiamata dal gamecontrol creando un thread e chiamando la start su quel thread
     }
 
     /**
@@ -61,155 +61,11 @@ public class ServerNetworkHandler implements Runnable, ClientObserver {
             System.exit(1);
             return;
         }
-        Runnable runClient1 = ()->{
-            while(true)
-            {
-                synchronized (this)
-                {
-                    fromClient1 = null;
-                    while (fromClient1 == null) {
-                        try {
-                            wait();
-                        } catch (InterruptedException e) {
-                        }
-                    }
-                }
-                    //qui ho un evento dal client 1 da mandare alla VirtualView
-                    virtualView.receivedResponse(fromClient1.getBox());
-            }
 
-        };
+        Thread th1 = new Thread(receiver1);
+        Thread th2 = new Thread(receiver2);
+        Thread th3 = new Thread(receiver3);
 
-        Runnable runPingClient1 = ()->{
-            while(true)
-            {
-                //manda subito il ping
-                VCEvent pingEvent = new VCEvent((Integer) 1, VCEvent.Event.ping);
-                sendPingTo(pingEvent,0);
-                synchronized (this)
-                {
-                    pingFromClient1 = 0;
-                    while (pingFromClient1 == 0) {
-                        try {
-                            wait(10000);
-                        } catch (InterruptedException e) {
-                        }
-                    }
-                }
-                if(pingFromClient1 == 0)
-                {
-                    virtualView.playerDisconnected(0);
-                }
-                //aspetta 10 secondi prima di rimandare il ping
-                try {
-                    TimeUnit.SECONDS.sleep(10);
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
-
-
-            }
-
-        };
-        Runnable runClient2 = ()->{
-            while (true) {
-                synchronized (this)
-                {
-                    fromClient2 = null;
-                    while (fromClient2 == null) {
-                        try {
-                            wait();
-                        } catch (InterruptedException e) {
-                        }
-                    }
-                }
-                virtualView.receivedResponse(fromClient2.getBox());
-            }
-
-        };
-
-        Runnable runPingClient2 = ()->{
-            while(true)
-            {
-
-                VCEvent pingEvent = new VCEvent((Integer) 2, VCEvent.Event.ping);
-                sendPingTo(pingEvent,1);
-                synchronized (this)
-                {
-                    pingFromClient2 = 0;
-                    while (pingFromClient2 == 0) {
-                        try {
-                            wait(10000);
-                        } catch (InterruptedException e) { }
-                    }
-                }
-                    if(pingFromClient2 == 0)
-                    {
-                        virtualView.playerDisconnected(1);
-                    }
-                    System.out.println("Pong1");
-                try {
-                    TimeUnit.SECONDS.sleep(10);
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
-            }
-
-        };
-        Runnable runClient3 = ()->{
-            while(true) {
-                synchronized (this)
-                {
-                    fromClient3 = null;
-                    while (fromClient3 == null) {
-                        try {
-                            wait();
-                        } catch (InterruptedException e) { }
-                    }
-                }
-                virtualView.receivedResponse(fromClient3.getBox());
-            }
-
-        };
-        Runnable runPingClient3 = ()->{
-            while(true)
-            {
-
-
-                VCEvent pingEvent = new VCEvent((Integer) 3, VCEvent.Event.ping);
-                sendPingTo(pingEvent,2);
-                synchronized (this)
-                {
-                    pingFromClient3 = 0;
-                    while (pingFromClient3 == 0) {
-                        try {
-                            wait(10000);
-                        } catch (InterruptedException e) {
-                        }
-                    }
-                }
-                    if(pingFromClient3 == 0)
-                    {
-                        virtualView.playerDisconnected(2);
-                    }
-                try {
-                    TimeUnit.SECONDS.sleep(10);
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
-
-
-
-
-            }
-
-        };
-        Thread th1 = new Thread(runClient1);
-        Thread th2 = new Thread(runClient2);
-        Thread th3 = new Thread(runClient3);
-        Thread thPing1 = new Thread(runPingClient1);
-        Thread thPing2 = new Thread(runPingClient2);
-        Thread thPing3 = new Thread(runPingClient3);
         //per ogni client che prendiamo dobbiamo creare salvarci l'adapter nell'array adapters e la sua socket nell'array clientse aggiungere il server come observer
         int counter = 0;
         try {
@@ -231,9 +87,10 @@ public class ServerNetworkHandler implements Runnable, ClientObserver {
         {
             System.out.println("connection dropped");
         }
-        thPing1.start();
+
         //qui dovrò aspettare un VCEvent dal primo client connesso con il numero di giocatori perchè poi mi serve per accettare gli altri
         VCEvent e1 = new VCEvent(Color.ANSI_YELLOW , VCEvent.Event.setup_request);
+        th1.start();
         while(true){
             sendVCEventTo(e1,0);
 
@@ -263,7 +120,7 @@ public class ServerNetworkHandler implements Runnable, ClientObserver {
         //a questo punto ho in fromClient1 il numero dei giocatori
         virtualView.receivedResponse(fromClient1.getBox());
         numberOfPlayers = (Integer) fromClient1.getBox();
-        th1.start();
+        receiver1.canReceiveEvents();
 
         while (numberOfPlayers != 1) {
             try{
@@ -281,11 +138,11 @@ public class ServerNetworkHandler implements Runnable, ClientObserver {
                 thread.start();
                 counter++;
                 if (counter == 2) {
-                    thPing2.start();
+                    receiver2.canReceiveEvents();
                     th2.start();
                 }
                 if (counter == 3) {
-                    thPing3.start();
+                    receiver3.canReceiveEvents();
                     th3.start();
                 }
             }catch(IOException e)
@@ -314,15 +171,14 @@ public class ServerNetworkHandler implements Runnable, ClientObserver {
         {
             case 0:
                 fromClient1 = eventFromClient;
+                receiver1.didReceiveEvent(eventFromClient);
                 notifyAll();
                 break;
             case 1:
-                fromClient2 = eventFromClient;
-                notifyAll();
+               receiver2.didReceiveEvent(eventFromClient);
                 break;
             case 2:
-                fromClient3 = eventFromClient;
-                notifyAll();
+                receiver3.didReceiveEvent(eventFromClient);
             default:
                 break;
         }
@@ -334,21 +190,18 @@ public class ServerNetworkHandler implements Runnable, ClientObserver {
      * @param p is the integer sent between the nth client and server
      * @param n is the index that identifies the client who sent the ping
      */
-    public synchronized void didReceivePingFrom(Integer p,int n)
+    public void didReceivePingFrom(Integer p,int n)
     {
         switch (n)
         {
             case 0:
-                pingFromClient1 = p;
-                notifyAll();
+              receiver1.didReceivePing(p);
                 break;
             case 1:
-                pingFromClient2 = p;
-                notifyAll();
+               receiver2.didReceivePing(p);
                 break;
             case 2:
-                pingFromClient3 = p;
-                notifyAll();
+                receiver3.didReceivePing(p);
             default:
                 break;
         }
