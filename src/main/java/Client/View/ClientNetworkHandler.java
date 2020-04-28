@@ -21,9 +21,10 @@ public class ClientNetworkHandler implements Runnable, ServerObserver {
     private boolean endGame;
     private String winner;
     private boolean updateView;
-    private Integer ping;
+    private Integer ping; // can be 1,2 or 3
     private boolean canWrite;
     private boolean serverIsDied;
+    private int PlayerID;//can be 0,1 or 2
 
     public ClientNetworkHandler(){this.run();}
 
@@ -120,8 +121,10 @@ public class ClientNetworkHandler implements Runnable, ServerObserver {
      */
     public synchronized void didReceivePing(Integer n)
     {
+
+        PlayerID = n-1;
         ping = n;
-        notifyAll();;
+        notifyAll();
     }
 
     /**

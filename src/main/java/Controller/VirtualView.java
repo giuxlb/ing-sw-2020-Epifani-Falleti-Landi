@@ -425,7 +425,7 @@ public class VirtualView {
     }
 
     /**
-     * getter to notify the GameControl that the set-up is ready
+     * Getter to notify the GameControl that the set-up is ready
      * @return
      */
     public boolean isSetUpisReady()

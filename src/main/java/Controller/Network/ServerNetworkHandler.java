@@ -82,11 +82,7 @@ public class ServerNetworkHandler implements Runnable, ClientObserver {
         Runnable runPingClient1 = ()->{
             while(true)
             {
-                try {
-                    TimeUnit.SECONDS.sleep(10);
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
+                //manda subito il ping
                 VCEvent pingEvent = new VCEvent((Integer) 1, VCEvent.Event.ping);
                 sendPingTo(pingEvent,0);
                 synchronized (this)
@@ -103,7 +99,12 @@ public class ServerNetworkHandler implements Runnable, ClientObserver {
                 {
                     virtualView.playerDisconnected(0);
                 }
-
+                //aspetta 10 secondi prima di rimandare il ping
+                try {
+                    TimeUnit.SECONDS.sleep(10);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
 
 
             }
@@ -129,11 +130,7 @@ public class ServerNetworkHandler implements Runnable, ClientObserver {
         Runnable runPingClient2 = ()->{
             while(true)
             {
-                try {
-                    TimeUnit.SECONDS.sleep(10);
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
+
                 VCEvent pingEvent = new VCEvent((Integer) 2, VCEvent.Event.ping);
                 sendPingTo(pingEvent,1);
                 synchronized (this)
@@ -150,6 +147,11 @@ public class ServerNetworkHandler implements Runnable, ClientObserver {
                         virtualView.playerDisconnected(1);
                     }
                     System.out.println("Pong1");
+                try {
+                    TimeUnit.SECONDS.sleep(10);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
             }
 
         };
@@ -171,11 +173,7 @@ public class ServerNetworkHandler implements Runnable, ClientObserver {
         Runnable runPingClient3 = ()->{
             while(true)
             {
-                try {
-                    TimeUnit.SECONDS.sleep(10);
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
+
 
                 VCEvent pingEvent = new VCEvent((Integer) 3, VCEvent.Event.ping);
                 sendPingTo(pingEvent,2);
@@ -193,6 +191,11 @@ public class ServerNetworkHandler implements Runnable, ClientObserver {
                     {
                         virtualView.playerDisconnected(2);
                     }
+                try {
+                    TimeUnit.SECONDS.sleep(10);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
 
 
 
