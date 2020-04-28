@@ -44,7 +44,7 @@ public class ServerNetworkHandler implements Runnable, ClientObserver {
         receiver1 = new ClientEventReceiver(this,0);
         receiver2 = new ClientEventReceiver(this,1);
         receiver3 = new ClientEventReceiver(this,2);
-        //la run deve essere chiamata dal gamecontrol creando un thread e chiamando la start su quel thread
+        //la run deve essere chiamata dalla Virtual View creando un thread e chiamando la start su quel thread
     }
 
     /**

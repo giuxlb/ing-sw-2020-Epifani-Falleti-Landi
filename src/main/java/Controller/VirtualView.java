@@ -30,6 +30,8 @@ public class VirtualView {
         usernames = new ArrayList<String>();
         connected = new boolean[3];
         serverHandler = new ServerNetworkHandler(this);
+        Thread serverThread = new Thread(serverHandler);
+        serverThread.start();
 
         while(true) {
             synchronized (this) {
