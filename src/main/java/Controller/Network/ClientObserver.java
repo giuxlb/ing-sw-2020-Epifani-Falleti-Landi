@@ -1,5 +1,8 @@
 package Controller.Network;
 
+/**
+ * @author Adriano Falleti
+ */
 
 public interface ClientObserver {
     public void didReceiveVCEventFrom(VCEvent event, int index);
