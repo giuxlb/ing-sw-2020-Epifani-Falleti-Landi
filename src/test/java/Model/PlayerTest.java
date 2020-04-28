@@ -31,6 +31,14 @@ public class PlayerTest {
     }
 
     @Test
+    public void getColorAndDate(){
+        Calendar data = Calendar.getInstance();
+        data.set(1998,Calendar.NOVEMBER,30);
+        assertEquals(player.getBirthDate(),data);
+        assertEquals(player.getUsername(),"Giux");
+    }
+
+    @Test
     public void setWorkers(){
         player.assignWorker(0,0,0);
         player.assignWorker(4,4,1);

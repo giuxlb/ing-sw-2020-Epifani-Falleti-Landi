@@ -1,0 +1,166 @@
+
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html id="htmlId">
+<head>
+  <title>Coverage Report :: Player</title>
+  <style type="text/css">
+    @import "../../.css/coverage.css";
+  </style>
+</head>
+
+<body>
+<div class="header"></div>
+
+<div class="content">
+<div class="breadCrumbs">
+    [ <a href="../../index.html">all classes</a> ]
+    [ <a href="../index.html">Model</a> ]
+</div>
+
+<h1>Coverage Summary for Class: Player (Model)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Class, %
+</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">Player</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (1/ 1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (9/ 9)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (15/ 15)
+  </span>
+</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<div class="sourceCode"><i>1</i>&nbsp;package Model;
+<i>2</i>&nbsp;
+<i>3</i>&nbsp;import java.util.Calendar;
+<i>4</i>&nbsp;
+<i>5</i>&nbsp;public class Player {
+<i>6</i>&nbsp;    private String username;
+<i>7</i>&nbsp;    private Worker[] workers;
+<i>8</i>&nbsp;    private Card gameCard;
+<i>9</i>&nbsp;    private Color color;
+<i>10</i>&nbsp;    private Calendar birthDate;
+<i>11</i>&nbsp;
+<i>12</i>&nbsp;    /***
+<i>13</i>&nbsp;     * Costruttore della classe Player
+<i>14</i>&nbsp;     * @param name nome da assegnare al giocatore
+<i>15</i>&nbsp;     */
+<b class="fc"><i>16</i>&nbsp;    public Player (String name,Calendar birthDate){</b>
+<b class="fc"><i>17</i>&nbsp;        this.username = name;</b>
+<b class="fc"><i>18</i>&nbsp;        this.birthDate = birthDate;</b>
+<b class="fc"><i>19</i>&nbsp;        this.workers = new Worker[2];</b>
+<b class="fc"><i>20</i>&nbsp;    }</b>
+<i>21</i>&nbsp;
+<i>22</i>&nbsp;
+<i>23</i>&nbsp;    /***
+<i>24</i>&nbsp;     * Creates and assign a worker to the player
+<i>25</i>&nbsp;     * @param x pos x
+<i>26</i>&nbsp;     * @param y pos y
+<i>27</i>&nbsp;     * @param index index of the worker
+<i>28</i>&nbsp;     */
+<b class="fc"><i>29</i>&nbsp;    public void assignWorker(int x,int y,int index){this.workers[index]= new Worker(x,y,this.color);}</b>
+<i>30</i>&nbsp;
+<i>31</i>&nbsp;    /***
+<i>32</i>&nbsp;     * Setter of the color
+<i>33</i>&nbsp;     * @param index the index of the color in the Color Enum
+<i>34</i>&nbsp;     */
+<b class="fc"><i>35</i>&nbsp;    public void setColor(int index){this.color = Color.values()[index];}</b>
+<i>36</i>&nbsp;
+<i>37</i>&nbsp;    /***
+<i>38</i>&nbsp;     * Setter of the card
+<i>39</i>&nbsp;     * @param card the card to assigng to the Player
+<i>40</i>&nbsp;     */
+<i>41</i>&nbsp;    public void chooseCard(Card card){
+<b class="fc"><i>42</i>&nbsp;        this.gameCard=card;</b>
+<b class="fc"><i>43</i>&nbsp;    }</b>
+<i>44</i>&nbsp;
+<i>45</i>&nbsp;    /***
+<i>46</i>&nbsp;     * calls the method to move a worker.
+<i>47</i>&nbsp;     * @param worker the worker to move
+<i>48</i>&nbsp;     * @param x new position x of the worker
+<i>49</i>&nbsp;     * @param y new position y of the worker
+<i>50</i>&nbsp;     */
+<i>51</i>&nbsp;    public void moveWith(Worker worker,int x, int y){
+<b class="fc"><i>52</i>&nbsp;        worker.moveTo(x,y);</b>
+<b class="fc"><i>53</i>&nbsp;    }</b>
+<i>54</i>&nbsp;
+<i>55</i>&nbsp;    /***
+<i>56</i>&nbsp;     * @author Alfredo Landi (to acknoledge some undebugged methods)
+<i>57</i>&nbsp;     * Get needed player&#39;s worker
+<i>58</i>&nbsp;     * @return
+<i>59</i>&nbsp;     */
+<i>60</i>&nbsp;    public Worker getWorker(int p){
+<b class="fc"><i>61</i>&nbsp;        return this.workers[p];</b>
+<i>62</i>&nbsp;    }
+<i>63</i>&nbsp;
+<i>64</i>&nbsp;    /***
+<i>65</i>&nbsp;     * @author Adriano Falleti
+<i>66</i>&nbsp;     * Get the attribute username
+<i>67</i>&nbsp;     * @return
+<i>68</i>&nbsp;     */
+<b class="fc"><i>69</i>&nbsp;    public String getUsername() {return username; }</b>
+<i>70</i>&nbsp;
+<i>71</i>&nbsp;    /***
+<i>72</i>&nbsp;     *
+<i>73</i>&nbsp;     * @return the card of this player
+<i>74</i>&nbsp;     */
+<b class="fc"><i>75</i>&nbsp;    public Card getGameCard(){return this.gameCard;}</b>
+<i>76</i>&nbsp;
+<i>77</i>&nbsp;    /***
+<i>78</i>&nbsp;     *
+<i>79</i>&nbsp;     * @return the birth date of this player
+<i>80</i>&nbsp;     */
+<b class="fc"><i>81</i>&nbsp;    public Calendar getBirthDate(){return this.birthDate;}</b>
+<i>82</i>&nbsp;
+<i>83</i>&nbsp;}
+</div>
+</div>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2020-04-28 11:51</div>
+</div>
+</body>
+</html>
