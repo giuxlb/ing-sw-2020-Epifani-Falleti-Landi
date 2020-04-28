@@ -42,6 +42,7 @@ public class ServerNetworkHandler implements Runnable, ClientObserver {
         adapters = new ClientAdapter[3];
         outputs = new ObjectOutputStream[3];
         inputs = new ObjectInputStream[3];
+        canWrite = new boolean[3];
         virtualView = vv;
 
         this.run();
@@ -215,8 +216,8 @@ public class ServerNetworkHandler implements Runnable, ClientObserver {
             clients[counter] = server.accept();
             clients[counter].setSoTimeout(20000);
             virtualView.setConnectedIndexToTrue(counter);
-            outputs[counter] = (ObjectOutputStream) clients[counter].getOutputStream();
-            inputs[counter] = (ObjectInputStream) clients[counter].getInputStream();
+            outputs[counter] = new ObjectOutputStream(clients[counter].getOutputStream());
+            inputs[counter] = new ObjectInputStream( clients[counter].getInputStream());
             adapters[counter] = new ClientAdapter(clients[counter], counter);
             adapters[counter].addObserver(this);
             adapters[counter].setInput(inputs[counter]);
@@ -269,8 +270,8 @@ public class ServerNetworkHandler implements Runnable, ClientObserver {
                 clients[counter] = server.accept();
                 clients[counter].setSoTimeout(20000);
                 virtualView.setConnectedIndexToTrue(counter);
-                outputs[counter] = (ObjectOutputStream) clients[counter].getOutputStream();
-                inputs[counter] = (ObjectInputStream) clients[counter].getInputStream();
+                outputs[counter] = new ObjectOutputStream( clients[counter].getOutputStream());
+                inputs[counter] = new ObjectInputStream( clients[counter].getInputStream());
                 adapters[counter] = new ClientAdapter(clients[counter],counter);
                 adapters[counter].addObserver(this);
                 adapters[counter].setInput(inputs[counter]);
@@ -368,7 +369,7 @@ public class ServerNetworkHandler implements Runnable, ClientObserver {
      * @param eventToClient is the event which will be sent to the client
      * @param clientIndex identifies the client who will receive the event
      */
-    public void sendVCEventTo(VCEvent eventToClient, int clientIndex)
+    public synchronized void sendVCEventTo(VCEvent eventToClient, int clientIndex)
     {
         synchronized (this)
         {
@@ -396,7 +397,7 @@ public class ServerNetworkHandler implements Runnable, ClientObserver {
      * @param pingEvent is the event with the attribute command set to .ping
      * @param clientIndex identifies the client who will receive the ping
      */
-    public void sendPingTo(VCEvent pingEvent, int clientIndex)
+    public synchronized void sendPingTo(VCEvent pingEvent, int clientIndex)
     {
         synchronized (this)
         {

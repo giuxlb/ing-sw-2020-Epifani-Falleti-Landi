@@ -28,7 +28,9 @@ public class VirtualView {
     {
           players = new ArrayList<Player>();
         usernames = new ArrayList<String>();
+        connected = new boolean[3];
         serverHandler = new ServerNetworkHandler(this);
+
         while(true) {
             synchronized (this) {
                 received = null;

@@ -165,7 +165,7 @@ public class ClientNetworkHandler implements Runnable, ServerObserver {
     /**
      * It answers to the ping sent by the server
      */
-    public void sendPing()
+    public synchronized void sendPing()
     {
         synchronized (this)
         {
