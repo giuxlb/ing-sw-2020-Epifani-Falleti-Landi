@@ -329,13 +329,20 @@ public class VirtualView {
 
     }
 
+
     /**
      * It notifies the player p that he has lost
      * @param p
      */
-    public void youLost(Player p)
+    public void youLost(Player p,boolean playerBlocked,Player winner)
     {
-        VCEvent evento = new VCEvent("Loser", VCEvent.Event.you_lost);
+        VCEvent evento;
+        if (playerBlocked == false) {
+             evento = new VCEvent(winner.getUsername(), VCEvent.Event.you_lost);
+        }
+        else{
+            evento = new VCEvent(winner.getUsername(), VCEvent.Event.game_ended_foryou);
+        }
         for (int i = 0; i <numberOfPlayers ; i++) {
             if (p.getUsername().equals(players.get(i).getUsername()))
                 serverHandler.sendVCEventTo(evento,i);

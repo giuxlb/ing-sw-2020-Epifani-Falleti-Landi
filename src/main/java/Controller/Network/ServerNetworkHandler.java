@@ -19,19 +19,19 @@ import java.util.concurrent.TimeUnit;
 public class ServerNetworkHandler implements Runnable, ClientObserver {
 
 
-    private static ServerSocket server;
-    private static Socket[] clients;
-    private static ClientAdapter[] adapters;
-    private static VCEvent fromClient1;
-    private static Integer numberOfPlayers;
+    private ServerSocket server;
+    private Socket[] clients;
+    private ClientAdapter[] adapters;
+    private VCEvent fromClient1;
+    private Integer numberOfPlayers;
     public final static int SOCKET_PORT = 7777;
-    private static  ObjectOutputStream[] outputs;
-    private static ObjectInputStream[] inputs;
-    public static VirtualView virtualView;
-    private static boolean[] canWrite;
-    private static ClientEventReceiver receiver1;
-    private static ClientEventReceiver receiver2;
-    private static ClientEventReceiver receiver3;
+    private ObjectOutputStream[] outputs;
+    private ObjectInputStream[] inputs;
+    public  VirtualView virtualView;
+    private boolean[] canWrite;
+    private ClientEventReceiver receiver1;
+    private ClientEventReceiver receiver2;
+    private ClientEventReceiver receiver3;
 
     public ServerNetworkHandler(VirtualView vv)
     {
@@ -256,10 +256,7 @@ public class ServerNetworkHandler implements Runnable, ClientObserver {
 
     }
 
-
-
-
-
-
-
+    public Socket[] getClients() {
+        return clients;
+    }
 }

@@ -1,5 +1,6 @@
 package Controller.Network;
 
+import java.io.IOException;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -87,8 +88,18 @@ public class ClientEventReceiver implements Runnable {
                 }
 
             }
-            snh.virtualView.receivedResponse(fromClient.getBox());
-           // System.out.println("Il client "+(this.clientIndex+1)+" ha scritto "+ fromClient.getBox());
+            if ((fromClient.getCommand() == VCEvent.Event.you_lost) || (fromClient.getCommand() == VCEvent.Event.you_won))
+            {
+                try {
+                    snh.getClients()[clientIndex].close();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+            else {
+                snh.virtualView.receivedResponse(fromClient.getBox());
+            }
+
         }
 
 
