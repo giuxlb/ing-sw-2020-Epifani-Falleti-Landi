@@ -46,7 +46,13 @@ public class Game {
             turnNumber++;
 
         }
-        p.setColor(turnNumber);
+        if(turnNumber==0){
+            p.setColor(Color.ANSI_YELLOW);
+        }else if(turnNumber==1){
+            p.setColor(Color.ANSI_GREEN);
+        }else if(turnNumber==2{
+            p.setColor(Color.ANSI_PURPLE);
+        }
     }
 
     /**

@@ -1,44 +1,67 @@
 //Manca ancora tutta la logica delle carte
 package Client.View;
 
-import Model.*;
-import Client.Controller.*;
+import Controller.Network.VCEvent;
+import Model.Board;
+import Model.Player;
+import Client.Controller.Controller;
+import Controller.Coordinates;
+import Controller.Network.VCEvent;
+import Model.Color;
+import Model.Worker;
 
+
+import java.util.ArrayList;
 import java.util.Scanner;
 
 public class CLI {
     public static void main(String[] args){
-        boolean endGame=false; //It will be modified as soon as clientSocket will be completed
-        boolean myTurn=false;//It will be modified as soon as clientSocket will be completed
-        int playerID=0; //It will be modified as soon as clientSocket will be completed
         System.out.println("Santorini - Epifani Falleti Landi");
-        CLI currentCLI = new CLI();
-        Scanner s= new Scanner(System.in);
-        Board b= new Board();
-        Controller clientController = new Controller();
+        CLI CLI = new CLI();
 
-        //Costruzione oggetto clientNetworkHandler
+        //Costruzione dello scanner e del Controlle usati nel main(Una volta finita la CLI posso unificarli con quelli del costruttore di CLI?)
+        Scanner mainScanner= new Scanner(System.in);
+        Controller mainController = new Controller();
+
+        //Creazione della socket del client
         ClientNetworkHandler cnh = new ClientNetworkHandler();
-        Thread clientNetworkHandlerThread = new Thread(cnh);
-        clientNetworkHandlerThread.start();
 
-        System.out.println("Inserisci il tuo nome utente");
-        s.nextLine();
-        //sendUsername to Server
-       /* while (clientController.checkUsername(cnh)==false){ //o va implementata in modo diverso
-            System.out.println("Questo username è già stato scelto! Per favore riprovare!");
-            s.nextLine();
+        //Thread per l'esecuzione principale della CLI
+        Thread game = new Thread(cnh);
+        game.start();
 
-        }*/
-        //getPlayerID from server
-        if(playerID==0){
-            System.out.println("Quanti giocatori giocheranno a questa partita?\n" +
-                    "Inserire 2 per 2 giocatori, 3 per 3 giocatori"); //Controllo deve essere fatto lato client o lato server?
-            s.nextInt();
-            //sendPlayersNumber to server
+
+        /*Quando Adriano ha fatto la modifica in ClientNetworkHandler implenta questo while
+        * while(cnh.isIdArrived()==false){
+        * //Qui bisogna aggiungere un ritardo per far aspettare il client
+        * }
+        * */
+        CLI.setPlayerID(cnh.getPlayerID());
+        if(CLI.getPlayerID()==0) {
+            //Aspetta fino a quando non arriva un messaggio
+            CLI.waitUpdateView(cnh);
+
+            //Chiede numero giocatori al primo client
+            System.out.println("Quanti giocatori giocheranno a questa partita?\nInserire 2 per 2 giocatori, 3 per 3 giocatori");
+            int n = mainScanner.nextInt();
+            while (mainController.checkNumberOfPlayers(n) == false) {
+                System.out.println("Errore, impossibile avviare una partita con questo numero di giocatori, chiedere solo per 2 o 3 giocatori");
+                n = mainScanner.nextInt();
+            }
+            CLI.buildEvent(cnh, n, VCEvent.Event.setup_request);
+
+            //Le pedine del primo player sono gialle
+            CLI.setColor(Color.ANSI_GREEN);
+        }else if(CLI.getPlayerID()==1){
+            //Le pedine del secondo player sono verdi
+            CLI.setColor(Color.ANSI_GREEN);
+        }else if(CLI.getPlayerID()==2){
+            //Le pedine di un EVENTUALE terzo player sono viola
+            CLI.setColor(Color.ANSI_PURPLE);
         }
 
-        System.out.println("Caricamento in corso...");
+
+        /*System.out.println("Caricamento in corso...");
         //getBoard() from server
         currentCLI.printBoard(b);
         System.out.println("Dove vuoi inserire il primo worker?");
@@ -53,26 +76,32 @@ public class CLI {
         System.out.println("Selezionare l'i-esima posizione");
         s.nextInt();
         System.out.println("Selezionare la j-esima positione");
-        s.nextInt();
+        s.nextInt();*/
 
-        while(!endGame){ //ci sarà la getEndGame della socket
-            if(myTurn){// ci sarà la getTurn della socket
-                System.out.println("Fase di spostamento");
-                System.out.println("Le caselle in cui puoi costruire sono in rosso");
-                //cnh.getValidiPositions()
-                //paintAvaibleBoardCell(Board b, validPosition)
 
-                System.out.println("Fase di costruzione");
-                //Codice per la fase di costruzione
-            }
-        }
 
         System.out.println("Partita terminata!\n Il vincitore è -> " /*+getWinner()*/);
 
     }
 
+    //Attributi grafici e testuali della CLI
+    private Controller c;
+    private Scanner s;
+    private int playerID;
+    private Color ansiColor;
+    private Board b;
+    private String move="dove ti vuoi muovere";
+    private String build="dove vuoi costruire";
 
 
+    //Costruttore della CLI
+    public CLI(){
+        s= new Scanner(System.in);
+        c=new Controller();
+        b= new Board();
+    }
+
+    //da aggiustare una volta finita l'unificazione con ClientNetworkHandler
     public void printBoard(Board b){
         for(int i=0;i<5;i++){
             for(int j=0;j<5;j++)  {
@@ -86,15 +115,117 @@ public class CLI {
         }
     }
 
-    public void initialSettlemet(Controller c, int index){
-        int pos;
-
-        Scanner is= new Scanner(System.in);
-        System.out.println("Selezionare l'i-esima posizione del " + index+1 + "°" +" worker");
-        pos=is.nextInt();
-        while(!c.checkLimits(pos)){
-            System.out.println("Errore, gli indici delle posizione vanno da solo da 0 a 4, perfavore reinserire!");
-            pos=is.nextInt();
+    //da aggiustare una volta finita l'unificazione con ClientNetworkHandler
+    public void paintBoardCell(Board b, ArrayList<Coordinates> validPositions){
+        for(int i=0;i<5;i++){
+            for(int j=0;j<5;j++){
+                for(Coordinates c: validPositions){
+                    if(c.getX()==i && c.getY()==j){
+                        System.out.print( Color.ANSI_BLUE +"| worker: X" + " height: " + b.getBoardHeight(i,j) + "| ");
+                    }
+                }
+            }
         }
     }
+
+    //da aggiustare una volta finita l'unificazione con ClientNetworkHandler
+    public void printWorker(Board b, int i, int j, Color c){
+        if(b.getBoardWorker(i,j)==null){
+            System.out.print( c +"| worker: X" + " height: " + b.getBoardHeight(i,j) + "| ");
+        }else{
+            System.out.print( Color.ANSI_BLUE +"| worker: " /*+*/  + " height: " + b.getBoardHeight(i,j) + "| ");
+        }
+    }
+
+    public int getPlayerID() {
+        return playerID;
+    }
+
+    public void setPlayerID(int playerID) {
+        this.playerID = playerID;
+    }
+
+    public void buildEvent(ClientNetworkHandler cnh, Object o, VCEvent.Event command){
+        VCEvent currentEvent= new VCEvent(o, command);
+        cnh.sendVCEvent(currentEvent);
+    }
+
+    public void waitUpdateView(ClientNetworkHandler cnh){
+        while(cnh.isUpdateView()==false){
+            //lo facciamo addormentare
+        }
+    }
+
+    public void checkEvent(ClientNetworkHandler cnh){
+        while(true){
+            waitUpdateView(cnh);
+            switch (cnh.getFromServer().getCommand()){
+                case username_request :
+                    System.out.println("Inserisci il tuo nome utente");
+                    String username=s.nextLine();
+                    buildEvent(cnh, username, VCEvent.Event.username_request);
+                    break;
+                /*case wrong_username*/
+                /*case Date request*/
+                case not_your_turn:
+                    Object objectPlayer = cnh.getFromServer().getBox();
+                    if(objectPlayer instanceof Player){
+                        Player p = (Player)objectPlayer;
+                        System.out.println("Partita in corso, sta giocando " + p.getUsername() + " con la carta " + p.getGameCard());
+                    }else {
+                        System.out.println("Errore, player corrotto!");
+                    }
+                    break;
+                case update:
+                    Object objectBoard = cnh.getFromServer().getBox();
+                    if(objectBoard instanceof Board){
+                        Board b = (Board)objectBoard;
+                        printBoard(b);
+                        setBoard(b);
+                        //Abbiamo bisogno che update venga sempre mandato prima di send_cells_move (Da chiedere a Peppe)
+                    }else {
+                        System.out.println("Errore, board corrotta!");
+                    }
+                    break;
+                case send_cells_move:
+                    Object objectValidPositions = cnh.getFromServer().getBox();
+                    ArrayList<Coordinates> validPositions = (ArrayList<Coordinates>)objectValidPositions;
+                    paintBoardCell(b, validPositions );
+                    //Attenzione qui non possiamo controllare se il dato arrivi corrotto o meno!
+                    System.out.println("Selezionare l'i-esima posizione " + getStringMove());
+                    s.nextInt();
+                    System.out.println("Selezionare la j-esima positione" +get);
+                    s.nextInt();
+                        break;
+
+
+            }
+        }
+    }
+
+    /***
+     *
+     * @param c
+     */
+    public void setColor(Color c) {
+        this.ansiColor = c;
+    }
+
+    /***
+     *
+     * @return
+     */
+    public Color getColor() {
+        return ansiColor;
+    }
+
+    public Board getBoard() {
+        return b;
+    }
+
+    public void setBoard(Board b) {
+        this.b = b;
+    }
+
+
 }

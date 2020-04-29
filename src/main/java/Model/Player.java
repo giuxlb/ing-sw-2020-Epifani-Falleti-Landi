@@ -29,10 +29,10 @@ public class Player {
     public void assignWorker(int x,int y,int index){this.workers[index]= new Worker(x,y,this.color);}
 
     /***
-     * Setter of the color
-     * @param index the index of the color in the Color Enum
+     *
+     * @param c
      */
-    public void setColor(int index){this.color = Color.values()[index];}
+    public void setColor(Color c){this.color = c;}
 
     /***
      * Setter of the card
@@ -80,4 +80,7 @@ public class Player {
      */
     public Calendar getBirthDate(){return this.birthDate;}
 
+    public Color getColor() {
+        return color;
+    }
 }

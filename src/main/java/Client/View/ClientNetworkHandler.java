@@ -24,7 +24,7 @@ public class ClientNetworkHandler implements Runnable, ServerObserver {
     private Integer ping; // can be 1,2 or 3
     private boolean canWrite;
     private boolean serverIsDied;
-    private int PlayerID;//can be 0,1 or 2
+    private int playerID;//can be 0,1 or 2
 
 
 
@@ -120,7 +120,8 @@ public class ClientNetworkHandler implements Runnable, ServerObserver {
     public synchronized void didReceivePing(Integer n)
     {
 
-        PlayerID = n-1;
+
+        playerID = n.intValue()-1;
         ping = n;
         notifyAll();
     }
@@ -215,5 +216,19 @@ public class ClientNetworkHandler implements Runnable, ServerObserver {
         return winner;
     }
 
+    /***
+     * Get playerID
+     * @return ID of current player of the client
+     */
+    public int getPlayerID() {
+        return playerID;
+    }
 
+    /***
+     *
+     * @return
+     */
+    public VCEvent getFromServer() {
+        return fromServer;
+    }
 }

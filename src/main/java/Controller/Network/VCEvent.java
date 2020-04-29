@@ -16,7 +16,7 @@ public class VCEvent implements Serializable {
         setup_request,
         username_request,
         date_request,
-       not_your_turn,
+        not_your_turn,
         update,
         send_cells_move,
         send_cells_build,
