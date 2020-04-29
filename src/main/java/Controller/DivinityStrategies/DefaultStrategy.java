@@ -22,9 +22,15 @@ public class DefaultStrategy implements TurnStrategy {
      * @param worker the chosen worker
      * @param board the board
      * @param game the game
-     * @param athenaeffect athena effect, used in the checkAvailableMoveSpots method
+     * @param extraEffect applied on this turn
      */
-    public void turn(Player player, Worker worker, Board board, Game game, boolean athenaeffect, VirtualView vview){
+    public int turn(Player player, Worker worker, Board board, Game game, int extraEffect, VirtualView vview){
+        /*Calcolo l'extra effect di questo turno*/
+        boolean athenaeffect = false;
+        if(extraEffect==1){
+            athenaeffect = true;
+        }
+
         /*Salvo la posizione iniziale*/
         Coordinates starting_position = new Coordinates(worker.getPositionX(),worker.getPositionY());
 
@@ -55,7 +61,7 @@ public class DefaultStrategy implements TurnStrategy {
         /*Costruisco*/
         build(worker,build_spots,index,game,board);
 
-
+        return 0;
     }
 
     /***
@@ -153,13 +159,13 @@ public class DefaultStrategy implements TurnStrategy {
      * Method that checks if the player has won after a move.
      * It checks if the starting position has an height value of "2" and if the final position has an height value of "3".
      * To be executed after every move.
-     * @param starting_positon the position before the move
+     * @param starting_position the position before the move
      * @param final_position the position after the move
      * @param board board
      * @return true if the player has won
      */
-    public boolean checkWinCondition(Coordinates starting_positon,Coordinates final_position, Board board){
-        if (board.getBoardGame()[starting_positon.getX()][starting_positon.getY()].getHeight()==2 && board.getBoardGame()[final_position.getX()][final_position.getY()].getHeight()==3){
+    public boolean checkWinCondition(Coordinates starting_position,Coordinates final_position, Board board){
+        if (board.getBoardGame()[starting_position.getX()][starting_position.getY()].getHeight()==2 && board.getBoardGame()[final_position.getX()][final_position.getY()].getHeight()==3){
             return true;
         }
         return false;

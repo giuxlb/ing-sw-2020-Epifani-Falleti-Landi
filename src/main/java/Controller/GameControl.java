@@ -34,9 +34,11 @@ public class GameControl {
         }
 
         //prendo nome, data, e numero giocatori dal client 0
-        String player_name_0 = virtualView.getFirstUsername();
-        Calendar player_date_0 = virtualView.getFirstDate();
         int player_number = virtualView.getNumberOfPlayers();
+
+
+        String player_name_0 = virtualview.askForUsername(0,false);
+        Calendar player_date_0 = virtualView.askForDate(0);
 
         //aggiungo il player 0
         this.addPlayer(new Player(player_name_0,player_date_0));
@@ -46,10 +48,12 @@ public class GameControl {
 
 
         //continuo a chiedere il nome al secondo giocatore finchè non è diverso dal primo
+        boolean first_time = true;
         while (!flag) {
             //ricevo dal client nome 2
-            player_name_1 = virtualView.askForUsername(1);
+            player_name_1 = virtualView.askForUsername(1,!first_time);
             if(!player_name_1.equals(player_name_0)){ flag=true;}
+            first_time = false;
 
         }
         Calendar player_date_1 = virtualView.askForDate(1);
@@ -60,9 +64,11 @@ public class GameControl {
             flag=false;
             String player_name_2 = null;
 
+            first_time = true;
             while (!flag){
-                player_name_2 = virtualView.askForUsername(2);
+                player_name_2 = virtualView.askForUsername(2,!first_time);
                 if(!player_name_2.equals(player_name_1) && !player_name_2.equals(player_name_0)){flag=true;}
+                first_time = false;
             }
             Calendar player_date_2 = virtualView.askForDate(2);
             this.addPlayer(new Player(player_name_2,player_date_2));
@@ -111,29 +117,54 @@ public class GameControl {
 
         //chiedo a tutti i player le posizioni iniziali
         do{
-            boolean valid_pos = false;
-            Coordinates initial_pos;
-
-            for(int worker_index = 0;worker_index<2;worker_index++) {
-                while (!valid_pos) {
-                    initial_pos = virtualView.askInitialPosition(players.get(game.getTurnNumber()),worker_index);
-                    valid_pos = checkValidInitialPosition(initial_pos.getX(), initial_pos.getY());
-                    if (valid_pos) {
-                        insertInitialPosition(game.getTurnNumber(), initial_pos.getX(), initial_pos.getY(),worker_index);
-                    } else {
-                        virtualView.sendMessageWrongPosition(players.get(game.getTurnNumber()));
-                    }
+            //creo e riempio una lista con tutte le posizioni valide
+            ArrayList<Coordinates> initial_valid_pos = new ArrayList<>();
+            for(int i = 0;i < 5;i++){
+                for(int j = 0;j < 5;j++){
+                    initial_valid_pos.add(new Coordinates(i,j));
                 }
+            }
+            int index;
+            for(int worker_index = 0;worker_index<2;worker_index++) {
+
+                //mando al current player la lista delle posizioni valide e rcevo l'indice della posizione scelta
+                index = virtualView.sendAvailableMove(players.get(game.getTurnNumber()),initial_valid_pos);
+
+                //inserisco il worker nella la posizione scelta
+                insertInitialPosition(game.getTurnNumber(),initial_valid_pos.get(index).getX(),initial_valid_pos.get(index).getY(),worker_index);
+
+                //rimuovo la posizione scelta dall'array
+                initial_valid_pos.remove(index);
+
+
             }
 
             game.nextTurnNumber();
         }while(game.getTurnNumber()!=0);
 
+
+        //loop della partita:
+        //next_turn_effect è il valore di ritorno di startNextTurn, e sta ad indicare che nel ciclo di turno successivo ci sarà un effetto extra (tipo Athena)
+        //extra_turn_effect è il parametro passato a startNextTurn, che indica se e quali effetti extra ci saranno in  questo turno
+        //effect_duration indica per quanti turni l'effetto si applica, viene settato al numero di giocatori-1 quando next_turn_effect indica che c'è un effetto
+        int next_turn_effect = 0;
+        int extra_turn_effect = 0;
+        int effect_duration = 0;
         while(true){
+            if(effect_duration>0){
+                next_turn_effect = startNextTurn(extra_turn_effect);
+                effect_duration--;
+            }
+            else {
+                next_turn_effect = startNextTurn(0);
+            }
 
-
-            startNextTurn();
             game.nextTurnNumber();
+
+            if(next_turn_effect!=0) {
+                extra_turn_effect = next_turn_effect;
+                effect_duration = players.size()-1;
+            }
         }
 
 
@@ -143,9 +174,9 @@ public class GameControl {
      * Method that starts the currentPlayer's turn, this
      * method will be inserted in a loop in startGame
      */
-    public void startNextTurn(){
-        TurnControl turn = new TurnControl(players.get(game.getTurnNumber()),athenaEffectTurn,game.getBoardGame(),game,virtualView);
-        turn.start();
+    public int startNextTurn(int extra_turn_effect){
+        TurnControl turn = new TurnControl(players.get(game.getTurnNumber()),extra_turn_effect,game.getBoardGame(),game,virtualView);
+        return turn.start();
     }
 
     /***

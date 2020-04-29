@@ -23,9 +23,15 @@ public class DemeterStrategy extends DefaultStrategy implements TurnStrategy {
      * @param worker the worker of this turn
      * @param board board
      * @param game game
-     * @param athenaeffect athena effect
+     * @param extraEffect the effect on this turn
      */
-    public void turn(Player player, Worker worker, Board board, Game game, boolean athenaeffect, VirtualView vview){
+    public int turn(Player player, Worker worker, Board board, Game game, int extraEffect, VirtualView vview){
+
+        /*Calcolo l'extra effect di questo turno*/
+        boolean athenaeffect = false;
+        if(extraEffect==1){
+            athenaeffect = true;
+        }
 
         /*Salvo la posizione iniziale*/
         Coordinates starting_position = new Coordinates(worker.getPositionX(),worker.getPositionY());
@@ -66,5 +72,6 @@ public class DemeterStrategy extends DefaultStrategy implements TurnStrategy {
         /*Costruisco*/
         build(worker,build_spots,index,game,board);
 
+        return 0;
     }
 }

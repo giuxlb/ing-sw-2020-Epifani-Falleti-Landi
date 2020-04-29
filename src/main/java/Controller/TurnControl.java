@@ -4,7 +4,7 @@ import Model.*;
 
 public class TurnControl {
     private Player player;
-    private boolean athenaEffect;
+    private int extraEffect;
     private Card card;
     private DivinityContext ctx;
     private Board boardGame;
@@ -14,12 +14,11 @@ public class TurnControl {
     /***
      * Constructor of TurnControl, which is created every time a turn starts
      * @param player the player that his starting their turn
-     * @param athenaEffect boolean that indicates the fact that another player
-     *                     can interfere in this turn with the Athena effect
+     * @param extraEffect effect on this turn
      */
-    public TurnControl(Player player,boolean athenaEffect,Board boardGame,Game game,VirtualView virtualView){
+    public TurnControl(Player player,int extraEffect,Board boardGame,Game game,VirtualView virtualView){
         this.player = player;
-        this.athenaEffect = athenaEffect;
+        this.extraEffect = extraEffect;
         this.card = this.player.getGameCard();
         this.ctx = new DivinityContext();
         this.boardGame = boardGame;
@@ -27,7 +26,7 @@ public class TurnControl {
         this.virtualView = virtualView;
     }
 
-    public void start(){
+    public int start(){
 
         //ask the player if they want to use the card effect
 
@@ -36,8 +35,7 @@ public class TurnControl {
         //ask the player which worker they want to use
         Worker selectedWorker = player.getWorker(0);
 
-        ctx.turn(player,selectedWorker,boardGame,game,athenaEffect,virtualView);
-
+        return ctx.turn(player,selectedWorker,boardGame,game,extraEffect,virtualView);
     }
 
 
