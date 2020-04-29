@@ -65,7 +65,7 @@ public class ServerNetworkHandler implements Runnable, ClientObserver {
         Thread th2 = new Thread(receiver2);
         Thread th3 = new Thread(receiver3);
 
-        //per ogni client che prendiamo dobbiamo creare salvarci l'adapter nell'array adapters e la sua socket nell'array clientse aggiungere il server come observer
+        //per ogni client che prendiamo dobbiamo  salvarci l'adapter nell'array adapters e la sua socket nell'array clients e aggiungere il server come observer
         int counter = 0;
         try {
             clients[counter] = server.accept();
@@ -86,13 +86,12 @@ public class ServerNetworkHandler implements Runnable, ClientObserver {
         {
             System.out.println("connection dropped");
         }
-
-        //qui dovrò aspettare un VCEvent dal primo client connesso con il numero di giocatori perchè poi mi serve per accettare gli altri
-        VCEvent e1 = new VCEvent(Color.ANSI_YELLOW , VCEvent.Event.setup_request);
         th1.start();
+        //qui dovrò aspettare un VCEvent dal primo client connesso con il numero di giocatori perchè poi mi serve per accettare gli altri
+        VCEvent e1 = new VCEvent("NumberOfPlayers" , VCEvent.Event.setup_request);
+
         while(true){
             sendVCEventTo(e1,0);
-
             synchronized (this)
             {
                 fromClient1 = null;
@@ -101,17 +100,6 @@ public class ServerNetworkHandler implements Runnable, ClientObserver {
                         wait();
                     } catch (InterruptedException e) { }
                 }
-            }
-            if (fromClient1.getBox() instanceof String) {
-                virtualView.receivedResponse(fromClient1.getBox());
-                e1 = null;
-                e1 = new VCEvent("Data", VCEvent.Event.setup_request);
-            }
-            else if (fromClient1.getBox() instanceof Calendar)
-            {
-                virtualView.receivedResponse(fromClient1.getBox());
-                e1 = null;
-                e1 = new VCEvent("NumeroGiocatori", VCEvent.Event.setup_request);
             }
             if (fromClient1.getBox() instanceof Integer) // se il box è un Integer allora vuol dire che ci avrà mandato il numero di giocatori
                 break;
@@ -151,11 +139,6 @@ public class ServerNetworkHandler implements Runnable, ClientObserver {
             numberOfPlayers--;
 
         }
-        //una volta arrivato qui devo ritornare alla VirtualView il setup con il primo nome  e il numero di giocatori
-        //poi la VirtualView dovrà chiedermi di chiedergli lo username e io avrò già tutto pronto per mandare la richiesta e ricever
-        //la risposta
-
-
 
 
     }

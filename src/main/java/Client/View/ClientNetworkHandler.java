@@ -13,6 +13,8 @@ import java.io.IOException;
  */
 public class ClientNetworkHandler implements Runnable, ServerObserver {
 
+
+
     private VCEvent fromServer;
     private ServerAdapter adapter;
     private Socket server;
@@ -24,7 +26,13 @@ public class ClientNetworkHandler implements Runnable, ServerObserver {
     private Integer ping; // can be 1,2 or 3
     private boolean canWrite;
     private boolean serverIsDied;
-    private int playerID;//can be 0,1 or 2
+    private int PlayerID;//can be 0,1 or 2
+
+    public boolean isIdArrived() {
+        return idArrived;
+    }
+
+    private boolean idArrived;
 
 
 
@@ -82,24 +90,16 @@ public class ClientNetworkHandler implements Runnable, ServerObserver {
         while (true)
         {
             synchronized (this) {
-                    fromServer = null;
-                    while (fromServer == null) {
-                        updateView = false;
-                        try {
-                            wait();
-                        } catch (InterruptedException e) {
-                        }
+                fromServer = null;
+                while (fromServer == null) {
+                    updateView = false;
+                    try {
+                        wait();
+                    } catch (InterruptedException e) { }
 
-                    }
+                }
             }
                 updateView = true;
-
-                //qui l'evento dal server sarà arrivato e ora devo gestirlo con una switch sul suo comando per chiamare il metodo
-                //della view corrispondente. Poi la view chiamerà il metodo sendVCEvent passandogli il VCEvent da mandare al Server
-
-                //UNA SOLUZIONE ALTERNATIVA POTREBBE ESSERE ANCHE MANDARE DIRETTAMENTE L'EVENTO ALLA VIEW, MA DIPENDE
-                //DA COME ALFREDO VUOLE IMPLEMENTARE LA CLI/GUI
-
         }
 
     }
@@ -120,8 +120,8 @@ public class ClientNetworkHandler implements Runnable, ServerObserver {
     public synchronized void didReceivePing(Integer n)
     {
 
-
-        playerID = n.intValue()-1;
+        PlayerID = n-1;
+        idArrived = true;
         ping = n;
         notifyAll();
     }
@@ -191,6 +191,13 @@ public class ClientNetworkHandler implements Runnable, ServerObserver {
 
     }
 
+    /**
+     * Getter for the event from Server
+     * @return
+     */
+    public VCEvent getFromServer() {
+        return fromServer;
+    }
 
     /**
      * Getter for the attribute endGame
@@ -216,19 +223,7 @@ public class ClientNetworkHandler implements Runnable, ServerObserver {
         return winner;
     }
 
-    /***
-     * Get playerID
-     * @return ID of current player of the client
-     */
     public int getPlayerID() {
-        return playerID;
-    }
-
-    /***
-     *
-     * @return
-     */
-    public VCEvent getFromServer() {
-        return fromServer;
+        return PlayerID;
     }
 }

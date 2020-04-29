@@ -15,6 +15,7 @@ public class VCEvent implements Serializable {
     public enum Event{
         setup_request,
         username_request,
+        wrong_username,
         date_request,
         not_your_turn,
         update,

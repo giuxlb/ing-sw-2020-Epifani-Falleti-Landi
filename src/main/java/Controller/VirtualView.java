@@ -13,9 +13,6 @@ import java.util.Calendar;
 public class VirtualView {
     private ServerNetworkHandler serverHandler;
     private ArrayList<Player> players;
-    private ArrayList<String> usernames;
-    private String firstUsername;
-    private Calendar firstDate;
     private Integer numberOfPlayers;
     private Object received;
     private boolean setUpisReady;
@@ -26,8 +23,7 @@ public class VirtualView {
      */
     public VirtualView()
     {
-          players = new ArrayList<Player>();
-        usernames = new ArrayList<String>();
+        players = new ArrayList<Player>();
         connected = new boolean[3];
         serverHandler = new ServerNetworkHandler(this);
         Thread serverThread = new Thread(serverHandler);
@@ -42,21 +38,15 @@ public class VirtualView {
                     } catch (InterruptedException e) {
                     }
                 }
-                if (received instanceof String) {
-                    firstUsername = (String) received;
-                    usernames.add(firstUsername);
-                    received = null;
-                } else if (received instanceof Calendar) {
-                    firstDate = (Calendar) received;
-                    received = null;
-                } else if (received instanceof Integer) {
-                    numberOfPlayers = (Integer) received;
-                    break;//esce dal loop
-                }
             }
+            if (received instanceof Integer)
+            {
+                numberOfPlayers = (Integer) received;
+                break;//esce dal loop
+            }
+
         }
-        //una volta qui abbiamo settato tutto e settiamo setUpisReady e così il gameControl può leggere
-        //firstUsername, firstDate e numberOfPlayers
+       //una volta qui abbiamo il numero di giocatori
         setUpisReady = true;
 
 
@@ -68,16 +58,15 @@ public class VirtualView {
      * @param index identifies the client who will receive the request
      * @return
      */
-    public String askForUsername(int index)
+    public String askForUsername(int index,boolean wasWrong)
     {
-        Color colore;
-        if (index == 1)
-            colore = Color.ANSI_GREEN;
-        else {
-            colore = Color.ANSI_PURPLE;
+        VCEvent evento;
+        if (wasWrong == false) {
+             evento = new VCEvent("username", VCEvent.Event.username_request);
         }
-
-        VCEvent evento = new VCEvent(colore, VCEvent.Event.username_request);
+        else{
+            evento =  new VCEvent("username", VCEvent.Event.wrong_username);
+        }
         serverHandler.sendVCEventTo(evento,index);
         synchronized(this) {
             received = null;
@@ -92,7 +81,6 @@ public class VirtualView {
         }
         if (received instanceof String)
             return (String) received;
-        usernames.add((String) received);
 
         return "";
 
@@ -129,9 +117,9 @@ public class VirtualView {
      * It notifies the clientl that now it's not their turn
      * @param playersNotPlaying are the players that won't play during this turn
      */
-    public void notYourTurn(Player[] playersNotPlaying)
+    public void notYourTurn(Player[] playersNotPlaying,Player playerPlaying)
     {
-        VCEvent evento = new VCEvent("Wait", VCEvent.Event.not_your_turn);
+        VCEvent evento = new VCEvent(playerPlaying, VCEvent.Event.not_your_turn);
         for (int i = 0; i <numberOfPlayers ; i++) {
             for (int j = 0; j < numberOfPlayers-1; j++) {
                 if (players.get(i).getUsername().equals(playersNotPlaying[j].getUsername()))
@@ -144,21 +132,16 @@ public class VirtualView {
     }
 
     /**
-     * It sends to the client the update of the board after a move or a build of another player
-     * @param playersToUpdate are the players who need the update
+     * It sends to all the clients the update of the board after a move or a build of another player
      * @param board is the updated board
      */
-    public void upload(Player[] playersToUpdate, Board board)
+    public void upload(Board board)
     {
         VCEvent evento = new VCEvent(board, VCEvent.Event.update);
-        for (int i = 0; i <numberOfPlayers ; i++) {
-            for (int j = 0; j < numberOfPlayers-1; j++) {
-                if (players.get(i).getUsername().equals(playersToUpdate[j].getUsername()))
-                {
-                    serverHandler.sendVCEventTo(evento,i);
-                }
-            }
-        }
+        for (int i = 0; i <numberOfPlayers ; i++)
+            serverHandler.sendVCEventTo(evento,i);
+
+
     }
 
     /**
@@ -404,21 +387,6 @@ public class VirtualView {
        this.connected[index] = true;
     }
 
-    /**
-     * Getter for the username of the first client
-     * @return
-     */
-    public String getFirstUsername() {
-        return firstUsername;
-    }
-
-    /**
-     * Getter for the birthdate of the first client
-     * @return
-     */
-    public Calendar getFirstDate() {
-        return firstDate;
-    }
 
     /**
      * Getter for the number of players chosen by the first client
