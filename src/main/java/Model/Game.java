@@ -9,12 +9,18 @@ public class Game {
     private int turnNumber;
     private TurnPhases turnPhase;
     private ArrayList<Card> availableCards;
-    private ArrayList<Card> choosenCards;
+    private ArrayList<Card> chosenCards;
+    private boolean gameStopped;
+    private Player winner;
+    private Player lastLostPlayer;
 
 
     public Game()
     {
         this.boardGame = new Board();
+        this.gameStopped = false;
+        this.winner = null;
+        this.lastLostPlayer = null;
 
         //aggiungo tutte le carte implementate ad un array
         availableCards = new ArrayList<Card>();
@@ -50,7 +56,7 @@ public class Game {
             p.setColor(Color.ANSI_YELLOW);
         }else if(turnNumber==1){
             p.setColor(Color.ANSI_GREEN);
-        }else if(turnNumber==2{
+        }else if(turnNumber==2){
             p.setColor(Color.ANSI_PURPLE);
         }
     }
@@ -60,15 +66,65 @@ public class Game {
      */
     public void startGame()
     {
+        gameStopped = false;
         turnNumber = 0;
     }
 
     /**
      * it manages the end of a game
      */
-    public void stopGame()
+    public void stopGame(Player p)
     {
+        gameStopped = true;
+        if(p!=null){
+            winner = p;
+        }
+        boardGame.reset();
+        chosenCards.clear();
+        players[0]=null;
+        players[1]=null;
+        players[2]=null;
+        turnNumber = 0;
 
+    }
+
+    public void playerLose(Player p){
+        lastLostPlayer=p;
+
+        boardGame.setBoardWorker(p.getWorker(0).getPositionX(),p.getWorker(0).getPositionY(),null);
+        boardGame.setBoardWorker(p.getWorker(1).getPositionX(),p.getWorker(1).getPositionY(),null);
+
+
+        if(p.equals(players[2])){
+            players[2]=null;
+        }
+        else if(p.equals(players[1])){
+            players[1]=players[2];
+            players[2]=null;
+        }
+        else if(p.equals(players[0])){
+            players[0]=players[2];
+            players[2]=null;
+        }
+
+        if(turnNumber == 2){
+            turnNumber = 0;
+        }
+
+        //controlla il numero di giocatori rimasti
+        int count = 0;
+        Player winner = null;
+        for(int i = 0; i<3 ; i++){
+            if(players[i]!=null){
+                count++;
+                winner=players[i];
+            }
+        }
+        //se è rimasto un solo giocatore, si ferma il gioco e lo setta come winner
+        if(count==1){
+            gameStopped = true;
+            this.winner = winner;
+        }
     }
 
     /**
@@ -174,11 +230,19 @@ public class Game {
         return turnPhase;
     }
 
-    public void setChoosenCards(ArrayList<Card> choosenCards) {
-        this.choosenCards = choosenCards;
+    public void setChosenCards(ArrayList<Card> chosenCards) {
+        this.chosenCards = chosenCards;
     }
 
     public ArrayList<Card> getAvailableCards() {
         return availableCards;
     }
+
+    public boolean isGameStopped() {return gameStopped;}
+
+    public Player getWinner() {return winner;}
+
+    public Player getLastLostPlayer() {return lastLostPlayer;}
+
+    public void clearLastLostPlayer() {lastLostPlayer = null;}
 }

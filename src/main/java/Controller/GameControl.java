@@ -91,7 +91,7 @@ public class GameControl {
         //scelta delle carte del primo player
 
         ArrayList<Card> chosenCards = virtualView.sendAllCards(players.get(game.getTurnNumber()),game.getAvailableCards());
-        game.setChoosenCards(chosenCards);
+        game.setChosenCards(chosenCards);
         game.nextTurnNumber();
 
 
@@ -150,24 +150,38 @@ public class GameControl {
         int next_turn_effect = 0;
         int extra_turn_effect = 0;
         int effect_duration = 0;
-        while(true){
-            if(effect_duration>0){
+        while(!game.isGameStopped()) {
+            if (effect_duration > 0) {
                 next_turn_effect = startNextTurn(extra_turn_effect);
                 effect_duration--;
-            }
-            else {
+            } else {
                 next_turn_effect = startNextTurn(0);
             }
 
-            game.nextTurnNumber();
+            if(game.getLastLostPlayer()==null){
+                game.nextTurnNumber();
+            }
+            else{
+                players.remove(game.getLastLostPlayer());
+                virtualView.sendLostMessage(game.getLastLostPlayer());
+                game.clearLastLostPlayer();
+            }
 
-            if(next_turn_effect!=0) {
+            if (next_turn_effect != 0) {
                 extra_turn_effect = next_turn_effect;
-                effect_duration = players.size()-1;
+                effect_duration = players.size() - 1;
             }
         }
 
+        Player winner = game.getWinner();
 
+        if(winner!=null){
+            //manda il messaggio ai giocatori con scritto il vincitore
+            virtualView.sendWinMessage(winner);
+        }
+        else{
+            virtualView.sendInterruptedMessage();
+        }
     }
 
     /***
