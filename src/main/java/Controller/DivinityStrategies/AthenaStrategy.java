@@ -29,7 +29,11 @@ public class AthenaStrategy extends DefaultStrategy implements TurnStrategy {
         ArrayList<Coordinates> move_spots = checkAvailableMoveSpots(player,worker,board,athenaeffect);
 
         /*Se l'array è vuoto, il worker non puo spostarsi, quindi il player ha perso*/
-        //if (move_spots.size()==0) {game.lose(player);}
+        if (move_spots.size()==0) {
+            game.playerLose(player);
+            return 0;
+        }
+
         /*Mando le caselle al client, ricevo l'indice dello spostamento*/
         int index = vview.sendAvailableMove(player,move_spots);
 
@@ -41,7 +45,10 @@ public class AthenaStrategy extends DefaultStrategy implements TurnStrategy {
 
         /*Controllo se il giocatore ha vinto*/
         boolean win = checkWinCondition(starting_position,final_position,board);
-        //if (win) {game.win(player);}
+        if (win) {
+            game.stopGame(player);
+            return 0;
+        }
 
         /*Controllo se il worker è salito*/
         boolean has_gone_up = board.getBoardGame()[final_position.getX()][final_position.getY()].getHeight() > board.getBoardGame()[starting_position.getX()][starting_position.getY()].getHeight();
