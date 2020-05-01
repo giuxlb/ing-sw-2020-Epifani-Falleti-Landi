@@ -1,6 +1,8 @@
 package Model;
 
-public class Board {
+import java.io.Serializable;
+
+public class Board implements Serializable {
     private final static int DIM=5;
     private BoardCell[][] boardGame;
 

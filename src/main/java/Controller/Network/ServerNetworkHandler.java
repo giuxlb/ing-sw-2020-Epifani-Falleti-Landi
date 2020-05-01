@@ -200,6 +200,7 @@ public class ServerNetworkHandler implements Runnable, ClientObserver {
      */
     public synchronized void sendVCEventTo(VCEvent eventToClient, int clientIndex)
     {
+        System.out.println("Mando "+eventToClient.getCommand());
         synchronized (this)
         {
             while (canWrite[clientIndex] == false)

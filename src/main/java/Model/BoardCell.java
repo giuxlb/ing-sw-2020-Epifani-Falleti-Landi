@@ -1,6 +1,8 @@
 package Model;
 
-public class BoardCell {
+import java.io.Serializable;
+
+public class BoardCell implements Serializable {
     private int height;
     private Worker workerBuilder;
 
