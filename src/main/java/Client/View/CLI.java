@@ -1,4 +1,3 @@
-//Manca ancora tutta la logica delle carte
 package Client.View;
 
 import Controller.Network.VCEvent;
@@ -9,7 +8,6 @@ import Controller.Coordinates;
 import Controller.Network.VCEvent;
 import Model.Color;
 import Model.Worker;
-
 
 
 import java.util.ArrayList;
@@ -83,6 +81,9 @@ public class CLI {
     private String movingPhase = "Fase di movimento";
     private String buildingPhase = "Fase di costruzione";
     private int playersNumber;
+    private int giorno;
+    private int mese;
+    private int anno;
 
 
     //Costruttore della CLI
@@ -105,7 +106,7 @@ public class CLI {
     public void printBoard(Board b){
         for(int i=0;i<5;i++){
             for(int j=0;j<5;j++)  {
-                    System.out.print( Color.ANSI_BLUE +"| worker: " + turnWorkerIntoImage(b, i, j) + " height: " + turnHeightIntoImage(b, i, j) + " | ");
+                    System.out.print( Color.ANSI_BLUE +"| worker: " + turnWorkerIntoColoredImage(b, i, j) + " height: " + turnHeightIntoImage(b, i, j) + " | ");
                     }
             System.out.println();
         }
@@ -116,21 +117,26 @@ public class CLI {
      * @param b
      * @param validPositions
      */
-    public void paintBoardCell(Board b, ArrayList<Coordinates> validPositions){
-        for(int i=0;i<5;i++){
-            for(int j=0;j<5;j++){
-                for(Coordinates c: validPositions){
-                    if(c.getX()==i && c.getY()==j){
-                        System.out.print( Color.ANSI_BLUE +"| worker: " + turnWorkerIntoImage(b, i, j) + " height: " + turnHeightIntoImage(b, i, j) + " | ");
-                    }else{
-                        System.out.print( Color.ANSI_BLUE +"| worker: " + turnWorkerIntoImage(b, i, j) + " height: " + turnHeightIntoImage(b, i, j) + " | ");
+    public void paintBoardCell(Board b, ArrayList<Coordinates> validPositions) {
+        boolean isToPaint= false;
+
+        for (int i = 0; i < 5; i++) {
+            for (int j = 0; j < 5; j++) {
+                    for (Coordinates c: validPositions){
+                        if(c.getX()==i && c.getY()==j){
+                            isToPaint=true;
+                        }
                     }
+                if (isToPaint==true) {
+                    System.out.print(Color.ANSI_RED + "| worker: " + turnWorkerIntoColoredImage(b, i, j) + " height: " + turnHeightIntoImage(b, i, j) + " | ");
+                    isToPaint=false;
+                } else {
+                    System.out.print(Color.ANSI_BLUE + "| worker: " + turnWorkerIntoColoredImage(b, i, j) + " height: " + turnHeightIntoImage(b, i, j) + " | ");
                 }
             }
             System.out.println();
         }
     }
-
     /***
      *
      * @return
@@ -304,13 +310,13 @@ public class CLI {
      */
     public String turnHeightIntoImage(Board b, int i, int j){
         if(b.getBoardHeight(i,j)==0){
-            return "   ";
+            return e.getBuilding(0);
         }else if(b.getBoardHeight(i,j)==1){
-            return e.getBuilding(1);
+            return " " + e.getBuilding(1) + " ";
         }else if(b.getBoardHeight(i,j)==2){
-            return e.getBuilding(1) + " " + e.getBuilding(2);
+            return " " + e.getBuilding(2) + " ";
         }else if(b.getBoardHeight(i,j)==3){
-            return " " + e.getBuilding(3) + " ";
+            return e.getBuilding(3) + " " + e.getBuilding(1);
         }else if(b.getBoardHeight(i,j)==4){
             return " " + e.getBuilding(4) + " ";
         }
@@ -324,12 +330,21 @@ public class CLI {
      * @param j
      * @return
      */
-    public String turnWorkerIntoImage(Board b, int i, int j){
+    public String turnWorkerIntoColoredImage(Board b, int i, int j){
         if(b.getBoardWorker(i,j)!=null){
-            return " " + e.getWorker() + " ";
+            switch (b.getBoardWorker(i,j).getColor()){
+                case ANSI_YELLOW:
+                    return " " + Color.ANSI_YELLOW + e.getWorker() + " ";
+                case ANSI_GREEN:
+                    return " " + Color.ANSI_GREEN + e.getWorker() + " ";
+                case ANSI_PURPLE:
+                    return " " + Color.ANSI_PURPLE + e.getWorker() + " ";
+            }
         }else{
-            return "   ";
+            return "    ";
         }
+
+        return "Renderizzazione e colorazione del worker non riuscita";
     }
 
     /***
@@ -375,15 +390,18 @@ public class CLI {
     public void sendCells(String phase, ClientNetworkHandler cnh, VCEvent.Event command,VCEvent evento){
         System.out.println(phase);
         Object objectValidPositions = evento.getBox();
+        //Attenzione: qui non possiamo controllare se il dato arrivi corrotto o meno!
         ArrayList<Coordinates> validPositions = (ArrayList<Coordinates>)objectValidPositions;
         //Abbiamo bisogno che update venga sempre mandato prima di send_cells_move o send_cells_build (Da chiedere a Peppe)
         paintBoardCell(b, validPositions );
-        //Attenzione: qui non possiamo controllare se il dato arrivi corrotto o meno!
         int x=chooseCoordinate(xPosition);
         int y=chooseCoordinate(yPosition);
         Coordinates chosenCoordinates = new Coordinates(x,y);
         while(c.checkRequestedPosition(validPositions, chosenCoordinates)==false){
             System.out.println("Errore! Mossa non valida, controlla le caselle in rosso per poter eseguire una mossa valida");
+            x=chooseCoordinate(xPosition);
+            y=chooseCoordinate(yPosition);
+            chosenCoordinates = new Coordinates(x,y);
         }
         VCEvent replyPosition = new VCEvent(findIndex(validPositions, chosenCoordinates), command);
         cnh.sendVCEvent(replyPosition);
@@ -403,5 +421,20 @@ public class CLI {
      */
     public void setPlayersNumber(int playersNumber) {
         this.playersNumber = playersNumber;
+    }
+
+    /***
+     *
+     */
+    public void insertData(){
+        System.out.print("Inserire il giorno in cui si è nati in formato gg (solo numerico) ->");
+        this.giorno=s.nextInt();
+        System.out.println();
+        System.out.print("Inserire il mese in cui si è nati in formato mm (solo numerico) ->");
+        this.mese=s.nextInt();
+        System.out.println();
+        System.out.print("Inserire l'anno in cui si è nati in formato aaaa (solo numerico) ->");
+        this.anno=s.nextInt();
+        System.out.println();
     }
 }
