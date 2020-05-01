@@ -226,7 +226,7 @@ public class VirtualView {
      */
     public void sendYourCard(Player p, String c)
     {
-        VCEvent evento = new VCEvent(c, VCEvent.Event.send_chosen_cards);
+        VCEvent evento = new VCEvent(c, VCEvent.Event.send_your_card);
         for (int i = 0; i <numberOfPlayers ; i++) {
             if (p.getUsername().equals(players.get(i).getUsername()))
                 serverHandler.sendVCEventTo(evento,i);

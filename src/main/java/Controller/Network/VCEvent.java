@@ -30,7 +30,8 @@ public class VCEvent implements Serializable {
         wrongInitialPositionMessage,
         choose_initial_position,
         player_disconnected_game_ended,
-        id
+        id,
+        send_your_card
 
     }
 
