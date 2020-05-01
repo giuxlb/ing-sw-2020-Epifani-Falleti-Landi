@@ -50,6 +50,7 @@ public class ArtemisStrategy extends DefaultStrategy implements TurnStrategy {
 
         /*Muovo il worker*/
         move(worker,move_spots,index,game,board);
+        vview.upload(board);
 
         /*Salvo la posizione intermedia*/
         Coordinates middle_position = new Coordinates(worker.getPositionX(),worker.getPositionY());
@@ -82,6 +83,7 @@ public class ArtemisStrategy extends DefaultStrategy implements TurnStrategy {
 
         /*Muovo il worker*/
         move(worker,move_spots,index,game,board);
+        vview.upload(board);
 
         /*Salvo la finale intermedia*/
         Coordinates final_position = new Coordinates(worker.getPositionX(),worker.getPositionY());
@@ -101,6 +103,7 @@ public class ArtemisStrategy extends DefaultStrategy implements TurnStrategy {
 
         /*Costruisco*/
         build(worker,build_spots,index,game,board);
+        vview.upload(board);
 
         return 0;
     }

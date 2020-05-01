@@ -50,6 +50,7 @@ public class DemeterStrategy extends DefaultStrategy implements TurnStrategy {
 
         /*Muovo il worker*/
         move(worker,move_spots,index,game,board);
+        vview.upload(board);
 
         /*Salvo la posizione dopo lo spostamento*/
         Coordinates final_position = new Coordinates(worker.getPositionX(),worker.getPositionY());
@@ -69,6 +70,7 @@ public class DemeterStrategy extends DefaultStrategy implements TurnStrategy {
 
         /*Costruisco*/
         build(worker,build_spots,index,game,board);
+        vview.upload(board);
 
         /*Rimuovo da build_spots la posizione dove il player ha fatto la prina costruzione*/
         build_spots.remove(index);
@@ -78,6 +80,7 @@ public class DemeterStrategy extends DefaultStrategy implements TurnStrategy {
 
         /*Costruisco*/
         build(worker,build_spots,index,game,board);
+        vview.upload(board);
 
         return 0;
     }

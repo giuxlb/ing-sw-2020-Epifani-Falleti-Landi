@@ -39,6 +39,7 @@ public class AthenaStrategy extends DefaultStrategy implements TurnStrategy {
 
         /*Muovo il worker*/
         move(worker,move_spots,index,game,board);
+        vview.upload(board);
 
         /*Salvo la posizione dopo lo spostamento*/
         Coordinates final_position = new Coordinates(worker.getPositionX(),worker.getPositionY());
@@ -61,6 +62,7 @@ public class AthenaStrategy extends DefaultStrategy implements TurnStrategy {
 
         /*Costruisco*/
         build(worker,build_spots,index,game,board);
+        vview.upload(board);
 
         if (has_gone_up){
             return 1;

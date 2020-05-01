@@ -87,6 +87,7 @@ public class GameControl {
 
     public void startGame(){
         game.startGame();
+        virtualView.upload(game.getBoardGame());
 
         //scelta delle carte del primo player
 
@@ -132,6 +133,7 @@ public class GameControl {
 
                 //inserisco il worker nella la posizione scelta
                 insertInitialPosition(game.getTurnNumber(),initial_valid_pos.get(index).getX(),initial_valid_pos.get(index).getY(),worker_index);
+                virtualView.upload(game.getBoardGame());
 
                 //rimuovo la posizione scelta dall'array
                 initial_valid_pos.remove(index);

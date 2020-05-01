@@ -47,6 +47,7 @@ public class DefaultStrategy implements TurnStrategy {
 
         /*Muovo il worker*/
         move(worker,move_spots,index,game,board);
+        vview.upload(board);
 
         /*Salvo la posizione dopo lo spostamento*/
         Coordinates final_position = new Coordinates(worker.getPositionX(),worker.getPositionY());
@@ -66,6 +67,7 @@ public class DefaultStrategy implements TurnStrategy {
 
         /*Costruisco*/
         build(worker,build_spots,index,game,board);
+        vview.upload(board);
 
         return 0;
     }
@@ -82,6 +84,7 @@ public class DefaultStrategy implements TurnStrategy {
         //default move
         Coordinates move = valid_positions.get(index);
         game.moveWorker(worker,move.getX(),move.getY());
+
     }
 
     /***
