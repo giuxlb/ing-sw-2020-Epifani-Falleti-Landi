@@ -28,8 +28,8 @@ public class DivinityContext {
      * Select the strategy based on the card given in input
      * @param card the card associated to a player
      */
-    public void selectStrategy(Card card){
-        switch(card.toString().toUpperCase()){
+    public void selectStrategy(String card){
+        switch(card.toUpperCase()){
             case "APOLLO": this.setTurnStrategy(new ApolloStrategy());
                 break;
             case "ARTEMIS": this.setTurnStrategy(new ArtemisStrategy());

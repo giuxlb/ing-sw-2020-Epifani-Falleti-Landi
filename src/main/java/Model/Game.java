@@ -8,8 +8,8 @@ public class Game {
     private Board boardGame;
     private int turnNumber;
     private TurnPhases turnPhase;
-    private ArrayList<Card> availableCards;
-    private ArrayList<Card> chosenCards;
+    private ArrayList<String> availableCards;
+    private ArrayList<String> chosenCards;
     private boolean gameStopped;
     private Player winner;
     private Player lastLostPlayer;
@@ -23,8 +23,10 @@ public class Game {
         this.lastLostPlayer = null;
 
         //aggiungo tutte le carte implementate ad un array
-        availableCards = new ArrayList<Card>();
-        availableCards.addAll(Arrays.asList(Card.values()));
+        availableCards = new ArrayList<String>();
+        for(Card carta : Card.values()){
+            availableCards.add(carta.toString());
+        }
     }
 
     /**
@@ -230,11 +232,11 @@ public class Game {
         return turnPhase;
     }
 
-    public void setChosenCards(ArrayList<Card> chosenCards) {
+    public void setChosenCards(ArrayList<String> chosenCards) {
         this.chosenCards = chosenCards;
     }
 
-    public ArrayList<Card> getAvailableCards() {
+    public ArrayList<String> getAvailableCards() {
         return availableCards;
     }
 

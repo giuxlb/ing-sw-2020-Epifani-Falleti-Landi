@@ -5,7 +5,7 @@ import Model.*;
 public class TurnControl {
     private Player player;
     private int extraEffect;
-    private Card card;
+    private String card;
     private DivinityContext ctx;
     private Board boardGame;
     private Game game;

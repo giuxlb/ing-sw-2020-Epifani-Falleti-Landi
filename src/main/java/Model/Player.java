@@ -1,19 +1,21 @@
 package Model;
 
+import Client.View.Data;
+
 import java.util.Calendar;
 
 public class Player {
     private String username;
     private Worker[] workers;
-    private Card gameCard;
+    private String gameCard;
     private Color color;
-    private Calendar birthDate;
+    private Data birthDate;
 
     /***
      * Costruttore della classe Player
      * @param name nome da assegnare al giocatore
      */
-    public Player (String name,Calendar birthDate){
+    public Player (String name,Data birthDate){
         this.username = name;
         this.birthDate = birthDate;
         this.workers = new Worker[2];
@@ -38,7 +40,7 @@ public class Player {
      * Setter of the card
      * @param card the card to assigng to the Player
      */
-    public void chooseCard(Card card){
+    public void chooseCard(String card){
         this.gameCard=card;
     }
 
@@ -72,13 +74,13 @@ public class Player {
      *
      * @return the card of this player
      */
-    public Card getGameCard(){return this.gameCard;}
+    public String getGameCard(){return this.gameCard;}
 
     /***
      *
      * @return the birth date of this player
      */
-    public Calendar getBirthDate(){return this.birthDate;}
+    public Data getBirthDate(){return this.birthDate;}
 
     public Color getColor() {
         return color;

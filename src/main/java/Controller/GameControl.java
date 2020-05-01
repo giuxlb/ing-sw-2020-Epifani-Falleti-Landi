@@ -1,5 +1,6 @@
 package Controller;
 
+import Client.View.Data;
 import Model.Card;
 import Model.Game;
 import Model.Player;
@@ -43,7 +44,7 @@ public class GameControl {
 
 
         String player_name_0 = this.virtualView.askForUsername(0,false);
-        Calendar player_date_0 = virtualView.askForDate(0);
+        Data player_date_0 = virtualView.askForDate(0);
 
         //aggiungo il player 0
         this.addPlayer(new Player(player_name_0,player_date_0));
@@ -61,7 +62,7 @@ public class GameControl {
             first_time = false;
 
         }
-        Calendar player_date_1 = virtualView.askForDate(1);
+        Data player_date_1 = virtualView.askForDate(1);
         this.addPlayer(new Player(player_name_1,player_date_1));
 
         //se il numero di player è 3, chiedo i dati del terzo giocatore
@@ -75,7 +76,7 @@ public class GameControl {
                 if(!player_name_2.equals(player_name_1) && !player_name_2.equals(player_name_0)){flag=true;}
                 first_time = false;
             }
-            Calendar player_date_2 = virtualView.askForDate(2);
+            Data player_date_2 = virtualView.askForDate(2);
             this.addPlayer(new Player(player_name_2,player_date_2));
         }
 
@@ -96,13 +97,13 @@ public class GameControl {
 
         //scelta delle carte del primo player
 
-        ArrayList<Card> chosenCards = virtualView.sendAllCards(players.get(game.getTurnNumber()),game.getAvailableCards());
+        ArrayList<String> chosenCards = virtualView.sendAllCards(players.get(game.getTurnNumber()),game.getAvailableCards());
         game.setChosenCards(chosenCards);
         game.nextTurnNumber();
 
 
 
-        Card cardChoice;
+        String cardChoice;
 
         //mando array delle carte scelte dal primo player al secondo player
         while(game.getTurnNumber()!=0) {
@@ -255,18 +256,18 @@ public class GameControl {
      */
     public void sortPlayersByAge(){
         if(this.players.size()==3){
-            if(this.players.get(0).getBirthDate().compareTo(this.players.get(1).getBirthDate()) < 0){
+            if(!this.players.get(0).getBirthDate().isGreaterthan(this.players.get(1).getBirthDate())){
                 Collections.swap(players,0,1);
             }
-            if (this.players.get(1).getBirthDate().compareTo(this.players.get(2).getBirthDate()) < 0){
+            if (!this.players.get(1).getBirthDate().isGreaterthan(this.players.get(2).getBirthDate())){
                 Collections.swap(players,1,2);
             }
-            if (this.players.get(0).getBirthDate().compareTo(this.players.get(1).getBirthDate()) < 0){
+            if (!this.players.get(0).getBirthDate().isGreaterthan(this.players.get(1).getBirthDate())){
                 Collections.swap(players,0,1);
             }
         }
         else {
-            if (this.players.get(0).getBirthDate().compareTo(this.players.get(1).getBirthDate()) < 0) {
+            if (!this.players.get(0).getBirthDate().isGreaterthan(this.players.get(1).getBirthDate())) {
                 Collections.swap(players,0,1);
             }
         }
