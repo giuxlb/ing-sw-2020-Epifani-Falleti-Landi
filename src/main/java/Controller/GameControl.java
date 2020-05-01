@@ -163,7 +163,7 @@ public class GameControl {
             }
             else{
                 players.remove(game.getLastLostPlayer());
-                virtualView.sendLostMessage(game.getLastLostPlayer());
+                virtualView.youLost(game.getLastLostPlayer(),true,null);
                 game.clearLastLostPlayer();
             }
 
@@ -177,10 +177,11 @@ public class GameControl {
 
         if(winner!=null){
             //manda il messaggio ai giocatori con scritto il vincitore
-            virtualView.sendWinMessage(winner);
+            virtualView.youWon(winner);
+            //TODO aggiugere youlost
         }
         else{
-            virtualView.sendInterruptedMessage();
+            //virtualView.playerHasDisconnected();
         }
     }
 
