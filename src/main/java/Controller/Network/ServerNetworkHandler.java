@@ -99,26 +99,19 @@ public class ServerNetworkHandler implements Runnable, ClientObserver {
         }
         virtualView.setOkFromFirstClient(true);
         //qui dovrò aspettare un VCEvent dal primo client connesso con il numero di giocatori perchè poi mi serve per accettare gli altri
-        VCEvent e1 = new VCEvent("NumberOfPlayers" , VCEvent.Event.setup_request);
-
-        while(true){
-            sendVCEventTo(e1,0);
-            synchronized (this)
-            {
-                fromClient1 = null;
-                while (fromClient1 == null) {
-                    try {
-                        wait();
-                    } catch (InterruptedException e) { }
-                }
-            }
-            if (fromClient1.getBox() instanceof Integer) // se il box è un Integer allora vuol dire che ci avrà mandato il numero di giocatori
-                break;
-        }
-        //a questo punto ho in fromClient1 il numero dei giocatori
-        virtualView.receivedResponse(fromClient1.getBox());
-        numberOfPlayers = (Integer) fromClient1.getBox();
         receiver1.canReceiveEvents();
+
+        synchronized (this)
+        {
+            numberOfPlayers = 0;
+            while (numberOfPlayers == 0) {
+                try {
+                    wait();
+                } catch (InterruptedException e) { }
+            }
+        }
+
+
 
         while (numberOfPlayers != 1) {
             try{
@@ -161,13 +154,13 @@ public class ServerNetworkHandler implements Runnable, ClientObserver {
      * @param eventFromClient is the event arrived
      * @param n is the index that identifies the client who sent the event
      */
-    public synchronized void didReceiveVCEventFrom(VCEvent eventFromClient, int n) {
+    public  void didReceiveVCEventFrom(VCEvent eventFromClient, int n) {
         switch (n)
         {
             case 0:
-                fromClient1 = eventFromClient;
+
                 receiver1.didReceiveEvent(eventFromClient);
-                notifyAll();
+
                 break;
             case 1:
                receiver2.didReceiveEvent(eventFromClient);
@@ -272,6 +265,11 @@ public class ServerNetworkHandler implements Runnable, ClientObserver {
     public synchronized void idSent()
     {
         idIsSent = true;
+        notifyAll();
+    }
+    public synchronized void setPlayerNumber(int number)
+    {
+        numberOfPlayers = number;
         notifyAll();
     }
     public Socket[] getClients() {

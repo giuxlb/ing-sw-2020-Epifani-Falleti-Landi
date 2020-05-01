@@ -86,10 +86,13 @@ public class ClientEventReceiver implements Runnable {
                     try {
                         wait();
                     } catch (InterruptedException e) {
+                        System.out.println("Errore");
+                        e.printStackTrace();
                     }
                 }
 
             }
+            System.out.println("Ho ricevuto "+fromClient.getBox());
             // se il client ha perso,ha vinto oppure riceve il messaggio che un giocatore si è disconnesso e quindi la partita è finita
             if ((fromClient.getCommand() == VCEvent.Event.you_lost) || (fromClient.getCommand() == VCEvent.Event.you_won) || (fromClient.getCommand() == VCEvent.Event.player_disconnected_game_ended))
             {

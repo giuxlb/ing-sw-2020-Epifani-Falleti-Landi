@@ -62,6 +62,7 @@ public class VirtualView {
         if (received instanceof Integer) {
             numberOfPlayers = (Integer) received;
             setUpisReady = true;
+            serverHandler.setPlayerNumber(numberOfPlayers);
             return numberOfPlayers.intValue();
         }
         return -1;
@@ -95,6 +96,7 @@ public class VirtualView {
             }
 
         }
+        System.out.println(received);
         if (received instanceof String)
             return (String) received;
 

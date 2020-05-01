@@ -109,6 +109,7 @@ public class ClientAdapter implements Runnable {
                 VCEvent evento = (VCEvent) input.readObject();
                 if (evento != null) {
                     if (evento.getCommand() != VCEvent.Event.ping) {
+                        System.out.println("é arrivato "+ evento.getBox());
                         for (ClientObserver observer : observersCpy)
                             observer.didReceiveVCEventFrom(evento, this.number);
                     } else {

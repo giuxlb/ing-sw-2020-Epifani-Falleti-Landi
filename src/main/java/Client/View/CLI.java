@@ -40,8 +40,9 @@ public class CLI {
 
         if(CLI.getPlayerID()==0) {
             //Aspetta fino a quando non arriva un messaggio
-            //CLI.waitUpdateView(cnh);
-
+            CLI.waitUpdateView(cnh);
+            VCEvent event = cnh.getFromServer();
+            cnh.readByView();
             //Chiede numero giocatori al primo client
             System.out.println("Quanti giocatori giocheranno a questa partita?\nInserire 2 per 2 giocatori, 3 per 3 giocatori");
             int n = mainScanner.nextInt();

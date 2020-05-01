@@ -34,6 +34,7 @@ public class GameControl {
         //aspetto che SetupItReady sia true
 
         while(virtualView.isSetUpisReady() == false){
+            System.out.println("Qui");
             try{
                 TimeUnit.MILLISECONDS.sleep(10);}
             catch (InterruptedException e){System.out.println("Interrupted exception");};

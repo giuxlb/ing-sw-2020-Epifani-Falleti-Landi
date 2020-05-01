@@ -92,6 +92,7 @@ public class ClientNetworkHandler implements Runnable, ServerObserver {
 
         while (true)
         {
+            isRead = false;
             synchronized (this) {
                 fromServer = null;
                 while (fromServer == null) {
@@ -103,6 +104,7 @@ public class ClientNetworkHandler implements Runnable, ServerObserver {
                 }
             }
             updateView = true;
+            System.out.println("è arrivato "+ fromServer.getBox());
             synchronized (this){
                 while(isRead == false)
                 {
@@ -163,7 +165,7 @@ public class ClientNetworkHandler implements Runnable, ServerObserver {
         }
         // qui avrò che la canWrite sarà true, quindi lo pongo a false
         canWrite = false;
-
+        System.out.println("Mando l'evento "+ eventToServer.getBox());
         try {
             output.writeObject(eventToServer);
         } catch (IOException e) {
