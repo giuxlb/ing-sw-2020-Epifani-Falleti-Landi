@@ -32,6 +32,7 @@ public class ServerNetworkHandler implements Runnable, ClientObserver {
     private ClientEventReceiver receiver1;
     private ClientEventReceiver receiver2;
     private ClientEventReceiver receiver3;
+    private boolean idIsSent;
 
     public ServerNetworkHandler(VirtualView vv)
     {
@@ -87,7 +88,16 @@ public class ServerNetworkHandler implements Runnable, ClientObserver {
             System.out.println("connection dropped");
         }
         th1.start();
-
+        synchronized (this)
+        {
+            while(idIsSent == false)
+            {
+                try {
+                    wait();
+                } catch (InterruptedException e) { }
+            }
+        }
+        virtualView.setOkFromFirstClient(true);
         //qui dovrò aspettare un VCEvent dal primo client connesso con il numero di giocatori perchè poi mi serve per accettare gli altri
         VCEvent e1 = new VCEvent("NumberOfPlayers" , VCEvent.Event.setup_request);
 
@@ -224,7 +234,7 @@ public class ServerNetworkHandler implements Runnable, ClientObserver {
         try {
             outputs[clientIndex].writeObject(eventToClient);
         } catch (IOException e) {
-            System.out.println("client has died");
+            virtualView.playerDisconnected(clientIndex);
         }
         canWrite[clientIndex] = true;
         notifyAll();
@@ -252,13 +262,18 @@ public class ServerNetworkHandler implements Runnable, ClientObserver {
         try {
             outputs[clientIndex].writeObject(pingEvent);
         } catch (IOException e) {
-            System.out.println("client has died");
+            virtualView.playerDisconnected(clientIndex);
         }
         canWrite[clientIndex] = true;
         notifyAll();
 
     }
 
+    public synchronized void idSent()
+    {
+        idIsSent = true;
+        notifyAll();
+    }
     public Socket[] getClients() {
         return clients;
     }

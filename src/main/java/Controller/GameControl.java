@@ -24,6 +24,11 @@ public class GameControl {
          this.game = new Game();
          this.virtualView = new VirtualView();
         players = new ArrayList<Player>();
+        while(virtualView.isOkFromFirstClient() == false){
+            try{
+                TimeUnit.MILLISECONDS.sleep(10);}
+            catch (InterruptedException e){System.out.println("Interrupted exception");};
+        }
         virtualView.playerNumber();
         //aspetto che SetupItReady sia true
 

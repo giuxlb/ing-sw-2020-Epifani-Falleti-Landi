@@ -3,7 +3,7 @@ package Controller;
 import Controller.Network.ServerNetworkHandler;
 import Controller.Network.VCEvent;
 import Model.*;
-
+import Client.View.Data;
 import java.util.ArrayList;
 import java.util.Calendar;
 
@@ -17,6 +17,18 @@ public class VirtualView {
     private Object received;
     private boolean setUpisReady;
     private boolean[] connected;
+
+
+
+    private boolean okFromFirstClient;
+
+    public void setOkFromFirstClient(boolean okFromFirstClient) {
+        this.okFromFirstClient = okFromFirstClient;
+    }
+
+    public boolean isOkFromFirstClient() {
+        return okFromFirstClient;
+    }
     /**
      * It creates the ServerNetworkHandler and prepares the information about the firstPlayer for the GameControl
      */
@@ -28,6 +40,7 @@ public class VirtualView {
         Thread serverThread = new Thread(serverHandler);
         serverThread.start();
         this.setUpisReady = false;
+        this.okFromFirstClient = false;
 
     }
 
@@ -58,6 +71,13 @@ public class VirtualView {
         return -1;
 
     }
+    /**
+     * It asks to a client for username
+     * @param index identifies the client who will receive the request
+     * @param wasWrong
+     * @return
+     */
+
     public String askForUsername(int index,boolean wasWrong)
     {
         VCEvent evento;
@@ -91,7 +111,7 @@ public class VirtualView {
      * @param index identifies the client who will receive the request
      * @return
      */
-    public Calendar askForDate(int index)
+    public Data askForDate(int index)
     {
         VCEvent evento = new VCEvent("Data", VCEvent.Event.date_request);
         serverHandler.sendVCEventTo(evento,index);
@@ -106,8 +126,8 @@ public class VirtualView {
             }
 
         }
-        if (received instanceof Calendar)
-            return (Calendar) received;
+        if (received instanceof Data)
+            return (Data) received;
 
 
         return null;
@@ -217,50 +237,6 @@ public class VirtualView {
         }
     }
 
-    /**
-     * It asks the initial position to the player p for a particular worker
-     * @param p is the player
-     * @param worker_Index identifies which worker the player is moving
-     * @return the coordiantes chosen for that worker
-     */
-    public Coordinates askInitialPosition(Player p, int worker_Index)
-    {
-        Integer workerIndex = Integer.valueOf(worker_Index);
-        VCEvent evento = new VCEvent(worker_Index, VCEvent.Event.choose_initial_position);
-        for (int i = 0; i <numberOfPlayers ; i++) {
-            if (p.getUsername().equals(players.get(i).getUsername()))
-                serverHandler.sendVCEventTo(evento,i);
-        }
-        synchronized(this) {
-            received = null;
-            while(received == null)
-            {
-                try{
-                    wait();
-                }
-                catch(InterruptedException e){}
-            }
-
-        }
-        if (received instanceof Coordinates)
-            return (Coordinates) received;
-        return null;
-
-    }
-
-    /**
-     * It sends to the client a message because it has chosen a wrong initial position
-     * @param p is the player
-     */
-    public void sendMessageWrongPosition(Player p)
-    {
-        VCEvent evento = new VCEvent("ERRORE", VCEvent.Event.wrongInitialPositionMessage);
-        for (int i = 0; i <numberOfPlayers ; i++) {
-            if (p.getUsername().equals(players.get(i).getUsername()))
-                serverHandler.sendVCEventTo(evento,i);
-        }
-
-    }
 
     /**
      * It sends all the spots where a player can move his workers

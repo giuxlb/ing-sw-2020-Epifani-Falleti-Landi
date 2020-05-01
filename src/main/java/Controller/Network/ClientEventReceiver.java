@@ -153,6 +153,7 @@ public class ClientEventReceiver implements Runnable {
             if (fromClient.getBox().equals("OK"))
                 break;
         }
+        snh.idSent();
     }
 }
 
