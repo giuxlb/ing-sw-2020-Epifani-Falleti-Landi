@@ -44,11 +44,7 @@ public class VirtualView {
 
     }
 
-    /**
-     * It asks to a client for username
-     * @param index identifies the client who will receive the request
-     * @return
-     */
+
 
     public int playerNumber()
     {
@@ -170,7 +166,7 @@ public class VirtualView {
      * @param cards are all the cards implemented in the game
      * @return 2 or 3 cards, depending on the number of players of the game
      */
-    public ArrayList<Card> sendAllCards(Player p, ArrayList<Card> cards)
+    public ArrayList<String> sendAllCards(Player p, ArrayList<String> cards)
     {
         VCEvent evento = new VCEvent(cards, VCEvent.Event.send_all_cards);
         for (int i = 0; i <numberOfPlayers ; i++) {
@@ -188,7 +184,7 @@ public class VirtualView {
             }
 
         }
-        ArrayList<Card> chosenCards = (ArrayList<Card>) received;
+        ArrayList<String> chosenCards = (ArrayList<String>) received;
 
         return chosenCards;
     }
@@ -199,7 +195,7 @@ public class VirtualView {
      * @param chosenCards are the cards chosen
      * @return the card chosen from the player p
      */
-    public Card sendChosenCards(Player p,ArrayList<Card> chosenCards)
+    public String sendChosenCards(Player p,ArrayList<String> chosenCards)
     {
         VCEvent evento = new VCEvent(chosenCards, VCEvent.Event.send_chosen_cards);
         for (int i = 0; i <numberOfPlayers ; i++) {
@@ -217,8 +213,8 @@ public class VirtualView {
             }
 
         }
-        if (received instanceof Card)
-            return (Card) received;
+        if (received instanceof String)
+            return (String) received;
 
         return null;
     }
@@ -228,7 +224,7 @@ public class VirtualView {
      * @param p is the player
      * @param c is the card chosen by player p
      */
-    public void sendYourCard(Player p, Card c)
+    public void sendYourCard(Player p, String c)
     {
         VCEvent evento = new VCEvent(c, VCEvent.Event.send_chosen_cards);
         for (int i = 0; i <numberOfPlayers ; i++) {
