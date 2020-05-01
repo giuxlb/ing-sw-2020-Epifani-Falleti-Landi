@@ -1,3 +1,4 @@
+//Manca la funzione di controllo delle carte
 package Client.View;
 
 import Controller.Network.VCEvent;
@@ -8,9 +9,6 @@ import Controller.Coordinates;
 import Controller.Network.VCEvent;
 import Model.Color;
 import Model.Worker;
-
-
-import java.nio.channels.ScatteringByteChannel;
 import java.util.ArrayList;
 import java.util.Scanner;
 import java.util.concurrent.TimeUnit;
@@ -64,6 +62,10 @@ public class CLI {
             CLI.setColor(Color.ANSI_PURPLE);
         }
 
+        CLI.checkEvent(cnh);
+
+        System.out.println("Partita terminata, grazie per aver giocato");
+
     }
 
     //Attributi grafici e testuali della CLI
@@ -83,10 +85,10 @@ public class CLI {
     private int giorno;
     private int mese;
     private int anno;
-
+    private ArrayList<String> chosenGods = new ArrayList<String>();
+    private String myCard;
 
     //Costruttore della CLI
-
     /***
      *
      */
@@ -224,7 +226,6 @@ public class CLI {
                         Board b = (Board)objectBoard;
                         printBoard(b);
                         setBoard(b);
-                        //Abbiamo bisogno che update venga sempre mandato prima di send_cells_move o send_cells_build (Da chiedere a Peppe)
                     }else {
                         System.out.println("Errore, board corrotta!");
                     }
@@ -256,9 +257,48 @@ public class CLI {
                     System.out.println("Mi spiace, non puoi più muoverti con nessuno dei tuoi worker");
                     break;
                 case send_all_cards:
+                    System.out.println("Hai a disposizione le seguenti divinità:");
+                    Object objectGods = evento.getBox();
+                    //Non possiamo controllare se l'ArrayList di Stringhe sia corrotto o meno
+                    ArrayList<String> gods= (ArrayList<String>)  objectGods;
+                    for(String god:gods){
+                        System.out.print(god);
+                    }
                     System.out.println("Scegli " + getPlayersNumber() + "carte");
+                    for(int i=0;i<getPlayersNumber();i++){
+                        System.out.print("Scegli la " + i + "°" + "carta ->");
+                        String card=s.nextLine();
+                        //Ricordati di chiamare il controller pure qui
+                        chosenGods.add(card);
+                    }
+                    System.out.println();
+                    buildEvent(cnh,chosenGods, VCEvent.Event.send_all_cards);
                     break;
                 case send_chosen_cards:
+                    System.out.println("Puoi scegliere tra le seguenti divinità:");
+                    Object objectSentGods = evento.getBox();
+                    //Non possiamo controllare se l'ArrayList di Stringhe sia corrotto o meno
+                    ArrayList<String> sentGods= (ArrayList<String>)  objectSentGods;
+                    for(String god:sentGods){
+                        System.out.print(god);
+                    }
+                    System.out.println();
+                    System.out.print("Digita il nome della divinità che preferisci ->");
+                    //Il controller deve controllare che effettivamente la divinità scelta sia un elemento delle divinità ricevute
+                    String chosenGod= s.nextLine();
+                    setMyCard(chosenGod);
+                    System.out.println();
+                    buildEvent(cnh, chosenGod, VCEvent.Event.send_chosen_cards);
+                    break;
+                case send_your_card:
+                    Object firstPlayerCard = evento.getBox();
+                    if (firstPlayerCard instanceof String){
+                        String myGod = (String) firstPlayerCard;
+                        setMyCard(myGod);
+                        System.out.println("La tua carta divinità è " + getMyCard());
+                    }else{
+                        System.out.println("La Stringa che rappresenta la carta del primo player è arrivata corrotta");
+                    }
                     break;
             }
         }
@@ -403,7 +443,6 @@ public class CLI {
         Object objectValidPositions = evento.getBox();
         //Attenzione: qui non possiamo controllare se il dato arrivi corrotto o meno!
         ArrayList<Coordinates> validPositions = (ArrayList<Coordinates>)objectValidPositions;
-        //Abbiamo bisogno che update venga sempre mandato prima di send_cells_move o send_cells_build (Da chiedere a Peppe)
         paintBoardCell(b, validPositions );
         int x=chooseCoordinate(xPosition);
         int y=chooseCoordinate(yPosition);
@@ -447,5 +486,21 @@ public class CLI {
         System.out.print("Inserire l'anno in cui si è nati in formato aaaa (solo numerico) ->");
         this.anno=s.nextInt();
         System.out.println();
+    }
+
+    /***
+     *
+     * @return
+     */
+    public String getMyCard() {
+        return myCard;
+    }
+
+    /***
+     *
+     * @param myCard
+     */
+    public void setMyCard(String myCard) {
+        this.myCard = myCard;
     }
 }
