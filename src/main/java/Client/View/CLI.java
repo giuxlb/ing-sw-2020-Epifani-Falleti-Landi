@@ -9,7 +9,7 @@ import Controller.Coordinates;
 import Controller.Network.VCEvent;
 import Model.Color;
 import Model.Worker;
-import
+
 
 
 import java.util.ArrayList;
@@ -19,7 +19,7 @@ public class CLI {
     public static void main(String[] args){
         System.out.println("Santorini - Epifani Falleti Landi");
         CLI CLI = new CLI();
-
+        CLI.playerID = -1;
         //Costruzione dello scanner e del Controlle usati nel main(Una volta finita la CLI posso unificarli con quelli del costruttore di CLI?)
         Scanner mainScanner= new Scanner(System.in);
         Controller mainController = new Controller();
@@ -30,17 +30,17 @@ public class CLI {
         //Thread per l'esecuzione principale della CLI
         Thread game = new Thread(cnh);
         game.start();
+        CLI.waitUpdateView(cnh);
+        VCEvent evento = cnh.getFromServer();
+        cnh.readByView();
+        while(evento.getCommand() != VCEvent.Event.id)
+            System.out.println("Waiting for id");
+        Integer i = (Integer) evento.getBox();
+        CLI.setPlayerID(i.intValue());
 
-
-        /*Quando Adriano ha fatto la modifica in ClientNetworkHandler implenta questo while
-        * while(cnh.isIdArrived()==false){
-        * //Qui bisogna aggiungere un ritardo per far aspettare il client
-        * }
-        * */
-        CLI.setPlayerID(cnh.getPlayerID());
         if(CLI.getPlayerID()==0) {
             //Aspetta fino a quando non arriva un messaggio
-            CLI.waitUpdateView(cnh);
+            //CLI.waitUpdateView(cnh);
 
             //Chiede numero giocatori al primo client
             System.out.println("Quanti giocatori giocheranno a questa partita?\nInserire 2 per 2 giocatori, 3 per 3 giocatori");
@@ -95,6 +95,7 @@ public class CLI {
         b = new Board();
         e = new Elements();
     }
+
 
     /***
      *
@@ -162,7 +163,7 @@ public class CLI {
      */
     public void waitUpdateView(ClientNetworkHandler cnh){
         while(cnh.isUpdateView()==false){
-            //lo facciamo addormentare
+                System.out.println("Aspetto l'update");
         }
     }
 
@@ -174,7 +175,9 @@ public class CLI {
         boolean endGame = false;
         while(endGame==false){
             waitUpdateView(cnh);
-            switch (cnh.getFromServer().getCommand()){
+            VCEvent evento = cnh.getFromServer();
+            cnh.readByView();
+            switch (evento.getCommand()){
                 case username_request :
                     System.out.println("Inserisci il tuo nome utente");
                     String username=s.nextLine();
@@ -183,7 +186,7 @@ public class CLI {
                 /*case wrong_username*/
                 /*case Date request*/
                 case not_your_turn:
-                    Object objectPlayer = cnh.getFromServer().getBox();
+                    Object objectPlayer = evento.getBox();
                     if(objectPlayer instanceof Player){
                         Player p = (Player)objectPlayer;
                         System.out.println("Partita in corso, sta giocando " + p.getUsername() + " con la carta " + p.getGameCard());
@@ -192,7 +195,7 @@ public class CLI {
                     }
                     break;
                 case update:
-                    Object objectBoard = cnh.getFromServer().getBox();
+                    Object objectBoard = evento.getBox();
                     if(objectBoard instanceof Board){
                         Board b = (Board)objectBoard;
                         printBoard(b);
@@ -203,13 +206,13 @@ public class CLI {
                     }
                     break;
                 case send_cells_move:
-                    sendCells(movingPhase, cnh, VCEvent.Event.send_cells_move);
+                    sendCells(movingPhase, cnh, VCEvent.Event.send_cells_move,evento);
                     break;
                 case send_cells_build:
-                    sendCells(buildingPhase, cnh, VCEvent.Event.send_cells_build);
+                    sendCells(buildingPhase, cnh, VCEvent.Event.send_cells_build,evento);
                     break;
                 case you_lost:
-                    Object objectWinner = cnh.getFromServer().getBox();
+                    Object objectWinner = evento.getBox();
                     if(objectWinner instanceof String){
                         String winner = (String) objectWinner;
                         System.out.println("Partita conclusa! Il vincitore è: " + winner);
@@ -368,9 +371,9 @@ public class CLI {
      * @param cnh
      * @param command
      */
-    public void sendCells(String phase, ClientNetworkHandler cnh, VCEvent.Event command){
+    public void sendCells(String phase, ClientNetworkHandler cnh, VCEvent.Event command,VCEvent evento){
         System.out.println(phase);
-        Object objectValidPositions = cnh.getFromServer().getBox();
+        Object objectValidPositions = evento.getBox();
         ArrayList<Coordinates> validPositions = (ArrayList<Coordinates>)objectValidPositions;
         //Abbiamo bisogno che update venga sempre mandato prima di send_cells_move o send_cells_build (Da chiedere a Peppe)
         paintBoardCell(b, validPositions );

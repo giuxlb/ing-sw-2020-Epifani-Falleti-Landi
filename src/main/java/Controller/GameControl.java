@@ -21,13 +21,13 @@ public class GameControl {
      * after receiving the names from the clients, it creates and inserts the player
      */
     public GameControl() {
-        Game game = new Game();
-        VirtualView virtualview = new VirtualView();
+         this.game = new Game();
+         this.virtualView = new VirtualView();
         players = new ArrayList<Player>();
-
+        virtualView.playerNumber();
         //aspetto che SetupItReady sia true
 
-        while(!virtualView.isSetUpisReady()){
+        while(virtualView.isSetUpisReady() == false){
             try{
                 TimeUnit.MILLISECONDS.sleep(10);}
             catch (InterruptedException e){System.out.println("Interrupted exception");};
@@ -37,7 +37,7 @@ public class GameControl {
         int player_number = virtualView.getNumberOfPlayers();
 
 
-        String player_name_0 = virtualview.askForUsername(0,false);
+        String player_name_0 = this.virtualView.askForUsername(0,false);
         Calendar player_date_0 = virtualView.askForDate(0);
 
         //aggiungo il player 0

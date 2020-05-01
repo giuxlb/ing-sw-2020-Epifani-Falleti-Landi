@@ -27,10 +27,10 @@ public class ClientNetworkHandler implements Runnable, ServerObserver {
     private boolean canWrite;
     private boolean serverIsDied;
     private int PlayerID;//can be 0,1 or 2
+    private boolean isRead;
 
-    public boolean isIdArrived() {
-        return idArrived;
-    }
+
+
 
     private boolean idArrived;
 
@@ -39,11 +39,14 @@ public class ClientNetworkHandler implements Runnable, ServerObserver {
     public boolean isUpdateView() {
         return updateView;
     }
-
+    public boolean isIdArrived() {
+        return idArrived;
+    }
     /**
      * It sets up the connection with the server and prepare the client to receive ping and events from the server and to answer those
      *
      */
+
     public void run() {
 
         try {
@@ -99,7 +102,16 @@ public class ClientNetworkHandler implements Runnable, ServerObserver {
 
                 }
             }
-                updateView = true;
+            updateView = true;
+            synchronized (this){
+                while(isRead == false)
+                {
+                    try {
+                        wait();
+                    } catch (InterruptedException e) { }
+                }
+            }
+            System.out.println("é arrivato alla view l'evento"+ fromServer.getCommand());
         }
 
     }
@@ -121,7 +133,7 @@ public class ClientNetworkHandler implements Runnable, ServerObserver {
     {
 
         PlayerID = n-1;
-        idArrived = true;
+
         ping = n;
         notifyAll();
     }
@@ -161,6 +173,11 @@ public class ClientNetworkHandler implements Runnable, ServerObserver {
         notifyAll();
     }
 
+    public synchronized void readByView()
+    {
+        isRead = true;
+        notifyAll();
+    }
     /**
      * It answers to the ping sent by the server
      */

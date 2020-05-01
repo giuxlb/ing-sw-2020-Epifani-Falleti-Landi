@@ -17,39 +17,17 @@ public class VirtualView {
     private Object received;
     private boolean setUpisReady;
     private boolean[] connected;
-
     /**
      * It creates the ServerNetworkHandler and prepares the information about the firstPlayer for the GameControl
      */
     public VirtualView()
     {
-        players = new ArrayList<Player>();
-        connected = new boolean[3];
-        serverHandler = new ServerNetworkHandler(this);
+        this.players = new ArrayList<Player>();
+        this.connected = new boolean[3];
+        this.serverHandler = new ServerNetworkHandler(this);
         Thread serverThread = new Thread(serverHandler);
         serverThread.start();
-
-        while(true) {
-            synchronized (this) {
-                received = null;
-                while (received == null) {
-                    try {
-                        wait();
-                    } catch (InterruptedException e) {
-                    }
-                }
-            }
-            if (received instanceof Integer)
-            {
-                numberOfPlayers = (Integer) received;
-                break;//esce dal loop
-            }
-
-        }
-       //una volta qui abbiamo il numero di giocatori
-        setUpisReady = true;
-
-
+        this.setUpisReady = false;
 
     }
 
@@ -58,6 +36,28 @@ public class VirtualView {
      * @param index identifies the client who will receive the request
      * @return
      */
+
+    public int playerNumber()
+    {
+        VCEvent evento = new VCEvent(null, VCEvent.Event.setup_request);
+        serverHandler.sendVCEventTo(evento,0);
+        synchronized (this) {
+            received = null;
+            while (received == null) {
+                try {
+                    wait();
+                } catch (InterruptedException e) {
+                }
+            }
+        }
+        if (received instanceof Integer) {
+            numberOfPlayers = (Integer) received;
+            setUpisReady = true;
+            return numberOfPlayers.intValue();
+        }
+        return -1;
+
+    }
     public String askForUsername(int index,boolean wasWrong)
     {
         VCEvent evento;
@@ -292,6 +292,7 @@ public class VirtualView {
         }
 
 
+
         return -1;
 
     }
@@ -341,7 +342,10 @@ public class VirtualView {
              evento = new VCEvent(winner.getUsername(), VCEvent.Event.you_lost);
         }
         else{
-            evento = new VCEvent(winner.getUsername(), VCEvent.Event.game_ended_foryou);
+            String vincitore = "";
+            if (winner != null)
+                vincitore = winner.getUsername();
+            evento = new VCEvent(vincitore, VCEvent.Event.game_ended_foryou);
         }
         for (int i = 0; i <numberOfPlayers ; i++) {
             if (p.getUsername().equals(players.get(i).getUsername()))

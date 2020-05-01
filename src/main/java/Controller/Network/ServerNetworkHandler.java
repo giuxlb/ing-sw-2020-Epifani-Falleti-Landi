@@ -87,6 +87,7 @@ public class ServerNetworkHandler implements Runnable, ClientObserver {
             System.out.println("connection dropped");
         }
         th1.start();
+        sendVCEventTo(new VCEvent(0, VCEvent.Event.id),0);
         //qui dovrò aspettare un VCEvent dal primo client connesso con il numero di giocatori perchè poi mi serve per accettare gli altri
         VCEvent e1 = new VCEvent("NumberOfPlayers" , VCEvent.Event.setup_request);
 
