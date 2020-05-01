@@ -28,13 +28,13 @@ public class ClientNetworkHandler implements Runnable, ServerObserver {
     private boolean serverIsDied;
     private int PlayerID;//can be 0,1 or 2
     private boolean isRead;
-
+    private CLI cli;
 
 
 
     private boolean idArrived;
 
-
+    public ClientNetworkHandler(CLI cli){this.cli = cli;}
 
     public boolean isUpdateView() {
         return updateView;
@@ -96,14 +96,13 @@ public class ClientNetworkHandler implements Runnable, ServerObserver {
             synchronized (this) {
                 fromServer = null;
                 while (fromServer == null) {
-
                     try {
                         wait();
                     } catch (InterruptedException e) { }
 
                 }
             }
-            updateView = true;
+            cli.updateGo();
             System.out.println("è arrivato "+ fromServer.getBox());
             synchronized (this){
                 while(isRead == false)
@@ -113,7 +112,7 @@ public class ClientNetworkHandler implements Runnable, ServerObserver {
                     } catch (InterruptedException e) { }
                 }
             }
-            updateView = false;
+
             System.out.println("é arrivato alla view l'evento"+ fromServer.getCommand());
         }
 

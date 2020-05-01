@@ -13,6 +13,7 @@ import java.util.ArrayList;
 import java.util.Scanner;
 import java.util.concurrent.TimeUnit;
 
+
 public class CLI {
     public static void main(String[] args){
         System.out.println("Santorini - Epifani Falleti Landi");
@@ -23,24 +24,26 @@ public class CLI {
         Controller mainController = new Controller();
 
         //Creazione della socket del client
-        ClientNetworkHandler cnh = new ClientNetworkHandler();
+            ClientNetworkHandler cnh = new ClientNetworkHandler(CLI);
 
         //Thread per l'esecuzione principale della CLI
         Thread game = new Thread(cnh);
         game.start();
-        CLI.waitUpdateView(cnh);
+        //CLI.waitUpdateView(cnh);
+        CLI.update();
         VCEvent evento = cnh.getFromServer();
         Integer i = (Integer) evento.getBox();
         CLI.setPlayerID(i.intValue());
 
-
-        cnh.sendVCEvent(new VCEvent("OK", VCEvent.Event.id));
         cnh.readByView();
+        cnh.sendVCEvent(new VCEvent("OK", VCEvent.Event.id));
+
 
 
         if(CLI.getPlayerID()==0) {
             //Aspetta fino a quando non arriva un messaggio
-            CLI.waitUpdateView(cnh);
+            //CLI.waitUpdateView(cnh);
+            CLI.update();
             VCEvent event = cnh.getFromServer();
             cnh.readByView();
             //Chiede numero giocatori al primo client
@@ -88,6 +91,7 @@ public class CLI {
     private int anno;
     private ArrayList<String> chosenGods = new ArrayList<String>();
     private String myCard;
+    private boolean updateView;
 
     //Costruttore della CLI
     /***
@@ -165,7 +169,26 @@ public class CLI {
         VCEvent currentEvent= new VCEvent(o, command);
         cnh.sendVCEvent(currentEvent);
     }
+    public synchronized void updateGo()
+    {
+        updateView = true;
+        notifyAll();
+    }
+    public void update()
+    {
+        synchronized (this)
+        {
+            while(updateView == false)
+            {
+                try{
+                    wait();
+                }
+                catch(InterruptedException e){}
+            }
+        }
+        updateView = false;
 
+    }
 
     /***
      *
@@ -189,7 +212,8 @@ public class CLI {
     public void checkEvent(ClientNetworkHandler cnh){
         boolean endGame = false;
         while(endGame==false){
-            waitUpdateView(cnh);
+            //waitUpdateView(cnh);
+            update();
             VCEvent evento = cnh.getFromServer();
             cnh.readByView();
             switch (evento.getCommand()){
