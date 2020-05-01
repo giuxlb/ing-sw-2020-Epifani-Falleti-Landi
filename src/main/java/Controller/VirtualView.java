@@ -339,6 +339,14 @@ public class VirtualView {
         }
     }
 
+    public void player_disconnected_game_ended(Player p)
+    {
+        VCEvent evento = new VCEvent(p.getUsername(), VCEvent.Event.player_disconnected_game_ended);
+        for (int i = 0; i <numberOfPlayers ; i++) {
+            if (!(p.getUsername().equals(players.get(i).getUsername())))
+                serverHandler.sendVCEventTo(evento,i);
+        }
+    }
 
     /**
      *It notifies one of the method of the virtual view that has arrived a response from the client
