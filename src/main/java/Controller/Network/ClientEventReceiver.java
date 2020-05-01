@@ -62,6 +62,8 @@ public class ClientEventReceiver implements Runnable {
         };
         Thread pingThread = new Thread(runPingClient);
         pingThread.start();
+        sendID(clientIndex.intValue());
+
 
         synchronized (this)
         {
@@ -135,6 +137,23 @@ public class ClientEventReceiver implements Runnable {
         notifyAll();
     }
 
+    public void sendID(int index)
+    {
+        while(true) {
+            snh.sendVCEventTo(new VCEvent(index, VCEvent.Event.id), index);
+            synchronized (this) {
+                fromClient = null;
+                while (fromClient == null) {
+                    try {
+                        wait();
+                    } catch (InterruptedException e) {
+                    }
+                }
+            }
+            if (fromClient.getBox().equals("OK"))
+                break;
+        }
+    }
 }
 
 
