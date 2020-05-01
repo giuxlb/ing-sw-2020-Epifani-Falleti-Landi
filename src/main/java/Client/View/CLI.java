@@ -61,10 +61,6 @@ public class CLI {
             CLI.setColor(Color.ANSI_PURPLE);
         }
 
-
-
-        System.out.println("Partita terminata!\n Il vincitore è -> " /*+getWinner()*/);
-
     }
 
     //Attributi grafici e testuali della CLI
@@ -106,7 +102,7 @@ public class CLI {
     public void printBoard(Board b){
         for(int i=0;i<5;i++){
             for(int j=0;j<5;j++)  {
-                    System.out.print( Color.ANSI_BLUE +"| worker: " + turnWorkerIntoColoredImage(b, i, j) + " height: " + turnHeightIntoImage(b, i, j) + " | ");
+                    System.out.print( Color.ANSI_BLUE +"| worker: " + turnWorkerIntoColoredImage(b, i, j) + Color.ANSI_BLUE + " height: " + turnHeightIntoImage(b, i, j) + " | ");
                     }
             System.out.println();
         }
@@ -128,10 +124,10 @@ public class CLI {
                         }
                     }
                 if (isToPaint==true) {
-                    System.out.print(Color.ANSI_RED + "| worker: " + turnWorkerIntoColoredImage(b, i, j) + " height: " + turnHeightIntoImage(b, i, j) + " | ");
+                    System.out.print(Color.ANSI_RED + "| worker: " + turnWorkerIntoColoredImage(b, i, j) + Color.ANSI_RED + " height: " + turnHeightIntoImage(b, i, j) + " | ");
                     isToPaint=false;
                 } else {
-                    System.out.print(Color.ANSI_BLUE + "| worker: " + turnWorkerIntoColoredImage(b, i, j) + " height: " + turnHeightIntoImage(b, i, j) + " | ");
+                    System.out.print(Color.ANSI_BLUE + "| worker: " + turnWorkerIntoColoredImage(b, i, j) + Color.ANSI_BLUE + " height: " + turnHeightIntoImage(b, i, j) + " | ");
                 }
             }
             System.out.println();
