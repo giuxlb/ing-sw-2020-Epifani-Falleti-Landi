@@ -10,8 +10,10 @@ import Model.Color;
 import Model.Worker;
 
 
+import java.nio.channels.ScatteringByteChannel;
 import java.util.ArrayList;
 import java.util.Scanner;
+import java.util.concurrent.TimeUnit;
 
 public class CLI {
     public static void main(String[] args){
@@ -32,8 +34,9 @@ public class CLI {
         VCEvent evento = cnh.getFromServer();
         cnh.readByView();
         cnh.sendVCEvent(new VCEvent("OK", VCEvent.Event.id));
-        while(evento.getCommand() != VCEvent.Event.id)
+        while(evento.getCommand() != VCEvent.Event.id) {
             System.out.println("Waiting for id");
+        }
         Integer i = (Integer) evento.getBox();
         CLI.setPlayerID(i.intValue());
 
@@ -164,9 +167,14 @@ public class CLI {
      *
      * @param cnh
      */
-    public void waitUpdateView(ClientNetworkHandler cnh){
+    public void waitUpdateView(ClientNetworkHandler cnh) {
         while(cnh.isUpdateView()==false){
-                System.out.println("Aspetto l'update");
+               System.out.println("Aspetto l'update");
+            try{
+                TimeUnit.SECONDS.sleep(2);
+            } catch (InterruptedException E){
+                System.out.println("Time out fallito");
+            }
         }
     }
 
@@ -186,8 +194,21 @@ public class CLI {
                     String username=s.nextLine();
                     buildEvent(cnh, username, VCEvent.Event.username_request);
                     break;
-                /*case wrong_username*/
-                /*case Date request*/
+                case wrong_username:
+                    Object objectWrongUsername = evento.getBox();
+                    if(objectWrongUsername instanceof String){
+                        String wrongUsername = (String) objectWrongUsername;
+                        System.out.println("Errore! Hai inserito uno username già scelto da un altro giocatore\nReinserire username");
+                        String newUsermane= s.nextLine();
+                        buildEvent(cnh,newUsermane, VCEvent.Event.wrong_username);
+                    }else{
+                        System.out.println("Errore, il messagio di wrong_username è scorretto");
+                    }
+                    break;
+                case date_request:
+                    insertDate();
+                    Data dateOfBirth=new Data(giorno,mese,anno);
+                    buildEvent(cnh,dateOfBirth, VCEvent.Event.date_request);
                 case not_your_turn:
                     Object objectPlayer = evento.getBox();
                     if(objectPlayer instanceof Player){
@@ -231,19 +252,13 @@ public class CLI {
                     VCEvent win= new VCEvent("Ho vinto", VCEvent.Event.you_won);
                     endGame=true;
                     break;
-                    //Da scommentare quando ci sarà l'evento game_ended_foryou
-                /*case game_ended_foryou:
-                    //Ricorda a Peppe che ci sono due modi per perdere
+                case game_ended_foryou:
                     System.out.println("Mi spiace, non puoi più muoverti con nessuno dei tuoi worker");
-                    break;*/
+                    break;
                 case send_all_cards:
                     System.out.println("Scegli " + getPlayersNumber() + "carte");
                     break;
-                case wrongInitialPositionMessage:
-                    break;
                 case send_chosen_cards:
-                    break;
-                case choose_initial_position:
                     break;
             }
         }
@@ -422,7 +437,7 @@ public class CLI {
     /***
      *
      */
-    public void insertData(){
+    public void insertDate(){
         System.out.print("Inserire il giorno in cui si è nati in formato gg (solo numerico) ->");
         this.giorno=s.nextInt();
         System.out.println();

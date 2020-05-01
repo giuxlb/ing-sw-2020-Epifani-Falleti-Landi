@@ -5,10 +5,19 @@ import Controller.Coordinates;
 import java.util.ArrayList;
 
 public class Controller {
+    /***
+     *
+     * @return
+     */
     public boolean validOperation(){
         return false;
     }
 
+    /***
+     *
+     * @param choice
+     * @return
+     */
     public boolean checkLimits(int choice){
         if(choice>=0 && choice<=4){
             return true;
@@ -17,6 +26,11 @@ public class Controller {
         }
     }
 
+    /***
+     *
+     * @param n
+     * @return
+     */
     public boolean checkNumberOfPlayers(int n){
         if(n==2 || n==3){
             return true;
@@ -25,6 +39,12 @@ public class Controller {
         return false;
     }
 
+    /***
+     *
+     * @param validPositions
+     * @param requestedPosition
+     * @return
+     */
     public boolean checkRequestedPosition(ArrayList<Coordinates> validPositions, Coordinates requestedPosition){
         for(Coordinates c:validPositions){
             if(c.equals(requestedPosition)){
@@ -36,6 +56,7 @@ public class Controller {
     }
 
     //ATTENZIONE: questo metodo non provvede al caso dell'inserimento di una stringa da parte dell'utente, ci penserà l'opportuna eccezione (da implementare)
+
     public boolean controllaData(Data d){
         if(d.getGiorno()<=0 || d.getGiorno()>=31){
             System.out.println("Errore! Giorno non valido");
