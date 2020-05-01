@@ -12,6 +12,7 @@ public class Main {
         p.setColor(Color.ANSI_YELLOW);
         System.out.println("Il tuo colore è: " + p.getColor());*/
 
+        //Prova del motore grafico della CLI
         Board boardGame= new Board();
         boardGame.setBoardHeight(0,0, 4);
         Worker w= new Worker(1,1, Color.ANSI_YELLOW);
