@@ -1,6 +1,8 @@
 package Client.View;
 
-public class Data {
+import java.io.Serializable;
+
+public class Data implements Serializable {
     private int giorno;
     private int mese;
     private int anno;

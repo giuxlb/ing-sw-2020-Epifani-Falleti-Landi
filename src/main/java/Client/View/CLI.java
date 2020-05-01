@@ -30,13 +30,13 @@ public class CLI {
         game.start();
         CLI.waitUpdateView(cnh);
         VCEvent evento = cnh.getFromServer();
-        cnh.readByView();
-        cnh.sendVCEvent(new VCEvent("OK", VCEvent.Event.id));
-        while(evento.getCommand() != VCEvent.Event.id) {
-            System.out.println("Waiting for id");
-        }
         Integer i = (Integer) evento.getBox();
         CLI.setPlayerID(i.intValue());
+
+
+        cnh.sendVCEvent(new VCEvent("OK", VCEvent.Event.id));
+        cnh.readByView();
+
 
         if(CLI.getPlayerID()==0) {
             //Aspetta fino a quando non arriva un messaggio
@@ -166,6 +166,7 @@ public class CLI {
         cnh.sendVCEvent(currentEvent);
     }
 
+
     /***
      *
      * @param cnh
@@ -212,6 +213,7 @@ public class CLI {
                     insertDate();
                     Data dateOfBirth=new Data(giorno,mese,anno);
                     buildEvent(cnh,dateOfBirth, VCEvent.Event.date_request);
+                    break;
                 case not_your_turn:
                     Object objectPlayer = evento.getBox();
                     if(objectPlayer instanceof Player){
@@ -310,6 +312,7 @@ public class CLI {
                         System.out.println("Errore! La stringa del nome del giocatore che è disconnesso è corrotta");
                     }
                     buildEvent(cnh, "ho ricevuto la disconnessione di un client", VCEvent.Event.player_disconnected_game_ended);
+                    break;
             }
         }
     }

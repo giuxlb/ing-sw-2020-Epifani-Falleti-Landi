@@ -25,11 +25,8 @@ public class GameControl {
          this.game = new Game();
          this.virtualView = new VirtualView();
         players = new ArrayList<Player>();
-        while(virtualView.isOkFromFirstClient() == false){
-            try{
-                TimeUnit.MILLISECONDS.sleep(10);}
-            catch (InterruptedException e){System.out.println("Interrupted exception");};
-        }
+        waitForOk();
+
         virtualView.playerNumber();
         //aspetto che SetupItReady sia true
 
@@ -53,7 +50,7 @@ public class GameControl {
         boolean flag = false;
         String player_name_1 = null;
 
-
+        waitForOk();
         //continuo a chiedere il nome al secondo giocatore finchè non è diverso dal primo
         boolean first_time = true;
         while (!flag) {
@@ -68,6 +65,7 @@ public class GameControl {
 
         //se il numero di player è 3, chiedo i dati del terzo giocatore
         if(player_number==3){
+            waitForOk();
             flag=false;
             String player_name_2 = null;
 
@@ -274,6 +272,15 @@ public class GameControl {
         }
     }
 
+    public void waitForOk()
+    {
+        while(virtualView.isOkFromClient() == false){
+            try{
+                TimeUnit.MILLISECONDS.sleep(10);}
+            catch (InterruptedException e){System.out.println("Interrupted exception");};
+        }
+        virtualView.setOkFromClient(false);
+    }
     public static void main(String[] args){
         GameControl partita = new GameControl();
     }

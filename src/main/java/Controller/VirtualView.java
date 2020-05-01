@@ -20,14 +20,14 @@ public class VirtualView {
 
 
 
-    private boolean okFromFirstClient;
+    private boolean okFromClient;
 
-    public void setOkFromFirstClient(boolean okFromFirstClient) {
-        this.okFromFirstClient = okFromFirstClient;
+    public void setOkFromClient(boolean okFromFirstClient) {
+        this.okFromClient = okFromFirstClient;
     }
 
-    public boolean isOkFromFirstClient() {
-        return okFromFirstClient;
+    public boolean isOkFromClient() {
+        return okFromClient;
     }
     /**
      * It creates the ServerNetworkHandler and prepares the information about the firstPlayer for the GameControl
@@ -40,7 +40,7 @@ public class VirtualView {
         Thread serverThread = new Thread(serverHandler);
         serverThread.start();
         this.setUpisReady = false;
-        this.okFromFirstClient = false;
+        this.okFromClient = false;
 
     }
 

@@ -88,18 +88,10 @@ public class ServerNetworkHandler implements Runnable, ClientObserver {
             System.out.println("connection dropped");
         }
         th1.start();
-        synchronized (this)
-        {
-            while(idIsSent == false)
-            {
-                try {
-                    wait();
-                } catch (InterruptedException e) { }
-            }
-        }
-        virtualView.setOkFromFirstClient(true);
+
+
         //qui dovrò aspettare un VCEvent dal primo client connesso con il numero di giocatori perchè poi mi serve per accettare gli altri
-        receiver1.canReceiveEvents();
+
 
         synchronized (this)
         {
@@ -129,14 +121,10 @@ public class ServerNetworkHandler implements Runnable, ClientObserver {
                 thread.start();
                 counter++;
                 if (counter == 2) {
-                    receiver2.canReceiveEvents();
                     th2.start();
-
                 }
                 if (counter == 3) {
-                    receiver3.canReceiveEvents();
                     th3.start();
-
                 }
             }catch(IOException e)
             {
