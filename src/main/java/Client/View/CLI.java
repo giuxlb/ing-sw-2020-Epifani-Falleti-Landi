@@ -300,6 +300,15 @@ public class CLI {
                         System.out.println("La Stringa che rappresenta la carta del primo player è arrivata corrotta");
                     }
                     break;
+                case player_disconnected_game_ended:
+                    Object objectPlayerDisconnected= evento.getBox();
+                    if(objectPlayerDisconnected instanceof String){
+                        String playerDisconnected = (String) objectPlayerDisconnected;
+                        System.out.println("Ops! Il giocatore " + playerDisconnected + " si è disconnesso, purtroppo la partita terminerà ora");
+                    }else{
+                        System.out.println("Errore! La stringa del nome del giocatore che è disconnesso è corrotta");
+                    }
+                    buildEvent(cnh, "ho ricevuto la disconnessione di un client", VCEvent.Event.player_disconnected_game_ended);
             }
         }
     }
