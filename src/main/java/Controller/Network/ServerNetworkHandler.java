@@ -87,7 +87,7 @@ public class ServerNetworkHandler implements Runnable, ClientObserver {
             System.out.println("connection dropped");
         }
         th1.start();
-        sendVCEventTo(new VCEvent(0, VCEvent.Event.id),0);
+        sendID(0);
         //qui dovrò aspettare un VCEvent dal primo client connesso con il numero di giocatori perchè poi mi serve per accettare gli altri
         VCEvent e1 = new VCEvent("NumberOfPlayers" , VCEvent.Event.setup_request);
 
@@ -128,10 +128,12 @@ public class ServerNetworkHandler implements Runnable, ClientObserver {
                 if (counter == 2) {
                     receiver2.canReceiveEvents();
                     th2.start();
+                    sendID(counter-1);
                 }
                 if (counter == 3) {
                     receiver3.canReceiveEvents();
                     th3.start();
+                    sendID(counter-1);
                 }
             }catch(IOException e)
             {
@@ -256,7 +258,23 @@ public class ServerNetworkHandler implements Runnable, ClientObserver {
         notifyAll();
 
     }
-
+    public void sendID(int index)
+    {
+        while(true) {
+            sendVCEventTo(new VCEvent(index, VCEvent.Event.id), index);
+            synchronized (this) {
+                fromClient1 = null;
+                while (fromClient1 == null) {
+                    try {
+                        wait();
+                    } catch (InterruptedException e) {
+                    }
+                }
+            }
+            if (fromClient1.getBox().equals("OK"))
+                break;
+        }
+    }
     public Socket[] getClients() {
         return clients;
     }

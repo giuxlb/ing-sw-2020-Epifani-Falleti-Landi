@@ -33,6 +33,7 @@ public class CLI {
         CLI.waitUpdateView(cnh);
         VCEvent evento = cnh.getFromServer();
         cnh.readByView();
+        cnh.sendVCEvent(new VCEvent("OK", VCEvent.Event.id));
         while(evento.getCommand() != VCEvent.Event.id)
             System.out.println("Waiting for id");
         Integer i = (Integer) evento.getBox();
