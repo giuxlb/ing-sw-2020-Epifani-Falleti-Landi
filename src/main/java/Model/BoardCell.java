@@ -1,5 +1,8 @@
 package Model;
 
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.io.Serializable;
 
 public class BoardCell implements Serializable {
@@ -50,5 +53,14 @@ public class BoardCell implements Serializable {
         return height;
     }
 
+    public void readObject(ObjectInputStream stream) throws IOException,ClassNotFoundException
+    {
+        stream.defaultReadObject();
+    }
+
+    public void writeObject(ObjectOutputStream stream) throws IOException
+    {
+        stream.defaultWriteObject();
+    }
 
 }

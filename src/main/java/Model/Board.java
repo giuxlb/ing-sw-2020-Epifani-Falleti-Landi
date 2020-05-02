@@ -1,5 +1,8 @@
 package Model;
 
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.io.Serializable;
 
 public class Board implements Serializable {
@@ -86,6 +89,16 @@ public class Board implements Serializable {
      */
     public Worker getBoardWorker(int i, int j){
         return this.boardGame[i][j].getWorkerBuilder();
+    }
+
+    public void readObject(ObjectInputStream stream) throws IOException,ClassNotFoundException
+    {
+        stream.defaultReadObject();
+    }
+
+    public void writeObject(ObjectOutputStream stream) throws IOException
+    {
+        stream.defaultWriteObject();
     }
 
 
