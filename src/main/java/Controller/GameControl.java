@@ -2,6 +2,7 @@ package Controller;
 
 import Client.View.Data;
 import Model.Card;
+import Model.Color;
 import Model.Game;
 import Model.Player;
 
@@ -25,7 +26,7 @@ public class GameControl {
          this.game = new Game();
          this.virtualView = new VirtualView();
         players = new ArrayList<Player>();
-        waitForOk();
+        //waitForOk();
 
         virtualView.playerNumber();
         //aspetto che SetupItReady sia true
@@ -46,11 +47,11 @@ public class GameControl {
 
         //aggiungo il player 0
         this.addPlayer(new Player(player_name_0,player_date_0));
-
+        virtualView.sendColor(Color.ANSI_YELLOW,players.get(0));
         boolean flag = false;
         String player_name_1 = null;
 
-        waitForOk();
+       // waitForOk();
         //continuo a chiedere il nome al secondo giocatore finchè non è diverso dal primo
         boolean first_time = true;
         while (!flag) {
@@ -62,10 +63,10 @@ public class GameControl {
         }
         Data player_date_1 = virtualView.askForDate(1);
         this.addPlayer(new Player(player_name_1,player_date_1));
-
+        virtualView.sendColor(Color.ANSI_GREEN,players.get(1));
         //se il numero di player è 3, chiedo i dati del terzo giocatore
         if(player_number==3){
-            waitForOk();
+           // waitForOk();
             flag=false;
             String player_name_2 = null;
 
@@ -77,6 +78,7 @@ public class GameControl {
             }
             Data player_date_2 = virtualView.askForDate(2);
             this.addPlayer(new Player(player_name_2,player_date_2));
+            virtualView.sendColor(Color.ANSI_PURPLE,players.get(2));
         }
 
         //mando alla virtualview l'array dei player non ordinato
@@ -271,16 +273,19 @@ public class GameControl {
             }
         }
     }
-
+/*
     public void waitForOk()
     {
         while(virtualView.isOkFromClient() == false){
+          System.out.println(virtualView.isOkFromClient());
             try{
                 TimeUnit.MILLISECONDS.sleep(10);}
             catch (InterruptedException e){System.out.println("Interrupted exception");};
         }
         virtualView.setOkFromClient(false);
     }
+
+ */
     public static void main(String[] args){
         GameControl partita = new GameControl();
         System.out.println("AVVIO LA PARTITA");

@@ -140,8 +140,8 @@ public class ClientEventReceiver implements Runnable {
         pingFromClient = ping;
         notifyAll();
     }
-/*
-    public void sendID(int index)
+
+    /*public void sendID(int index)
     {
         while(true) {
             snh.sendVCEventTo(new VCEvent(index, VCEvent.Event.id), index);
@@ -161,7 +161,7 @@ public class ClientEventReceiver implements Runnable {
         snh.virtualView.setOkFromClient(true);
     }
 
- */
+*/
 }
 
 

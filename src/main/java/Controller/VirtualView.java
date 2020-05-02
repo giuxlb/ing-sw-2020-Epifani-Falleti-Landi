@@ -22,13 +22,7 @@ public class VirtualView {
 
     private boolean okFromClient;
 
-    public void setOkFromClient(boolean okFromFirstClient) {
-        this.okFromClient = okFromFirstClient;
-    }
 
-    public boolean isOkFromClient() {
-        return okFromClient;
-    }
     /**
      * It creates the ServerNetworkHandler and prepares the information about the firstPlayer for the GameControl
      */
@@ -68,6 +62,16 @@ public class VirtualView {
         return -1;
 
     }
+
+
+    public void sendColor(Color c,Player p)
+    {
+        VCEvent evento = new VCEvent(c, VCEvent.Event.you_won);
+        for (int i = 0; i <numberOfPlayers ; i++) {
+            if (p.getUsername().equals(players.get(i).getUsername()))
+                serverHandler.sendVCEventTo(evento,i);
+        }
+    }
     /**
      * It asks to a client for username
      * @param index identifies the client who will receive the request
@@ -77,6 +81,7 @@ public class VirtualView {
 
     public String askForUsername(int index,boolean wasWrong)
     {
+
         VCEvent evento;
         if (wasWrong == false) {
              evento = new VCEvent("username", VCEvent.Event.username_request);

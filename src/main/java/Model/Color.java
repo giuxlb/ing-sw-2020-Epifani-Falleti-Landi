@@ -1,6 +1,8 @@
 package Model;
 
-public enum Color{
+import java.io.Serializable;
+
+public enum Color implements Serializable {
     ANSI_RED("\u001B[31m"),
     ANSI_GREEN("\u001B[32m"),
     ANSI_YELLOW("\u001B[33m"),
