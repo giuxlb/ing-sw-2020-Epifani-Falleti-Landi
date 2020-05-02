@@ -39,7 +39,10 @@ public class VirtualView {
     }
 
 
-
+    /***
+     * It sends the setup_request only to the first client conneceted
+     * @return
+     */
     public int playerNumber()
     {
         VCEvent evento = new VCEvent(null, VCEvent.Event.setup_request);
@@ -64,11 +67,14 @@ public class VirtualView {
 
     }
 
-
+    /***
+     * It sends the color of workers tha a player is using to him
+     * @param c identifies the color
+     * @param index identifies the client
+     */
     public void sendColor(String c,int index)
     {
         VCEvent evento = new VCEvent(c, VCEvent.Event.send_color);
-
         serverHandler.sendVCEventTo(evento,index);
 
     }
@@ -78,7 +84,6 @@ public class VirtualView {
      * @param wasWrong
      * @return
      */
-
     public String askForUsername(int index,boolean wasWrong)
     {
 
@@ -309,6 +314,12 @@ public class VirtualView {
 
     }
 
+    /***
+     * It asks to the player, which worker he wants to use for moving/building
+     * @param p is the player who will receive this request
+     * @param workersPosition contains the positions of player p's workers
+     * @return
+     */
     public Coordinates askForWorker(Player p, ArrayList<Coordinates> workersPosition)
     {
         VCEvent evento = new VCEvent(workersPosition, VCEvent.Event.ask_for_worker);
@@ -373,6 +384,10 @@ public class VirtualView {
         }
     }
 
+    /***
+     * It notifies to player p that a player has disconnected, so the game is ended with no winner
+     * @param p is the player to notify
+     */
     public void player_disconnected_game_ended(Player p)
     {
         VCEvent evento = new VCEvent(p.getUsername(), VCEvent.Event.player_disconnected_game_ended);
