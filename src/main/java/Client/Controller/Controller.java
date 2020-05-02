@@ -40,7 +40,7 @@ public class Controller {
      */
     public boolean checkRequestedPosition(ArrayList<Coordinates> validPositions, Coordinates requestedPosition){
         for(Coordinates c:validPositions){
-            if(c.equals(requestedPosition)){
+            if((c.getX() == requestedPosition.getX() && (c.getY() == requestedPosition.getY()))){
                 return true;
             }
         }

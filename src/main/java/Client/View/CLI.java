@@ -224,12 +224,12 @@ public class CLI {
                         System.out.println("Errore! La stringa del vincitore è corrotta");
                     }
                     System.out.println();
-                    VCEvent lose= new VCEvent("Ho perso", VCEvent.Event.you_lost);
+                    buildEvent(cnh,"ho perso", VCEvent.Event.you_lost);
                     endGame=true;
                     break;
                 case you_won:
                     System.out.println("Congratulazioni, sei il vincitore!");
-                    VCEvent win= new VCEvent("Ho vinto", VCEvent.Event.you_won);
+                    buildEvent(cnh,"ho vinto", VCEvent.Event.you_won);
                     endGame=true;
                     break;
                 case game_ended_foryou:
@@ -288,6 +288,9 @@ public class CLI {
                         System.out.println("Errore! La stringa del nome del giocatore che è disconnesso è corrotta");
                     }
                     buildEvent(cnh, "ho ricevuto la disconnessione di un client", VCEvent.Event.player_disconnected_game_ended);
+                    break;
+                default:
+                    System.out.println("Errore nel protocollo");
                     break;
             }
         }
@@ -364,7 +367,7 @@ public class CLI {
     public Integer findIndex(ArrayList<Coordinates> validPositions, Coordinates chosenCoordinates){
         int index=0;
         for(Coordinates c:validPositions){
-            if(c.equals(chosenCoordinates)){
+            if((c.getX() == chosenCoordinates.getX() && (c.getY() == chosenCoordinates.getY()))){
                 return index;
             }
             index++;
@@ -398,8 +401,7 @@ public class CLI {
             s.nextLine();
             chosenCoordinates = new Coordinates(x,y);
         }
-        VCEvent replyPosition = new VCEvent(findIndex(validPositions, chosenCoordinates), command);
-        cnh.sendVCEvent(replyPosition);
+        buildEvent(cnh,findIndex(validPositions, chosenCoordinates),command);
     }
 
     /***

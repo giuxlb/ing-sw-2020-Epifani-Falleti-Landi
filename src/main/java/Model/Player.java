@@ -2,9 +2,10 @@ package Model;
 
 import Client.View.Data;
 
+import java.io.Serializable;
 import java.util.Calendar;
 
-public class Player {
+public class Player implements Serializable {
     private String username;
     private Worker[] workers;
     private String gameCard;

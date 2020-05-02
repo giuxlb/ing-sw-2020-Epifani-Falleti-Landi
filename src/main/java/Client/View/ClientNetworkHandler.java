@@ -61,6 +61,7 @@ public class ClientNetworkHandler implements Runnable, ServerObserver {
         /*qua creo un'istanza della View chiamando il suo costruttore e passandogli questo network handler
         in modo tale da poi permetterci di chiamare i metodi della View sotto che dovranno gestire l'input e l'output
         */
+        //22 07 1997
         Runnable runPing = ()->{
             while(true)
             {
@@ -103,7 +104,7 @@ public class ClientNetworkHandler implements Runnable, ServerObserver {
                 }
             }
             cli.updateGo();
-            System.out.println("è arrivato "+ fromServer.getBox());
+            System.out.println("è arrivato "+ fromServer.getCommand());
             synchronized (this){
                 while(isRead == false)
                 {
@@ -165,7 +166,7 @@ public class ClientNetworkHandler implements Runnable, ServerObserver {
         }
         // qui avrò che la canWrite sarà true, quindi lo pongo a false
         canWrite = false;
-        System.out.println("Mando l'evento "+ eventToServer.getBox());
+        //System.out.println("Mando l'evento "+ eventToServer.getBox());
         try {
             output.writeObject(eventToServer);
         } catch (IOException e) {

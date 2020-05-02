@@ -1,6 +1,8 @@
 package Model;
 
-public class Worker {
+import java.io.Serializable;
+
+public class Worker implements Serializable {
     private Color color;
     private int pos_x;
     private int pos_y;
