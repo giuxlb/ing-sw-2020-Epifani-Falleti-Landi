@@ -1,4 +1,3 @@
-//Manca la funzione di controllo delle carte
 package Client.View;
 
 import Controller.Network.VCEvent;
@@ -9,8 +8,6 @@ import Controller.Coordinates;
 import Model.Color;
 import java.util.ArrayList;
 import java.util.Scanner;
-import java.util.concurrent.TimeUnit;
-
 
 public class CLI {
     public static void main(String[] args){
@@ -49,6 +46,7 @@ public class CLI {
     private int giorno;
     private int mese;
     private int anno;
+    private Data dateOfBirth;
     private ArrayList<String> chosenGods = new ArrayList<String>();
     private String myCard;
     private boolean updateView;
@@ -115,6 +113,7 @@ public class CLI {
         VCEvent currentEvent= new VCEvent(o, command);
         cnh.sendVCEvent(currentEvent);
     }
+
     public synchronized void updateGo()
     {
         updateView = true;
@@ -140,25 +139,9 @@ public class CLI {
      *
      * @param cnh
      */
-    public void waitUpdateView(ClientNetworkHandler cnh) {
-        while(cnh.isUpdateView()==false){
-               System.out.println("Aspetto l'update");
-            try{
-                TimeUnit.SECONDS.sleep(2);
-            } catch (InterruptedException E){
-                System.out.println("Time out fallito");
-            }
-        }
-    }
-
-    /***
-     *
-     * @param cnh
-     */
     public void checkEvent(ClientNetworkHandler cnh)  {
         boolean endGame = false;
         while(endGame==false){
-            //waitUpdateView(cnh);
             update();
             VCEvent evento = cnh.getFromServer();
             cnh.readByView();
@@ -166,7 +149,7 @@ public class CLI {
                 case send_color:
                     Object objcectColorName = evento.getBox();
                     if(objcectColorName instanceof String){
-                        myColor = (String) objcectColorName;
+                        this.myColor = (String) objcectColorName;
                         System.out.println("I tuoi worker saranno di colore " + myColor);
                     }else{
                         System.out.println("Errore! La stringa che dovrebbe rappresentare in nome del mio colore è arrivata corrotta");
@@ -181,6 +164,7 @@ public class CLI {
                         n = s.nextInt();
                         s.nextLine();
                     }
+                    this.playersNumber=n;
                     buildEvent(cnh, n, VCEvent.Event.setup_request);
                     break;
                 case username_request :
@@ -190,24 +174,19 @@ public class CLI {
                     break;
                 case wrong_username:
                     Object objectWrongUsername = evento.getBox();
-                    if(objectWrongUsername instanceof String){
-                        String wrongUsername = (String) objectWrongUsername;
-                        System.out.println("Errore! Hai inserito uno username già scelto da un altro giocatore\nReinserire username");
-                        String newUsermane= s.nextLine();
-                        buildEvent(cnh,newUsermane, VCEvent.Event.wrong_username);
-                    }else{
-                        System.out.println("Errore, il messagio di wrong_username è scorretto");
-                    }
+                    System.out.println("Errore! Hai inserito uno username già scelto da un altro giocatore\nReinserire username");
+                    String newUsermane= s.nextLine();
+                    buildEvent(cnh,newUsermane, VCEvent.Event.wrong_username);
                     break;
                 case date_request:
                     insertDate();
-                    Data dateOfBirth=new Data(giorno,mese,anno);
+                    dateOfBirth = new Data(giorno,mese,anno);
                     s.nextLine();
                     while(c.controllaData(dateOfBirth)==false){
                         System.out.println("Data non valida, per favore inserire nuovamente");
                         insertDate();
                         s.nextLine();
-                        dateOfBirth=new Data(giorno,mese,anno);
+                        this.dateOfBirth = new Data(giorno,mese,anno);
                     }
                     buildEvent(cnh,dateOfBirth, VCEvent.Event.date_request);
                     break;
@@ -225,7 +204,7 @@ public class CLI {
                     if(objectBoard instanceof Board){
                         Board b = (Board)objectBoard;
                         printBoard(b);
-                        setBoard(b);
+                        this.b=b;
                     }else {
                         System.out.println("Errore, board corrotta!");
                     }
@@ -284,7 +263,9 @@ public class CLI {
                     ArrayList<String> sentGods= (ArrayList<String>)  objectSentGods;
                     if(sentGods.size()==1){
                         System.out.println("La tua carta divinità sarà " + sentGods.get(0));
-                        setMyCard(sentGods.get(0));
+                        this.myCard=sentGods.get(0);
+                        //In realtà non ci sarebbe bisogno dello statement successivo
+                        buildEvent(cnh, sentGods.get(0), VCEvent.Event.send_chosen_cards);
                     }else{
                         for(String god:sentGods){
                             System.out.print(god + " ");
@@ -293,20 +274,9 @@ public class CLI {
                         System.out.print("Digita il nome della divinità che preferisci ->");
                         //Il controller deve controllare che effettivamente la divinità scelta sia un elemento delle divinità ricevute
                         String chosenGod= s.nextLine();
-                        setMyCard(chosenGod);
+                        this.myCard=chosenGod;
                         System.out.println();
                         buildEvent(cnh, chosenGod, VCEvent.Event.send_chosen_cards);
-                    }
-
-                    break;
-                case send_your_card:
-                    Object firstPlayerCard = evento.getBox();
-                    if (firstPlayerCard instanceof String){
-                        String myGod = (String) firstPlayerCard;
-                        setMyCard(myGod);
-                        System.out.println("La tua carta divinità è " + getMyCard());
-                    }else{
-                        System.out.println("La Stringa che rappresenta la carta del primo player è arrivata corrotta");
                     }
                     break;
                 case player_disconnected_game_ended:
@@ -322,23 +292,6 @@ public class CLI {
             }
         }
     }
-
-    /***
-     *
-     * @return
-     */
-    public Board getBoard() {
-        return b;
-    }
-
-    /***
-     *
-     * @param b
-     */
-    public void setBoard(Board b) {
-        this.b = b;
-    }
-
 
     /***
      *
@@ -460,22 +413,6 @@ public class CLI {
         System.out.print("Inserire l'anno in cui si è nati in formato aaaa (solo numerico) ->");
         this.anno=s.nextInt();
         System.out.println();
-    }
-
-    /***
-     *
-     * @return
-     */
-    public String getMyCard() {
-        return myCard;
-    }
-
-    /***
-     *
-     * @param myCard
-     */
-    public void setMyCard(String myCard) {
-        this.myCard = myCard;
     }
 
 }
