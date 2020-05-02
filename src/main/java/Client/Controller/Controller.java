@@ -5,13 +5,6 @@ import Controller.Coordinates;
 import java.util.ArrayList;
 
 public class Controller {
-    /***
-     *
-     * @return
-     */
-    public boolean validOperation(){
-        return false;
-    }
 
     /***
      *
@@ -57,6 +50,11 @@ public class Controller {
 
     //ATTENZIONE: questo metodo non provvede al caso dell'inserimento di una stringa da parte dell'utente, ci penserà l'opportuna eccezione (da implementare)
 
+    /***
+     *
+     * @param d
+     * @return
+     */
     public boolean controllaData(Data d){
         if(d.getGiorno()<=0 || d.getGiorno()>=31){
             System.out.println("Errore! Giorno non valido");
@@ -88,16 +86,22 @@ public class Controller {
         return true;
     }
 
-    public boolean isLeapYear(int anno){
-        if(anno%400==0){
+    /***
+     * Check if a year is leap or not
+     * @param year to check if it's a leap year or not
+     * @return true if param year represents a leap year or false if param year doesn't represent a leap year
+     */
+    public boolean isLeapYear(int year){
+        if(year%400==0){
             return true;
         }else {
-            if (anno % 4 == 0 && anno % 100 != 0) {
+            if (year % 4 == 0 && year% 100 != 0) {
                 return true;
             } else {
                 return false;
             }
         }
     }
+    
 
 }

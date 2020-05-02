@@ -1,6 +1,7 @@
 //Manca la funzione di controllo delle carte
 package Client.View;
 
+import Controller.Network.ClientObserver;
 import Controller.Network.VCEvent;
 import Model.Board;
 import Model.Player;
@@ -9,6 +10,10 @@ import Controller.Coordinates;
 import Controller.Network.VCEvent;
 import Model.Color;
 import Model.Worker;
+
+import java.io.BufferedInputStream;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.Scanner;
 import java.util.concurrent.TimeUnit;
@@ -73,6 +78,7 @@ public class CLI {
     }
 
     //Attributi grafici e testuali della CLI
+    private ClientNetworkHandler cnh;
     private Controller c;
     private Scanner s;
     private int playerID;
@@ -92,13 +98,18 @@ public class CLI {
     private ArrayList<String> chosenGods = new ArrayList<String>();
     private String myCard;
     private boolean updateView;
+    private InputStream is;
+    private BufferedInputStream in;
+
 
     //Costruttore della CLI
     /***
      *
      */
     public CLI(){
+        //cnh = new ClientNetworkHandler(CLI);
         s = new Scanner(System.in);
+        in = new BufferedInputStream(is);
         c = new Controller();
         b = new Board();
         e = new Elements();
@@ -209,7 +220,7 @@ public class CLI {
      *
      * @param cnh
      */
-    public void checkEvent(ClientNetworkHandler cnh){
+    public void checkEvent(ClientNetworkHandler cnh)  {
         boolean endGame = false;
         while(endGame==false){
             //waitUpdateView(cnh);
@@ -236,6 +247,13 @@ public class CLI {
                 case date_request:
                     insertDate();
                     Data dateOfBirth=new Data(giorno,mese,anno);
+                    s.nextLine();
+                    while(c.controllaData(dateOfBirth)==false){
+                        System.out.println("Data non valida, per favore inserire nuovamente");
+                        insertDate();
+                        s.nextLine();
+                        dateOfBirth=new Data(giorno,mese,anno);
+                    }
                     buildEvent(cnh,dateOfBirth, VCEvent.Event.date_request);
                     break;
                 case not_your_turn:
@@ -289,12 +307,15 @@ public class CLI {
                     //Non possiamo controllare se l'ArrayList di Stringhe sia corrotto o meno
                     ArrayList<String> gods= (ArrayList<String>)  objectGods;
                     for(String god:gods){
-                        System.out.print(god);
+                        System.out.print(god + " ");
                     }
+                    System.out.println("");
                     System.out.println("Scegli " + getPlayersNumber() + "carte");
+
                     for(int i=0;i<getPlayersNumber();i++){
-                        System.out.print("Scegli la " + i + "°" + "carta ->");
-                        String card=s.nextLine();
+                        System.out.print("Scegli la " + (i+1) + "°" + "carta ->");
+                        String card = s.nextLine();
+
                         //Ricordati di chiamare il controller pure qui
                         chosenGods.add(card);
                     }
@@ -307,7 +328,7 @@ public class CLI {
                     //Non possiamo controllare se l'ArrayList di Stringhe sia corrotto o meno
                     ArrayList<String> sentGods= (ArrayList<String>)  objectSentGods;
                     for(String god:sentGods){
-                        System.out.print(god);
+                        System.out.print(god + " ");
                     }
                     System.out.println();
                     System.out.print("Digita il nome della divinità che preferisci ->");
@@ -516,10 +537,8 @@ public class CLI {
     public void insertDate(){
         System.out.print("Inserire il giorno in cui si è nati in formato gg (solo numerico) ->");
         this.giorno=s.nextInt();
-        System.out.println();
         System.out.print("Inserire il mese in cui si è nati in formato mm (solo numerico) ->");
         this.mese=s.nextInt();
-        System.out.println();
         System.out.print("Inserire l'anno in cui si è nati in formato aaaa (solo numerico) ->");
         this.anno=s.nextInt();
         System.out.println();
