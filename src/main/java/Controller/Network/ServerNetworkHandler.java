@@ -87,6 +87,7 @@ public class ServerNetworkHandler implements Runnable, ClientObserver {
         {
             System.out.println("connection dropped");
         }
+        receiver1.canReceiveEvents();
         th1.start();
 
 
@@ -121,9 +122,11 @@ public class ServerNetworkHandler implements Runnable, ClientObserver {
                 thread.start();
                 counter++;
                 if (counter == 2) {
+                    receiver2.canReceiveEvents();
                     th2.start();
                 }
                 if (counter == 3) {
+                    receiver3.canReceiveEvents();
                     th3.start();
                 }
             }catch(IOException e)
