@@ -97,7 +97,7 @@ public class ClientNetworkHandler implements Runnable, ServerObserver {
         {
             isRead = false;
             synchronized (this) {
-                fromServer = null;
+
                 while (fromServer == null) {
                     try {
                         wait();
@@ -115,8 +115,11 @@ public class ClientNetworkHandler implements Runnable, ServerObserver {
                     } catch (InterruptedException e) { }
                 }
             }
-            adapter.continueToRead();
             System.out.println("é arrivato alla view l'evento"+ fromServer.getCommand());
+            fromServer = null;
+            adapter.continueToRead();
+
+
         }
 
     }
