@@ -64,7 +64,7 @@ public class VirtualView {
     }
 
 
-    public void sendColor(Color c,Player p)
+    public void sendColor(String c,Player p)
     {
         VCEvent evento = new VCEvent(c, VCEvent.Event.you_won);
         for (int i = 0; i <numberOfPlayers ; i++) {

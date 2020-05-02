@@ -47,7 +47,7 @@ public class GameControl {
 
         //aggiungo il player 0
         this.addPlayer(new Player(player_name_0,player_date_0));
-        virtualView.sendColor(Color.ANSI_YELLOW,players.get(0));
+        virtualView.sendColor("yellow",players.get(0));
         boolean flag = false;
         String player_name_1 = null;
 
@@ -63,7 +63,7 @@ public class GameControl {
         }
         Data player_date_1 = virtualView.askForDate(1);
         this.addPlayer(new Player(player_name_1,player_date_1));
-        virtualView.sendColor(Color.ANSI_GREEN,players.get(1));
+        virtualView.sendColor("green",players.get(1));
         //se il numero di player è 3, chiedo i dati del terzo giocatore
         if(player_number==3){
            // waitForOk();
@@ -78,7 +78,7 @@ public class GameControl {
             }
             Data player_date_2 = virtualView.askForDate(2);
             this.addPlayer(new Player(player_name_2,player_date_2));
-            virtualView.sendColor(Color.ANSI_PURPLE,players.get(2));
+            virtualView.sendColor("purple",players.get(2));
         }
 
         //mando alla virtualview l'array dei player non ordinato
