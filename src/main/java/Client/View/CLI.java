@@ -1,19 +1,12 @@
 //Manca la funzione di controllo delle carte
 package Client.View;
 
-import Controller.Network.ClientObserver;
 import Controller.Network.VCEvent;
 import Model.Board;
 import Model.Player;
 import Client.Controller.Controller;
 import Controller.Coordinates;
-import Controller.Network.VCEvent;
 import Model.Color;
-import Model.Worker;
-
-import java.io.BufferedInputStream;
-import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.Scanner;
 import java.util.concurrent.TimeUnit;
@@ -23,56 +16,18 @@ public class CLI {
     public static void main(String[] args){
         System.out.println("Santorini - Epifani Falleti Landi");
         CLI CLI = new CLI();
-        CLI.playerID = -1;
-        //Costruzione dello scanner e del Controlle usati nel main(Una volta finita la CLI posso unificarli con quelli del costruttore di CLI?)
-        Scanner mainScanner= new Scanner(System.in);
-        Controller mainController = new Controller();
 
         //Creazione della socket del client
-            ClientNetworkHandler cnh = new ClientNetworkHandler(CLI);
+        ClientNetworkHandler cnh = new ClientNetworkHandler(CLI);
 
         //Thread per l'esecuzione principale della CLI
         Thread game = new Thread(cnh);
         game.start();
-        //CLI.waitUpdateView(cnh);
-        CLI.update();
-        VCEvent evento = cnh.getFromServer();
-        Integer i = (Integer) evento.getBox();
-        CLI.setPlayerID(i.intValue());
 
-        cnh.readByView();
-        cnh.sendVCEvent(new VCEvent("OK", VCEvent.Event.id));
-
-
-
-        if(CLI.getPlayerID()==0) {
-            //Aspetta fino a quando non arriva un messaggio
-            //CLI.waitUpdateView(cnh);
-            CLI.update();
-            VCEvent event = cnh.getFromServer();
-            cnh.readByView();
-            //Chiede numero giocatori al primo client
-            System.out.println("Quanti giocatori giocheranno a questa partita?\nInserire 2 per 2 giocatori, 3 per 3 giocatori");
-            int n = mainScanner.nextInt();
-            while (mainController.checkNumberOfPlayers(n) == false) {
-                System.out.println("Errore, impossibile avviare una partita con questo numero di giocatori, chiedere solo per 2 o 3 giocatori");
-                n = mainScanner.nextInt();
-            }
-            CLI.setPlayersNumber(n);
-            CLI.buildEvent(cnh, n, VCEvent.Event.setup_request);
-
-            //Le pedine del primo player sono gialle
-            CLI.setColor(Color.ANSI_GREEN);
-        }else if(CLI.getPlayerID()==1){
-            //Le pedine del secondo player sono verdi
-            CLI.setColor(Color.ANSI_GREEN);
-        }else if(CLI.getPlayerID()==2){
-            //Le pedine di un EVENTUALE terzo player sono viola
-            CLI.setColor(Color.ANSI_PURPLE);
-        }
-
+        //Ciclo di gioco
         CLI.checkEvent(cnh);
 
+        //Messagio di arriverci
         System.out.println("Partita terminata, grazie per aver giocato");
 
     }
@@ -82,7 +37,7 @@ public class CLI {
     private Controller c;
     private Scanner s;
     private int playerID;
-    private Color ansiColor;
+    private String myColor;
     private Board b;
     private String move="dove ti vuoi muovere";
     private String build="dove vuoi costruire";
@@ -98,9 +53,6 @@ public class CLI {
     private ArrayList<String> chosenGods = new ArrayList<String>();
     private String myCard;
     private boolean updateView;
-    private InputStream is;
-    private BufferedInputStream in;
-
 
     //Costruttore della CLI
     /***
@@ -109,7 +61,6 @@ public class CLI {
     public CLI(){
         //cnh = new ClientNetworkHandler(CLI);
         s = new Scanner(System.in);
-        in = new BufferedInputStream(is);
         c = new Controller();
         b = new Board();
         e = new Elements();
@@ -228,6 +179,26 @@ public class CLI {
             VCEvent evento = cnh.getFromServer();
             cnh.readByView();
             switch (evento.getCommand()){
+                case send_color:
+                    Object objcectColorName = evento.getBox();
+                    if(objcectColorName instanceof String){
+                        myColor = (String) objcectColorName;
+                        System.out.println("I tuoi worker saranno di colore " + myColor);
+                    }else{
+                        System.out.println("Errore! La stringa che dovrebbe rappresentare in nome del mio colore è arrivata corrotta");
+                    }
+                    break;
+                case setup_request:
+                    System.out.println("Quanti giocatori giocheranno a questa partita?\nInserire 2 per 2 giocatori, 3 per 3 giocatori");
+                    int n = s.nextInt();
+                    s.nextLine();
+                    while (c.checkNumberOfPlayers(n) == false) {
+                        System.out.println("Errore, impossibile avviare una partita con questo numero di giocatori, chiedere solo per 2 o 3 giocatori");
+                        n = s.nextInt();
+                        s.nextLine();
+                    }
+                    buildEvent(cnh, n, VCEvent.Event.setup_request);
+                    break;
                 case username_request :
                     System.out.println("Inserisci il tuo nome utente");
                     String username=s.nextLine();
@@ -364,22 +335,6 @@ public class CLI {
 
     /***
      *
-     * @param c
-     */
-    public void setColor(Color c) {
-        this.ansiColor = c;
-    }
-
-    /***
-     *
-     * @return
-     */
-    public Color getColor() {
-        return ansiColor;
-    }
-
-    /***
-     *
      * @return
      */
     public Board getBoard() {
@@ -503,12 +458,16 @@ public class CLI {
         ArrayList<Coordinates> validPositions = (ArrayList<Coordinates>)objectValidPositions;
         paintBoardCell(b, validPositions );
         int x=chooseCoordinate(xPosition);
+        s.nextLine();
         int y=chooseCoordinate(yPosition);
+        s.nextLine();
         Coordinates chosenCoordinates = new Coordinates(x,y);
         while(c.checkRequestedPosition(validPositions, chosenCoordinates)==false){
             System.out.println("Errore! Mossa non valida, controlla le caselle in rosso per poter eseguire una mossa valida");
             x=chooseCoordinate(xPosition);
+            s.nextLine();
             y=chooseCoordinate(yPosition);
+            s.nextLine();
             chosenCoordinates = new Coordinates(x,y);
         }
         VCEvent replyPosition = new VCEvent(findIndex(validPositions, chosenCoordinates), command);
