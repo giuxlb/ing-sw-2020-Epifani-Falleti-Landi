@@ -2,6 +2,8 @@ package Controller;
 
 import Model.*;
 
+import java.util.ArrayList;
+
 public class TurnControl {
     private Player player;
     private int extraEffect;
@@ -32,8 +34,20 @@ public class TurnControl {
 
         ctx.selectStrategy(this.card);
 
-        //ask the player which worker they want to use
-        Worker selectedWorker = player.getWorker(0);
+        ArrayList<Coordinates> workers_pos = new ArrayList<>();
+        Coordinates position_0 = new Coordinates(player.getWorker(0).getPositionX(),player.getWorker(0).getPositionY());
+        Coordinates position_1 = new Coordinates(player.getWorker(1).getPositionX(),player.getWorker(1).getPositionY());
+
+
+        workers_pos.add(position_0);
+        workers_pos.add(position_1);
+
+
+        Coordinates worker_pos = virtualView.askForWorker(player,workers_pos);
+
+        int temp = workers_pos.indexOf(worker_pos);
+
+        Worker selectedWorker = player.getWorker(temp);
 
         return ctx.turn(player,selectedWorker,boardGame,game,extraEffect,virtualView);
     }
