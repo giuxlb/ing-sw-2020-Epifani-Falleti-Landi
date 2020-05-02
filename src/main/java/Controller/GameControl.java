@@ -114,14 +114,12 @@ public class GameControl {
             game.nextTurnNumber();
         }
 
-        //setto l'ultima carta rimasta al primo player
-        players.get(game.getTurnNumber()).chooseCard(chosenCards.get(0));
+        cardChoice = virtualView.sendChosenCards(players.get(game.getTurnNumber()),chosenCards);
 
-        //mando a tutti i player le loro carte
-        do{
-            virtualView.sendYourCard(players.get(game.getTurnNumber()),players.get(game.getTurnNumber()).getGameCard());
-            game.nextTurnNumber();
-        }while (game.getTurnNumber()!=0);
+        //setto l'ultima carta rimasta al primo player
+        players.get(game.getTurnNumber()).chooseCard(cardChoice);
+
+
 
         //chiedo a tutti i player le posizioni iniziali
         do{
