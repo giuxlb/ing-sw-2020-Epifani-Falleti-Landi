@@ -36,7 +36,6 @@ public class CLI {
     private ClientNetworkHandler cnh;
     private Controller c;
     private Scanner s;
-    private int playerID;
     private String myColor;
     private Board b;
     private String move="dove ti vuoi muovere";
@@ -104,21 +103,6 @@ public class CLI {
             }
             System.out.println();
         }
-    }
-    /***
-     *
-     * @return
-     */
-    public int getPlayerID() {
-        return playerID;
-    }
-
-    /***
-     *
-     * @param playerID
-     */
-    public void setPlayerID(int playerID) {
-        this.playerID = playerID;
     }
 
     /***
@@ -281,9 +265,9 @@ public class CLI {
                         System.out.print(god + " ");
                     }
                     System.out.println("");
-                    System.out.println("Scegli " + getPlayersNumber() + "carte");
+                    System.out.println("Scegli " + playersNumber + "carte");
 
-                    for(int i=0;i<getPlayersNumber();i++){
+                    for(int i=0;i<playersNumber;i++){
                         System.out.print("Scegli la " + (i+1) + "°" + "carta ->");
                         String card = s.nextLine();
 
@@ -298,16 +282,22 @@ public class CLI {
                     Object objectSentGods = evento.getBox();
                     //Non possiamo controllare se l'ArrayList di Stringhe sia corrotto o meno
                     ArrayList<String> sentGods= (ArrayList<String>)  objectSentGods;
-                    for(String god:sentGods){
-                        System.out.print(god + " ");
+                    if(sentGods.size()==1){
+                        System.out.println("La tua carta divinità sarà " + sentGods.get(0));
+                        setMyCard(sentGods.get(0));
+                    }else{
+                        for(String god:sentGods){
+                            System.out.print(god + " ");
+                        }
+                        System.out.println();
+                        System.out.print("Digita il nome della divinità che preferisci ->");
+                        //Il controller deve controllare che effettivamente la divinità scelta sia un elemento delle divinità ricevute
+                        String chosenGod= s.nextLine();
+                        setMyCard(chosenGod);
+                        System.out.println();
+                        buildEvent(cnh, chosenGod, VCEvent.Event.send_chosen_cards);
                     }
-                    System.out.println();
-                    System.out.print("Digita il nome della divinità che preferisci ->");
-                    //Il controller deve controllare che effettivamente la divinità scelta sia un elemento delle divinità ricevute
-                    String chosenGod= s.nextLine();
-                    setMyCard(chosenGod);
-                    System.out.println();
-                    buildEvent(cnh, chosenGod, VCEvent.Event.send_chosen_cards);
+
                     break;
                 case send_your_card:
                     Object firstPlayerCard = evento.getBox();
@@ -349,21 +339,6 @@ public class CLI {
         this.b = b;
     }
 
-    /***
-     *
-     * @return
-     */
-    public String getStringMove() {
-        return move;
-    }
-
-    /***
-     *
-     * @return
-     */
-    public String getStringBuild() {
-        return build;
-    }
 
     /***
      *
@@ -476,22 +451,6 @@ public class CLI {
 
     /***
      *
-     * @return
-     */
-    public int getPlayersNumber() {
-        return playersNumber;
-    }
-
-    /***
-     *
-     * @param playersNumber
-     */
-    public void setPlayersNumber(int playersNumber) {
-        this.playersNumber = playersNumber;
-    }
-
-    /***
-     *
      */
     public void insertDate(){
         System.out.print("Inserire il giorno in cui si è nati in formato gg (solo numerico) ->");
@@ -518,4 +477,5 @@ public class CLI {
     public void setMyCard(String myCard) {
         this.myCard = myCard;
     }
+
 }

@@ -56,6 +56,7 @@ public class VirtualView {
         if (received instanceof Integer) {
             numberOfPlayers = (Integer) received;
             setUpisReady = true;
+            System.out.println("continuo a ricevere eventi...");
             serverHandler.setPlayerNumber(numberOfPlayers);
             return numberOfPlayers.intValue();
         }
@@ -64,13 +65,12 @@ public class VirtualView {
     }
 
 
-    public void sendColor(String c,Player p)
+    public void sendColor(String c,int index)
     {
-        VCEvent evento = new VCEvent(c, VCEvent.Event.you_won);
-        for (int i = 0; i <numberOfPlayers ; i++) {
-            if (p.getUsername().equals(players.get(i).getUsername()))
-                serverHandler.sendVCEventTo(evento,i);
-        }
+        VCEvent evento = new VCEvent(c, VCEvent.Event.send_color);
+
+        serverHandler.sendVCEventTo(evento,index);
+
     }
     /**
      * It asks to a client for username
@@ -87,7 +87,7 @@ public class VirtualView {
              evento = new VCEvent("username", VCEvent.Event.username_request);
         }
         else{
-            evento =  new VCEvent("username", VCEvent.Event.wrong_username);
+            evento =  new VCEvent("", VCEvent.Event.wrong_username);
         }
         serverHandler.sendVCEventTo(evento,index);
         synchronized(this) {
