@@ -270,6 +270,7 @@ public class VirtualView {
             }
 
         }
+        //System.out.println("Ricevo..."+received);
         if (received instanceof Integer) {
             int x = ((Integer) received).intValue();
             return x;

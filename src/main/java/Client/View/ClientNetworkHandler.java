@@ -77,7 +77,9 @@ public class ClientNetworkHandler implements Runnable, ServerObserver {
 
                     }
                 }
-                    sendPing();//appena riceve manda indietro il ping per fargli sapere che è ancora attivo
+
+                sendPing();//appena riceve manda indietro il ping per fargli sapere che è ancora attivo
+
 
             }
         };
@@ -104,7 +106,7 @@ public class ClientNetworkHandler implements Runnable, ServerObserver {
                 }
             }
             cli.updateGo();
-            System.out.println("è arrivato "+ fromServer.getCommand());
+            System.out.println("è arrivato il comando"+ fromServer.getCommand());
             synchronized (this){
                 while(isRead == false)
                 {
@@ -113,7 +115,7 @@ public class ClientNetworkHandler implements Runnable, ServerObserver {
                     } catch (InterruptedException e) { }
                 }
             }
-
+            adapter.continueToRead();
             System.out.println("é arrivato alla view l'evento"+ fromServer.getCommand());
         }
 
@@ -134,9 +136,6 @@ public class ClientNetworkHandler implements Runnable, ServerObserver {
      */
     public synchronized void didReceivePing(Integer n)
     {
-
-        PlayerID = n-1;
-
         ping = n;
         notifyAll();
     }
@@ -170,6 +169,7 @@ public class ClientNetworkHandler implements Runnable, ServerObserver {
         try {
             output.writeObject(eventToServer);
         } catch (IOException e) {
+            e.printStackTrace();
             System.out.println("server has died for vcevent");
         }
         canWrite = true;

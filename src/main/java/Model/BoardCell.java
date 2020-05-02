@@ -49,4 +49,6 @@ public class BoardCell implements Serializable {
     public int getHeight() {
         return height;
     }
+
+
 }

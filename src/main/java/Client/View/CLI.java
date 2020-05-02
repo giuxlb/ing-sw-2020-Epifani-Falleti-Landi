@@ -293,6 +293,7 @@ public class CLI {
                     System.out.println("Errore nel protocollo");
                     break;
             }
+
         }
     }
 

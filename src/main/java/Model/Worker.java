@@ -54,4 +54,5 @@ public class Worker implements Serializable {
     }
 
     public Color getColor(){return this.color;}
+
 }

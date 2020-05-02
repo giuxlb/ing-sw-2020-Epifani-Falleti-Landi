@@ -19,6 +19,10 @@ public class ServerAdapter implements Runnable {
     private ObjectInputStream input;
 
 
+
+    private boolean continueReading;
+
+
     private List<ServerObserver> observers = new ArrayList<ServerObserver>();
 
     public ServerAdapter(Socket server)
@@ -50,6 +54,7 @@ public class ServerAdapter implements Runnable {
         synchronized (observers) {
             observersCpy = new ArrayList<ServerObserver>(observers);
         }
+        continueReading = true;
         try {
             handleServerConnection();
         } catch (IOException e) {
@@ -76,13 +81,18 @@ public class ServerAdapter implements Runnable {
         }
 
 
-        while (true) {
+        while (true)
+        {
 
                 VCEvent evento = (VCEvent) input.readObject();
+                continueReading = false;
                 if (evento != null) {
-                    if (evento.getCommand() != Event.ping)
+                    if (evento.getCommand() != Event.ping) {
+                        System.out.println("Adapter vede " + evento.getCommand());
                         for (ServerObserver observer : observersCpy)
                             observer.didReceiveVCEvent(evento);
+                         waitToContinue();
+                    }
                     else {
                         for (ServerObserver observer : observersCpy)
                             observer.didReceivePing((Integer) evento.getBox());
@@ -119,7 +129,24 @@ public class ServerAdapter implements Runnable {
         }
     }
 
-
+    public void waitToContinue()
+    {
+        synchronized (this)
+        {
+            while(continueReading == false)
+            {
+                try
+                {
+                    wait();
+                }catch(InterruptedException e){}
+            }
+        }
+    }
+    public synchronized void continueToRead()
+    {
+        continueReading = true;
+        notifyAll();
+    }
 
 }
 
