@@ -29,7 +29,8 @@ public class VCEvent implements Serializable {
         ping,
         player_disconnected_game_ended,
         id,
-        send_your_card
+        send_your_card,
+        ask_for_worker
 
     }
 

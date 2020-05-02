@@ -283,6 +283,7 @@ public class GameControl {
     }
     public static void main(String[] args){
         GameControl partita = new GameControl();
+        System.out.println("AVVIO LA PARTITA");
         partita.startGame();
     }
 }

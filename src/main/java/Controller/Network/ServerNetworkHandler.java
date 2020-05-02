@@ -251,11 +251,7 @@ public class ServerNetworkHandler implements Runnable, ClientObserver {
 
     }
 
-    public synchronized void idSent()
-    {
-        idIsSent = true;
-        notifyAll();
-    }
+
     public synchronized void setPlayerNumber(int number)
     {
         numberOfPlayers = number;
