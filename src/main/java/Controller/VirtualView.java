@@ -304,6 +304,33 @@ public class VirtualView {
 
     }
 
+    public Coordinates askForWorker(Player p, ArrayList<Coordinates> workersPosition)
+    {
+        VCEvent evento = new VCEvent(workersPosition, VCEvent.Event.ask_for_worker);
+        for (int i = 0; i <numberOfPlayers ; i++) {
+            if (p.getUsername().equals(players.get(i).getUsername()))
+                serverHandler.sendVCEventTo(evento,i);
+        }
+        synchronized(this) {
+            received = null;
+            while(received == null)
+            {
+                try{
+                    wait();
+                }
+                catch(InterruptedException e){}
+            }
+
+        }
+        if (received instanceof Integer) {
+            int x = ((Integer) received).intValue();
+            return workersPosition.get(x);
+        }
+        return null;
+
+
+    }
+
 
     /**
      * It notifies the player p that he has lost

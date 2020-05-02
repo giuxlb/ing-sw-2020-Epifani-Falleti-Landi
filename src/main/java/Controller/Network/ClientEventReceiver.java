@@ -62,7 +62,7 @@ public class ClientEventReceiver implements Runnable {
         };
         Thread pingThread = new Thread(runPingClient);
         pingThread.start();
-        sendID(clientIndex.intValue());
+        //sendID(clientIndex.intValue());
 
 
         synchronized (this)
@@ -140,7 +140,7 @@ public class ClientEventReceiver implements Runnable {
         pingFromClient = ping;
         notifyAll();
     }
-
+/*
     public void sendID(int index)
     {
         while(true) {
@@ -160,6 +160,8 @@ public class ClientEventReceiver implements Runnable {
         this.canReceiveEvents();
         snh.virtualView.setOkFromClient(true);
     }
+
+ */
 }
 
 
