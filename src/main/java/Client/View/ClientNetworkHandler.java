@@ -1,5 +1,6 @@
 package Client.View;
 
+import Controller.Coordinates;
 import Controller.Network.VCEvent;
 
 
@@ -7,6 +8,7 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.*;
 import java.io.IOException;
+import java.util.ArrayList;
 
 /**
  * @author Adriano Falleti
@@ -105,6 +107,7 @@ public class ClientNetworkHandler implements Runnable, ServerObserver {
 
                 }
             }
+
             cli.updateGo();
             //System.out.println("è arrivato il comando"+ fromServer.getCommand());
             synchronized (this){

@@ -155,11 +155,11 @@ public class GameControl {
             int index;
             for(int worker_index = 0;worker_index<2;worker_index++) {
 
-                //mando al current player la lista delle posizioni valide e rcevo l'indice della posizione scelta
+                //mando al current player la lista delle posizioni valide e ricevo l'indice della posizione scelta
                 index = virtualView.sendAvailableMove(players.get(game.getTurnNumber()),initial_valid_pos);
-                System.out.println("L'index è "+ index);
+
                 //inserisco il worker nella la posizione scelta
-                System.out.println(initial_valid_pos.get(index).toString());
+
                 insertInitialPosition(game.getTurnNumber(),initial_valid_pos.get(index).getX(),initial_valid_pos.get(index).getY(),worker_index);
 
                 System.out.println(game.getBoardGame().getBoardWorker(1,1));

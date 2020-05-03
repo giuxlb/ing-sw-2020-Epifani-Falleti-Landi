@@ -176,13 +176,7 @@ public class VirtualView {
                 socketBoard.add(new SocketBoardCell(board.getBoardHeight(i,j),board.getBoardWorker(i,j)));
             }
         }
-        CLI cli = new CLI();
-        cli.printBoard(board);
-        System.out.println("socketBoard");
-        for (int i = 0; i <25 ; i++) {
-            System.out.print(socketBoard.get(i).getHeight()+ " "+ socketBoard.get(i).getWorkerColor()+ "prova ");
-        }
-        System.out.println();
+
         VCEvent evento = new VCEvent(socketBoard, VCEvent.Event.update);
 
         for (int i = 0; i <numberOfPlayers ; i++)
@@ -236,7 +230,12 @@ public class VirtualView {
      */
     public String sendChosenCards(Player p,ArrayList<String> chosenCards)
     {
-        VCEvent evento = new VCEvent(chosenCards, VCEvent.Event.send_chosen_cards);
+        ArrayList<String> cards = new ArrayList<String>();
+        for (int i = 0; i <chosenCards.size(); i++)
+        {
+            cards.add(chosenCards.get(i));
+        }
+        VCEvent evento = new VCEvent(cards, VCEvent.Event.send_chosen_cards);
         for (int i = 0; i <numberOfPlayers ; i++) {
             if (p.getUsername().equals(players.get(i).getUsername()))
                 serverHandler.sendVCEventTo(evento,i);
@@ -281,7 +280,13 @@ public class VirtualView {
      */
     public int sendAvailableMove(Player p, ArrayList<Coordinates> move_spots)
     {
-        VCEvent evento = new VCEvent(move_spots, VCEvent.Event.send_cells_move);
+
+        ArrayList<Coordinates> coordinate = new ArrayList<Coordinates>();
+        for (int i = 0; i <move_spots.size(); i++)
+        {
+            coordinate.add(move_spots.get(i));
+        }
+        VCEvent evento = new VCEvent(coordinate, VCEvent.Event.send_cells_move);
         for (int i = 0; i <numberOfPlayers ; i++) {
             if (p.getUsername().equals(players.get(i).getUsername()))
                 serverHandler.sendVCEventTo(evento,i);
@@ -316,7 +321,12 @@ public class VirtualView {
      */
     public int sendAvailableBuild(Player p, ArrayList<Coordinates> build_spots)
     {
-        VCEvent evento = new VCEvent(build_spots, VCEvent.Event.send_cells_build);
+        ArrayList<Coordinates> coordinate = new ArrayList<Coordinates>();
+        for (int i = 0; i <build_spots.size(); i++)
+        {
+            coordinate.add(build_spots.get(i));
+        }
+        VCEvent evento = new VCEvent(coordinate, VCEvent.Event.send_cells_build);
         for (int i = 0; i <numberOfPlayers ; i++) {
             if (p.getUsername().equals(players.get(i).getUsername()))
                 serverHandler.sendVCEventTo(evento,i);
@@ -350,7 +360,12 @@ public class VirtualView {
      */
     public Coordinates askForWorker(Player p, ArrayList<Coordinates> workersPosition)
     {
-        VCEvent evento = new VCEvent(workersPosition, VCEvent.Event.ask_for_worker);
+        ArrayList<Coordinates> coordinate = new ArrayList<Coordinates>();
+        for (int i = 0; i <workersPosition.size(); i++)
+        {
+            coordinate.add(workersPosition.get(i));
+        }
+        VCEvent evento = new VCEvent(coordinate, VCEvent.Event.ask_for_worker);
         for (int i = 0; i <numberOfPlayers ; i++) {
             if (p.getUsername().equals(players.get(i).getUsername()))
                 serverHandler.sendVCEventTo(evento,i);

@@ -397,7 +397,7 @@ public class CLI {
     public Integer findIndex(ArrayList<Coordinates> validPositions, Coordinates chosenCoordinates){
         int index=0;
         for(Coordinates c:validPositions){
-            if((c.getX() == chosenCoordinates.getX() && (c.getY() == chosenCoordinates.getY()))){
+            if((c.getX() == chosenCoordinates.getX()) && (c.getY() == chosenCoordinates.getY())){
                 return index;
             }
             index++;
