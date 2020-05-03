@@ -31,7 +31,7 @@ public class GameControl {
 
         virtualView.playerNumber();
         //aspetto che SetupItReady sia true
-        virtualView.sendNumberOfPlayer();
+
         while(virtualView.isSetUpisReady() == false){
             System.out.println("Qui");
             try{
@@ -64,6 +64,7 @@ public class GameControl {
             first_time = false;
 
         }
+
         Data player_date_1 = virtualView.askForDate(1);
         System.out.println(player_date_1.toString());
         this.addPlayer(new Player(player_name_1,player_date_1));
@@ -105,7 +106,7 @@ public class GameControl {
         for (int i = 0; i < player_number; i++) {
             System.out.println(players.get(i).getBirthDate().toString());
         }
-
+        virtualView.sendNumberOfPlayer();
     }
 
 //TODO creare test per classi in model e controller ove possibile
@@ -158,7 +159,7 @@ public class GameControl {
                 index = virtualView.sendAvailableMove(players.get(game.getTurnNumber()),initial_valid_pos);
                 System.out.println("L'index è "+ index);
                 //inserisco il worker nella la posizione scelta
-
+                System.out.println(initial_valid_pos.get(index).toString());
                 insertInitialPosition(game.getTurnNumber(),initial_valid_pos.get(index).getX(),initial_valid_pos.get(index).getY(),worker_index);
 
                 System.out.println(game.getBoardGame().getBoardWorker(1,1));
