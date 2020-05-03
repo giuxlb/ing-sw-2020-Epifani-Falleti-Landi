@@ -50,7 +50,7 @@ public class ApolloStrategy extends DefaultStrategy implements TurnStrategy {
         for(int i = pos_x-1 ; i <= pos_x+1 ; i++){
             for(int j = pos_y-1 ; j <= pos_y+1 ; j++){
                 if(/*Posizione è dentro la scacchiera*/ i>=0 && i<=4 && j>=0 && j<=4) {
-                    if(/*non sono nella casella del mio worker*/ i!=pos_x && j!=pos_y &&
+                    if(/*non sono nella casella del mio worker*/ !(i==pos_x && j==pos_y) &&
                             /*L'altezza della casella non è superiore di 1 rispetto a quella del worker*/ boardCopy[pos_x][pos_y].getHeight() >= boardCopy[i][j].getHeight()-1 &&
                             /*nella casella non  c'è una cupola*/ boardCopy[i][j].getHeight()<4){
                         if(boardCopy[i][j].getWorkerBuilder()!=null){

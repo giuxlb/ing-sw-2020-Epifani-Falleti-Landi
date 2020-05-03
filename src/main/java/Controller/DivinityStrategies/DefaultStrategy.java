@@ -124,7 +124,7 @@ public class DefaultStrategy implements TurnStrategy {
         for(int i = pos_x-1 ; i <= pos_x+1 ; i++){
             for(int j = pos_y-1 ; j <= pos_y+1 ; j++){
                 if(/*Posizione è dentro la scacchiera*/ i>=0 && i<=4 && j>=0 && j<=4) {
-                    if(/*non sono nella casella del mio worker*/ i!=pos_x && j!=pos_y &&
+                    if(/*non sono nella casella del mio worker*/ !(i==pos_x && j==pos_y) &&
                         /*nella casella non c'è un altro worker*/ boardCopy[i][j].getWorkerBuilder()==null &&
                         /*L'altezza della casella non è superiore di 1 rispetto a quella del worker*/ boardCopy[pos_x][pos_y].getHeight() >= boardCopy[i][j].getHeight()-1 &&
                         /*nella casella non  c'è una cupola*/ boardCopy[i][j].getHeight()<4){
@@ -158,7 +158,7 @@ public class DefaultStrategy implements TurnStrategy {
         for(int i = pos_x-1; i<= pos_x+1;i++){
             for(int j = pos_y-1; j<= pos_y+1;j++){
                 if(i>=0 && i<=4 && j>=0 && j<=4){
-                    if(i!=pos_x && j!=pos_y &&
+                    if(!(i==pos_x && j==pos_y) &&
                         boardCopy[i][j].getWorkerBuilder()==null &&
                         boardCopy[i][j].getHeight()<4){
                         valid_positions.add(new Coordinates(i,j));
