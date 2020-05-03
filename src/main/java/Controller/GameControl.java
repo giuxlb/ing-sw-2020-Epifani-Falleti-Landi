@@ -5,6 +5,7 @@ import Model.Card;
 import Model.Color;
 import Model.Game;
 import Model.Player;
+import Model.Worker;
 
 import java.net.Socket;
 import java.util.*;
@@ -138,10 +139,19 @@ public class GameControl {
                 index = virtualView.sendAvailableMove(players.get(game.getTurnNumber()),initial_valid_pos);
                 System.out.println("L'index è "+ index);
                 //inserisco il worker nella la posizione scelta
-                insertInitialPosition(game.getTurnNumber(),initial_valid_pos.get(index).getX(),initial_valid_pos.get(index).getY(),worker_index);
 
+                insertInitialPosition(game.getTurnNumber(),initial_valid_pos.get(index).getX(),initial_valid_pos.get(index).getY(),worker_index);
+                Worker w = new Worker(1,1,Color.ANSI_PURPLE);
+                game.getBoardGame().setBoardWorker(1,1, w);
+                System.out.println(game.getBoardGame().getBoardWorker(1,1));
+                game.getBoardGame().setBoardHeight(1,1,4);
+                System.out.println(game.getBoardGame().getBoardHeight(1,1));
+                try{
+                    TimeUnit.SECONDS.sleep(1);
+                }catch (InterruptedException E){}
                 virtualView.upload(game.getBoardGame());
 
+                System.out.println(game.getBoardGame().getBoardWorker(1,1));
                 //rimuovo la posizione scelta dall'array
                 initial_valid_pos.remove(index);
 

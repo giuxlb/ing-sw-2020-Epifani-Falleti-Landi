@@ -191,20 +191,15 @@ public class CLI {
                     buildEvent(cnh,dateOfBirth, VCEvent.Event.date_request);
                     break;
                 case not_your_turn:
-                    Object objectPlayer = evento.getBox();
-                    if(objectPlayer instanceof Player){
-                        Player p = (Player)objectPlayer;
-                        System.out.println("Partita in corso, sta giocando " + p.getUsername() + " con la carta " + p.getGameCard());
-                    }else {
-                        System.out.println("Errore, player corrotto!");
-                    }
+                    Object objectCurrentPlayerInformation = evento.getBox();
+                    ArrayList<String> currentPlayerInformation= (ArrayList<String>) objectCurrentPlayerInformation;
+                    System.out.println("Partita in corso, sta giocando " + currentPlayerInformation.get(0) + " con la carta " + currentPlayerInformation.get(0));
                     break;
                 case update:
                     Object objectBoard = evento.getBox();
                     if(objectBoard instanceof Board){
-                        Board b = (Board)objectBoard;
+                        this.b = (Board)objectBoard;
                         printBoard(b);
-                        this.b=b;
                     }else {
                         System.out.println("Errore, board corrotta!");
                     }

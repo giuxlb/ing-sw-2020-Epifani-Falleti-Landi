@@ -24,7 +24,7 @@ public class ServerNetworkHandler implements Runnable, ClientObserver {
     private ClientAdapter[] adapters;
     private VCEvent fromClient1;
     private Integer numberOfPlayers;
-    public final static int SOCKET_PORT = 7777;
+    public final static int SOCKET_PORT = 7776;
     private ObjectOutputStream[] outputs;
     private ObjectInputStream[] inputs;
     public  VirtualView virtualView;

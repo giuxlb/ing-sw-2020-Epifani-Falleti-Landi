@@ -1,3 +1,5 @@
+//Controllo delle carte
+//Controllo della data in formato stringa
 package Client.Controller;
 
 import Client.View.Data;
