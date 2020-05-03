@@ -6,6 +6,8 @@ import Model.*;
 import Client.View.Data;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Collections;
+import java.util.List;
 
 /**
  * @author Adriano Falleti
@@ -147,7 +149,10 @@ public class VirtualView {
      */
     public void notYourTurn(Player[] playersNotPlaying,Player playerPlaying)
     {
-        VCEvent evento = new VCEvent(playerPlaying, VCEvent.Event.not_your_turn);
+        ArrayList<String> player = new ArrayList<String>();
+        player.add(playerPlaying.getUsername());
+        player.add(playerPlaying.getGameCard());
+        VCEvent evento = new VCEvent(player, VCEvent.Event.not_your_turn);
         for (int i = 0; i <numberOfPlayers ; i++) {
             for (int j = 0; j < numberOfPlayers-1; j++) {
                 if (players.get(i).getUsername().equals(playersNotPlaying[j].getUsername()))
@@ -166,10 +171,19 @@ public class VirtualView {
     public void upload(Board board)
     {
         VCEvent evento = new VCEvent(board, VCEvent.Event.update);
+
         for (int i = 0; i <numberOfPlayers ; i++)
             serverHandler.sendVCEventTo(evento,i);
 
 
+    }
+
+    public void sendNumberOfPlayer()
+    {
+        VCEvent e = new VCEvent(numberOfPlayers, VCEvent.Event.number_of_players);
+        for (int i = 1; i <numberOfPlayers ; i++) {
+            serverHandler.sendVCEventTo(e,i);
+        }
     }
 
     /**
@@ -451,8 +465,12 @@ public class VirtualView {
      * @param players
      */
     public void setPlayers(ArrayList<Player> players) {
-        this.players = players;
+        for (int i = 0; i < players.size(); i++) {
+            this.players.add(players.get(i));
+        }
     }
 
-
+    public ArrayList<Player> getPlayers() {
+        return players;
+    }
 }

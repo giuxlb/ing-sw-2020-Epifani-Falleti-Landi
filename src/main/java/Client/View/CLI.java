@@ -230,6 +230,9 @@ public class CLI {
                 case game_ended_foryou:
                     System.out.println("Mi spiace, non puoi più muoverti con nessuno dei tuoi worker");
                     break;
+                case number_of_players:
+                    playersNumber = (Integer)evento.getBox();
+                    break;
                 case send_all_cards:
                     System.out.println("Hai a disposizione le seguenti divinità:");
                     Object objectGods = evento.getBox();

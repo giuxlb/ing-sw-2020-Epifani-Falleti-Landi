@@ -6,9 +6,12 @@ import java.io.ObjectOutputStream;
 import java.io.Serializable;
 
 public class Worker implements Serializable {
+
+    private static final long serialVersionUID = 7797464638609326461L;
     private Color color;
     private int pos_x;
     private int pos_y;
+
 
     /***
      * Constructor of the Worker object

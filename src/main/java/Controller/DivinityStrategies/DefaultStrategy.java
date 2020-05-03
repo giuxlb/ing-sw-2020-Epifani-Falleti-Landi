@@ -7,6 +7,8 @@ import Model.*;
 
 import java.net.CookieHandler;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
 public class DefaultStrategy implements TurnStrategy {
 
@@ -47,7 +49,9 @@ public class DefaultStrategy implements TurnStrategy {
 
         /*Muovo il worker*/
         move(worker,move_spots,index,game,board);
+
         vview.upload(board);
+       // vview.upload(game.getBoardGame());
 
         /*Salvo la posizione dopo lo spostamento*/
         Coordinates final_position = new Coordinates(worker.getPositionX(),worker.getPositionY());
@@ -67,7 +71,9 @@ public class DefaultStrategy implements TurnStrategy {
 
         /*Costruisco*/
         build(worker,build_spots,index,game,board);
+
         vview.upload(board);
+       // vview.upload(game.getBoardGame());
 
         return 0;
     }

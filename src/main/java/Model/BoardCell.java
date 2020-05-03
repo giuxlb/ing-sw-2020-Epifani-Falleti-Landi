@@ -6,8 +6,13 @@ import java.io.ObjectOutputStream;
 import java.io.Serializable;
 
 public class BoardCell implements Serializable {
+
+    private static final long serialVersionUID = 5796216832741310505L;
     private int height;
     private Worker workerBuilder;
+
+
+
 
     /***
      * Put a worker on this BoardCell

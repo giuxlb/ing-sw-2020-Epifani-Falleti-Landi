@@ -2,6 +2,8 @@ package Model;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
 
 public class Game {
     private Player[] players;
@@ -226,6 +228,14 @@ public class Game {
 
     public Board getBoardGame() {
         return boardGame;
+    }
+
+
+    public List<Board> getBoardGameImmutable()
+    {
+        ArrayList<Board> board = new ArrayList<Board>();
+        board.add(boardGame);
+        return Collections.unmodifiableList(board);
     }
 
     public TurnPhases getTurnPhase() {

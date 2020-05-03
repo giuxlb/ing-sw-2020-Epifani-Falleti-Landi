@@ -6,6 +6,7 @@ import java.io.ObjectOutputStream;
 import java.io.Serializable;
 
 public class Data implements Serializable {
+    private static final long serialVersionUID = 6609982820955625848L;
     private int giorno;
     private int mese;
     private int anno;
@@ -105,4 +106,12 @@ public class Data implements Serializable {
         stream.defaultWriteObject();
     }
 
+    @Override
+    public String toString() {
+        return "Data{" +
+                "giorno=" + giorno +
+                ", mese=" + mese +
+                ", anno=" + anno +
+                '}';
+    }
 }

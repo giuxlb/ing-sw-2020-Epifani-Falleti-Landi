@@ -2,15 +2,21 @@ package Model;
 
 import Client.View.Data;
 
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.io.Serializable;
 import java.util.Calendar;
 
 public class Player implements Serializable {
+
+    private static final long serialVersionUID = 4053084588789160006L;
     private String username;
     private Worker[] workers;
     private String gameCard;
     private Color color;
     private Data birthDate;
+
 
     /***
      * Costruttore della classe Player
@@ -85,5 +91,15 @@ public class Player implements Serializable {
 
     public Color getColor() {
         return color;
+    }
+
+    public void readObject(ObjectInputStream stream) throws IOException,ClassNotFoundException
+    {
+        stream.defaultReadObject();
+    }
+
+    public void writeObject(ObjectOutputStream stream) throws IOException
+    {
+        stream.defaultWriteObject();
     }
 }

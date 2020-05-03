@@ -31,7 +31,7 @@ public class GameControl {
 
         virtualView.playerNumber();
         //aspetto che SetupItReady sia true
-
+        virtualView.sendNumberOfPlayer();
         while(virtualView.isSetUpisReady() == false){
             System.out.println("Qui");
             try{
@@ -45,6 +45,7 @@ public class GameControl {
 
         String player_name_0 = this.virtualView.askForUsername(0,false);
         Data player_date_0 = virtualView.askForDate(0);
+        System.out.println(player_date_0.toString());
 
         //aggiungo il player 0
 
@@ -64,6 +65,7 @@ public class GameControl {
 
         }
         Data player_date_1 = virtualView.askForDate(1);
+        System.out.println(player_date_1.toString());
         this.addPlayer(new Player(player_name_1,player_date_1));
         virtualView.sendColor("green",1);
         //se il numero di player è 3, chiedo i dati del terzo giocatore
@@ -85,9 +87,24 @@ public class GameControl {
 
         //mando alla virtualview l'array dei player non ordinato
         virtualView.setPlayers(players);
-
+        System.out.println("Array della virtual view");
+        for (int i = 0; i < player_number; i++) {
+            System.out.println(virtualView.getPlayers().get(i).getBirthDate().toString());
+        }
+        System.out.println("Array del game control");
+        for (int i = 0; i < player_number; i++) {
+            System.out.println(players.get(i).getBirthDate().toString());
+        }
         //riordino i giocatori in base all'età
         this.sortPlayersByAge();
+        System.out.println("Array della virtual view");
+        for (int i = 0; i < player_number; i++) {
+            System.out.println(virtualView.getPlayers().get(i).getBirthDate().toString());
+        }
+        System.out.println("Array del game control post ordinamento");
+        for (int i = 0; i < player_number; i++) {
+            System.out.println(players.get(i).getBirthDate().toString());
+        }
 
     }
 
@@ -99,7 +116,7 @@ public class GameControl {
         virtualView.upload(game.getBoardGame());
 
         //scelta delle carte del primo player
-
+        System.out.println(players.get(game.getTurnNumber()).getBirthDate().toString());
         ArrayList<String> chosenCards = virtualView.sendAllCards(players.get(game.getTurnNumber()),game.getAvailableCards());
         game.setChosenCards(chosenCards);
         game.nextTurnNumber();

@@ -13,6 +13,7 @@ import Model.Player;
 import Model.Worker;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public class AthenaStrategy extends DefaultStrategy implements TurnStrategy {
     public int turn(Player player, Worker worker, Board board, Game game, int extraEffect, VirtualView vview){
@@ -39,7 +40,9 @@ public class AthenaStrategy extends DefaultStrategy implements TurnStrategy {
 
         /*Muovo il worker*/
         move(worker,move_spots,index,game,board);
+
         vview.upload(board);
+        //vview.upload(game.getBoardGameImmutable());
 
         /*Salvo la posizione dopo lo spostamento*/
         Coordinates final_position = new Coordinates(worker.getPositionX(),worker.getPositionY());
@@ -62,7 +65,9 @@ public class AthenaStrategy extends DefaultStrategy implements TurnStrategy {
 
         /*Costruisco*/
         build(worker,build_spots,index,game,board);
+
         vview.upload(board);
+       // vview.upload(game.getBoardGameImmutable());
 
         if (has_gone_up){
             return 1;

@@ -9,6 +9,7 @@ import Model.Player;
 import Model.Worker;
 
 import java.util.ArrayList;
+import java.util.List;
 
 /*
 Tuo spostamento: il tuo lavoratore può spostarsi una volta in più, ma non può tornare dove è partito
@@ -50,7 +51,9 @@ public class ArtemisStrategy extends DefaultStrategy implements TurnStrategy {
 
         /*Muovo il worker*/
         move(worker,move_spots,index,game,board);
+
         vview.upload(board);
+        //vview.upload(game.getBoardGameImmutable());
 
         /*Salvo la posizione intermedia*/
         Coordinates middle_position = new Coordinates(worker.getPositionX(),worker.getPositionY());
@@ -83,7 +86,9 @@ public class ArtemisStrategy extends DefaultStrategy implements TurnStrategy {
 
         /*Muovo il worker*/
         move(worker,move_spots,index,game,board);
+
         vview.upload(board);
+        //vview.upload(game.getBoardGameImmutable());
 
         /*Salvo la finale intermedia*/
         Coordinates final_position = new Coordinates(worker.getPositionX(),worker.getPositionY());
@@ -103,7 +108,9 @@ public class ArtemisStrategy extends DefaultStrategy implements TurnStrategy {
 
         /*Costruisco*/
         build(worker,build_spots,index,game,board);
+
         vview.upload(board);
+        //vview.upload(game.getBoardGameImmutable());
 
         return 0;
     }
