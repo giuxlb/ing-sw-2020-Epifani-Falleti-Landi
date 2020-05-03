@@ -88,7 +88,7 @@ public class ServerAdapter implements Runnable {
                 continueReading = false;
                 if (evento != null) {
                     if (evento.getCommand() != Event.ping) {
-                        System.out.println("Adapter vede " + evento.getCommand());
+                       // System.out.println("Adapter vede " + evento.getCommand());
                         for (ServerObserver observer : observersCpy)
                             observer.didReceiveVCEvent(evento);
                          waitToContinue();

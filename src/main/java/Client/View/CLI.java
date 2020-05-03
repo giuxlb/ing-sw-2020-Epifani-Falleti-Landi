@@ -1,11 +1,10 @@
 package Client.View;
 
 import Controller.Network.VCEvent;
-import Model.Board;
-import Model.Player;
+import Model.*;
 import Client.Controller.Controller;
 import Controller.Coordinates;
-import Model.Color;
+
 import java.util.ArrayList;
 import java.util.Scanner;
 
@@ -196,13 +195,45 @@ public class CLI {
                     System.out.println("Partita in corso, sta giocando " + currentPlayerInformation.get(0) + " con la carta " + currentPlayerInformation.get(0));
                     break;
                 case update:
-                    Object objectBoard = evento.getBox();
-                    if(objectBoard instanceof Board){
-                        this.b = (Board)objectBoard;
-                        printBoard(b);
-                    }else {
-                        System.out.println("Errore, board corrotta!");
+                    Object objectBoardCell = evento.getBox();
+                    ArrayList<SocketBoardCell> socketBoardCell = (ArrayList<SocketBoardCell>) objectBoardCell;
+
+                    int counter = 0;
+                    for (int i = 0; i <5 ; i++) {
+                        for (int j = 0; j < 5; j++) {
+                            b.setBoardHeight(i,j,socketBoardCell.get(counter).getHeight());
+                           if (socketBoardCell.get(counter).getWorkerColor() != null)
+                           {
+                               b.setBoardWorker(i,j,new Worker(i,j,socketBoardCell.get(counter).getWorkerColor()));
+                           }
+                           counter++;
+                        }
+
                     }
+                    printBoard(b);
+                    break;
+                case ask_for_worker:
+                    Object objectChoices = evento.getBox();
+                    ArrayList<Coordinates> positionWorkers = (ArrayList<Coordinates>) objectChoices;
+                    System.out.println("Puoi muovere i seguenti worker: ");
+                    for (Coordinates c: positionWorkers) {
+                        System.out.println("Worker in posizione "+ c.toString());
+                    }
+                    System.out.println("Quale worker vuoi muovere?");
+                    int x=chooseCoordinate(xPosition);
+                    s.nextLine();
+                    int y=chooseCoordinate(yPosition);
+                    s.nextLine();
+                    Coordinates chosenCoordinates = new Coordinates(x,y);
+                    while(c.checkRequestedPosition(positionWorkers, chosenCoordinates)==false){
+                        System.out.println("Errore! Selezione non valida");
+                        x=chooseCoordinate(xPosition);
+                        s.nextLine();
+                        y=chooseCoordinate(yPosition);
+                        s.nextLine();
+                        chosenCoordinates = new Coordinates(x,y);
+                    }
+                    buildEvent(cnh,findIndex(positionWorkers,chosenCoordinates), VCEvent.Event.ask_for_worker);
                     break;
                 case send_cells_move:
                     sendCells(movingPhase, cnh, VCEvent.Event.send_cells_move,evento);

@@ -8,7 +8,7 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collections;
 import java.util.List;
-
+import Client.View.CLI;
 /**
  * @author Adriano Falleti
  */
@@ -170,7 +170,20 @@ public class VirtualView {
      */
     public void upload(Board board)
     {
-        VCEvent evento = new VCEvent(board, VCEvent.Event.update);
+        ArrayList<SocketBoardCell> socketBoard = new ArrayList<SocketBoardCell>();
+        for (int i = 0; i < 5 ; i++) {
+            for (int j = 0; j < 5; j++) {
+                socketBoard.add(new SocketBoardCell(board.getBoardHeight(i,j),board.getBoardWorker(i,j)));
+            }
+        }
+        CLI cli = new CLI();
+        cli.printBoard(board);
+        System.out.println("socketBoard");
+        for (int i = 0; i <25 ; i++) {
+            System.out.print(socketBoard.get(i).getHeight()+ " "+ socketBoard.get(i).getWorkerColor()+ "prova ");
+        }
+        System.out.println();
+        VCEvent evento = new VCEvent(socketBoard, VCEvent.Event.update);
 
         for (int i = 0; i <numberOfPlayers ; i++)
             serverHandler.sendVCEventTo(evento,i);

@@ -113,6 +113,8 @@ public class GameControl {
 
     public void startGame(){
         game.startGame();
+        //game.getBoardGame().setBoardHeight(1,1,1);
+       // game.getBoardGame().setBoardWorker(1,1,new Worker(1,1,Color.ANSI_YELLOW));
         virtualView.upload(game.getBoardGame());
 
         //scelta delle carte del primo player
@@ -158,14 +160,11 @@ public class GameControl {
                 //inserisco il worker nella la posizione scelta
 
                 insertInitialPosition(game.getTurnNumber(),initial_valid_pos.get(index).getX(),initial_valid_pos.get(index).getY(),worker_index);
-                Worker w = new Worker(1,1,Color.ANSI_PURPLE);
-                game.getBoardGame().setBoardWorker(1,1, w);
+
                 System.out.println(game.getBoardGame().getBoardWorker(1,1));
-                game.getBoardGame().setBoardHeight(1,1,4);
+
                 System.out.println(game.getBoardGame().getBoardHeight(1,1));
-                try{
-                    TimeUnit.SECONDS.sleep(1);
-                }catch (InterruptedException E){}
+
                 virtualView.upload(game.getBoardGame());
 
                 System.out.println(game.getBoardGame().getBoardWorker(1,1));

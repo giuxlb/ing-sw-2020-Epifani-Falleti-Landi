@@ -37,4 +37,9 @@ public class Coordinates implements Serializable {
         stream.defaultWriteObject();
     }
 
+    @Override
+    public String toString() {
+        return "y=" + x +
+                ", x=" + y;
+    }
 }

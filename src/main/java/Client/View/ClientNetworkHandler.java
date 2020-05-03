@@ -106,7 +106,7 @@ public class ClientNetworkHandler implements Runnable, ServerObserver {
                 }
             }
             cli.updateGo();
-            System.out.println("è arrivato il comando"+ fromServer.getCommand());
+            //System.out.println("è arrivato il comando"+ fromServer.getCommand());
             synchronized (this){
                 while(isRead == false)
                 {
@@ -115,7 +115,7 @@ public class ClientNetworkHandler implements Runnable, ServerObserver {
                     } catch (InterruptedException e) { }
                 }
             }
-            System.out.println("é arrivato alla view l'evento"+ fromServer.getCommand());
+            //System.out.println("é arrivato alla view l'evento"+ fromServer.getCommand());
             fromServer = null;
             adapter.continueToRead();
 
