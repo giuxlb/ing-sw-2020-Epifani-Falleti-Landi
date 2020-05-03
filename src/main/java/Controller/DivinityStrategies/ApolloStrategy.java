@@ -51,16 +51,28 @@ public class ApolloStrategy extends DefaultStrategy implements TurnStrategy {
             for(int j = pos_y-1 ; j <= pos_y+1 ; j++){
                 if(/*Posizione è dentro la scacchiera*/ i>=0 && i<=4 && j>=0 && j<=4) {
                     if(/*non sono nella casella del mio worker*/ i!=pos_x && j!=pos_y &&
-                            /*nella casella non c'è un TUO altro worker*/ !boardCopy[i][j].getWorkerBuilder().getColor().equals(worker.getColor()) &&
                             /*L'altezza della casella non è superiore di 1 rispetto a quella del worker*/ boardCopy[pos_x][pos_y].getHeight() >= boardCopy[i][j].getHeight()-1 &&
                             /*nella casella non  c'è una cupola*/ boardCopy[i][j].getHeight()<4){
-                        if(athenaeffect){
-                            if(boardCopy[pos_x][pos_y].getHeight() >= boardCopy[i][j].getHeight()){
-                                valid_positions.add(new Coordinates(i,j));
+                        if(boardCopy[i][j].getWorkerBuilder()!=null){
+                            if (!boardCopy[i][j].getWorkerBuilder().getColor().equals(worker.getColor())){
+                                if(athenaeffect){
+                                    if(boardCopy[pos_x][pos_y].getHeight() >= boardCopy[i][j].getHeight()){
+                                        valid_positions.add(new Coordinates(i,j));
+                                    }
+                                }
+                                else {
+                                    valid_positions.add(new Coordinates(i, j));
+                                }
                             }
                         }
                         else {
-                            valid_positions.add(new Coordinates(i, j));
+                            if (athenaeffect) {
+                                if (boardCopy[pos_x][pos_y].getHeight() >= boardCopy[i][j].getHeight()) {
+                                    valid_positions.add(new Coordinates(i, j));
+                                }
+                            } else {
+                                valid_positions.add(new Coordinates(i, j));
+                            }
                         }
                     }
                 }
