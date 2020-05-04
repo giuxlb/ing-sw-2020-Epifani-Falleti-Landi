@@ -32,4 +32,27 @@ public class DefaultStrategyTest {
             System.out.println(c.toString());
         }
     }
+
+    @Test
+    public void moveWorker(){
+        for(int i = 0;i<5;i++){
+            for(int j = 0;j<5;j++){
+                System.out.print("| "+ game.getBoardGame().getBoardGame()[i][j].getWorkerBuilder() +" |");
+            }
+            System.out.println(" ");
+        }
+
+        ArrayList<Coordinates> move_spots = strategy.checkAvailableMoveSpots(player,player.getWorker(0),game.getBoardGame(),false);
+
+        strategy.move(player.getWorker(0),move_spots,0,game,game.getBoardGame());
+
+        System.out.println(" ");
+
+        for(int i = 0;i<5;i++){
+            for(int j = 0;j<5;j++){
+                System.out.print("| "+ game.getBoardGame().getBoardGame()[i][j].getWorkerBuilder() +" |");
+            }
+            System.out.println(" ");
+        }
+    }
 }

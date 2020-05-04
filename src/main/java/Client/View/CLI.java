@@ -205,6 +205,8 @@ public class CLI {
                            if (socketBoardCell.get(counter).getWorkerColor() != null)
                            {
                                b.setBoardWorker(i,j,new Worker(i,j,socketBoardCell.get(counter).getWorkerColor()));
+                           }else{
+                               b.setBoardWorker(i,j,null);
                            }
                            counter++;
                         }

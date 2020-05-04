@@ -170,6 +170,13 @@ public class VirtualView {
      */
     public void upload(Board board)
     {
+        for(int i = 0;i<5;i++){
+            for(int j = 0;j<5;j++){
+                System.out.print("| "+ board.getBoardGame()[i][j].getWorkerBuilder() +" |");
+            }
+            System.out.println(" ");
+        }
+
         ArrayList<SocketBoardCell> socketBoard = new ArrayList<SocketBoardCell>();
         for (int i = 0; i < 5 ; i++) {
             for (int j = 0; j < 5; j++) {
