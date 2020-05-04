@@ -141,18 +141,16 @@ public class GameControl {
         //setto l'ultima carta rimasta al primo player
         players.get(game.getTurnNumber()).chooseCard(cardChoice);
 
-
-
+        //creo e riempio una lista con tutte le posizioni valide
+        ArrayList<Coordinates> initial_valid_pos = new ArrayList<>();
+        for(int i = 0;i < 5;i++){
+            for(int j = 0;j < 5;j++){
+                initial_valid_pos.add(new Coordinates(i,j));
+            }
+        }
+        int index;
         //chiedo a tutti i player le posizioni iniziali
         do{
-            //creo e riempio una lista con tutte le posizioni valide
-            ArrayList<Coordinates> initial_valid_pos = new ArrayList<>();
-            for(int i = 0;i < 5;i++){
-                for(int j = 0;j < 5;j++){
-                    initial_valid_pos.add(new Coordinates(i,j));
-                }
-            }
-            int index;
             for(int worker_index = 0;worker_index<2;worker_index++) {
 
                 //mando al current player la lista delle posizioni valide e ricevo l'indice della posizione scelta
