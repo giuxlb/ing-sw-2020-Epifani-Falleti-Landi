@@ -69,11 +69,19 @@ public class ArtemisStrategy extends DefaultStrategy implements TurnStrategy {
         move_spots = checkAvailableMoveSpots(player,worker,board,athenaeffect);
 
         /*Rimuovo dall'Array la posizione iniziale*/
+        int count = 0;
+        int to_delete = -1;
         for(Coordinates c : move_spots){
-            if(c.equals(starting_position)){
-                move_spots.remove(c);
+            if(c.getX()==starting_position.getX() && c.getY()==starting_position.getY()){
+                System.out.println("TROVATO");
+                to_delete = count;
             }
+            count++;
         }
+        if(to_delete!=-1) {
+            move_spots.remove(to_delete);
+        }
+
 
         /*Se l'array è vuoto, il worker non puo spostarsi, quindi il player ha perso*/
         if (move_spots.size()==0) {
