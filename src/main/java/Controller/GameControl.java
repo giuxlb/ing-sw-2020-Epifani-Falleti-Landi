@@ -212,7 +212,13 @@ public class GameControl {
         if(winner!=null){
             //manda il messaggio ai giocatori con scritto il vincitore
             virtualView.youWon(winner);
-            //TODO aggiugere youlost
+
+            //manda a tutti i giocatori non winner il messaggio di perdita
+            for(Player p: players){
+                if(!p.getUsername().equals(winner.getUsername())){
+                    virtualView.youLost(p,false,winner);
+                }
+            }
         }
         else{
             //virtualView.playerHasDisconnected();

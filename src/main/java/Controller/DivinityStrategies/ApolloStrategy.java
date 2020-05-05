@@ -46,7 +46,7 @@ public class ApolloStrategy extends DefaultStrategy implements TurnStrategy {
         int pos_x=worker.getPositionX();
         int pos_y=worker.getPositionY();
         BoardCell[][] boardCopy = board.getBoardGame();
-        ArrayList<Coordinates> valid_positions = new ArrayList<Coordinates>();
+        ArrayList<Coordinates> valid_positions = new ArrayList<>();
         for(int i = pos_x-1 ; i <= pos_x+1 ; i++){
             for(int j = pos_y-1 ; j <= pos_y+1 ; j++){
                 if(/*Posizione è dentro la scacchiera*/ i>=0 && i<=4 && j>=0 && j<=4) {
