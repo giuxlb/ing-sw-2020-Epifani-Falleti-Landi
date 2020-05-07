@@ -5,5 +5,6 @@ public enum Card {
     ARTEMIS,
     ATHENA,
     ATLAS,
-    DEMETER;
+    DEMETER,
+    PAN;
 }

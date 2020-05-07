@@ -1,6 +1,7 @@
-package Controller.DivinityStrategies;
+package Controller.DivinityStrategies.SimpleGodsSimpleRules;
 
 import Controller.Coordinates;
+import Controller.DivinityStrategies.DefaultStrategy;
 import Controller.TurnStrategy;
 import Model.*;
 
@@ -8,6 +9,7 @@ import java.util.ArrayList;
 
 /*
 Tuo spostamento: il tuo lavoratore può spostarsi in una casella occupata da un avversario, scambiando le posizioni
+Non ho bisogno di chiedere se l'user vuole attivare l'effetto: può scegliere durante il movimento.
  */
 
 public class ApolloStrategy extends DefaultStrategy implements TurnStrategy {

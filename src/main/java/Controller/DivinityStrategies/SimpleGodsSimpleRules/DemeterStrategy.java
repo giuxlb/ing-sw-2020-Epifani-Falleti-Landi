@@ -1,10 +1,12 @@
-package Controller.DivinityStrategies;
+package Controller.DivinityStrategies.SimpleGodsSimpleRules;
 
 /*
 Tua costruzione: puoi costruire una volta in più, ma non nella stessa casella.
+Da chiedere dopo la prima costruzione.
  */
 
 import Controller.Coordinates;
+import Controller.DivinityStrategies.DefaultStrategy;
 import Controller.TurnStrategy;
 import Controller.VirtualView;
 import Model.Board;
