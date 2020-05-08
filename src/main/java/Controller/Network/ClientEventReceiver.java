@@ -41,7 +41,7 @@ public class ClientEventReceiver implements Runnable {
 
                 synchronized (this) {
                     pingFromClient = 0;
-                    while (pingFromClient == 0) {
+                    while (pingFromClient == 0 && !finishPing) {
                         try {
                             wait(10000);
                         } catch (InterruptedException e) {
