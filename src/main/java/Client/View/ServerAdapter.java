@@ -17,6 +17,7 @@ public class ServerAdapter implements Runnable {
     private Socket server;
     private ObjectOutputStream output;
     private ObjectInputStream input;
+    private boolean finishAdapter;
 
 
 
@@ -55,6 +56,7 @@ public class ServerAdapter implements Runnable {
             observersCpy = new ArrayList<ServerObserver>(observers);
         }
         continueReading = true;
+        finishAdapter = false;
         try {
             handleServerConnection();
         } catch (IOException e) {
@@ -63,9 +65,8 @@ public class ServerAdapter implements Runnable {
         } catch (ClassNotFoundException e) {
             e.printStackTrace();
         }
-        try {
-            server.close();
-        } catch (IOException e) { }
+
+
     }
 
     /**
@@ -81,7 +82,7 @@ public class ServerAdapter implements Runnable {
         }
 
 
-        while (true)
+        while (!finishAdapter)
         {
 
                 VCEvent evento = (VCEvent) input.readObject();
@@ -148,5 +149,8 @@ public class ServerAdapter implements Runnable {
         notifyAll();
     }
 
+    public void setFinishAdapter(boolean finishAdapter) {
+        this.finishAdapter = finishAdapter;
+    }
 }
 

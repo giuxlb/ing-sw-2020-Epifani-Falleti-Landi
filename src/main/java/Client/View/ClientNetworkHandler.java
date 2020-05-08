@@ -16,7 +16,6 @@ import java.util.ArrayList;
 public class ClientNetworkHandler implements Runnable, ServerObserver {
 
 
-
     private VCEvent fromServer;
     private ServerAdapter adapter;
     private Socket server;
@@ -31,7 +30,8 @@ public class ClientNetworkHandler implements Runnable, ServerObserver {
     private int PlayerID;//can be 0,1 or 2
     private boolean isRead;
     private CLI cli;
-
+    private boolean finish;
+    private boolean finishPing;
 
 
     private boolean idArrived;
@@ -64,8 +64,10 @@ public class ClientNetworkHandler implements Runnable, ServerObserver {
         in modo tale da poi permetterci di chiamare i metodi della View sotto che dovranno gestire l'input e l'output
         */
         //22 07 1997
+        finish = false;
+        finishPing = false;
         Runnable runPing = ()->{
-            while(true)
+            while(!finishPing)
             {
                 synchronized (this) {
                     ping = 0;
@@ -95,23 +97,23 @@ public class ClientNetworkHandler implements Runnable, ServerObserver {
         threadPing.start();
         canWrite = true;
 
-        while (true)
+        while (!finish)
         {
             isRead = false;
             synchronized (this) {
 
-                while (fromServer == null) {
+                while (fromServer == null && finish == false) {
                     try {
                         wait();
                     } catch (InterruptedException e) { }
 
                 }
             }
-
-            cli.updateGo();
+            if (!finish)
+                cli.updateGo();
             //System.out.println("è arrivato il comando"+ fromServer.getCommand());
             synchronized (this){
-                while(isRead == false)
+                while(isRead == false && finish == false)
                 {
                     try {
                         wait();
@@ -120,10 +122,14 @@ public class ClientNetworkHandler implements Runnable, ServerObserver {
             }
             //System.out.println("é arrivato alla view l'evento"+ fromServer.getCommand());
             fromServer = null;
-            adapter.continueToRead();
+            if (!finish)
+                adapter.continueToRead();
 
 
         }
+        finishPing = true;
+        adapter.setFinishAdapter(true);
+        adapter.continueToRead();//let the adapter continue to read, so that it will go to the condition of the while loop and since the finishAdapter is true, it will end the handleServerConnection method
 
     }
 
@@ -251,5 +257,10 @@ public class ClientNetworkHandler implements Runnable, ServerObserver {
 
     public int getPlayerID() {
         return PlayerID;
+    }
+
+    public synchronized void setFinish(boolean finish) {
+        this.finish = finish;
+        notifyAll(); // if the clientNetworkHandler is waiting for an event from server, this will wake up  that wait at line 107
     }
 }

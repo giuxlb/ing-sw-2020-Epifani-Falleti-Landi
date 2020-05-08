@@ -17,6 +17,7 @@ public class ClientAdapter implements Runnable {
     private ObjectInputStream input;
     private List<ClientObserver> observers = new ArrayList<ClientObserver>();
     private int number;//from 0 to 2 maximum in case there are 3 players
+    private boolean finishClientAdapter;
 
     /**
      * Constructor for the server adapter
@@ -75,7 +76,7 @@ public class ClientAdapter implements Runnable {
         synchronized (observers) {
             observersCpy = new ArrayList<ClientObserver>(observers);
         }
-
+        finishClientAdapter = false;
         try {
             handleClientConnection();
         } catch (IOException e) {
@@ -103,7 +104,7 @@ public class ClientAdapter implements Runnable {
             observersCpy = new ArrayList<ClientObserver>(observers);
         }
 
-        while (true)
+        while (!finishClientAdapter)
         {
 
                 VCEvent evento = (VCEvent) input.readObject();
@@ -123,4 +124,7 @@ public class ClientAdapter implements Runnable {
         }
     }
 
+    public void setFinishClientAdapter(boolean finishClientAdapter) {
+        this.finishClientAdapter = finishClientAdapter;
+    }
 }
