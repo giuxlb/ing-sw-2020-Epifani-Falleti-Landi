@@ -356,6 +356,7 @@ public class CLI {
                         System.out.println("Errore! La stringa del nome del giocatore che è disconnesso è corrotta");
                     }
                     buildEvent(cnh, "ho ricevuto la disconnessione di un client", VCEvent.Event.player_disconnected_game_ended);
+                    endGame=true;
                     break;
                 default:
                     System.out.println("Errore nel protocollo");

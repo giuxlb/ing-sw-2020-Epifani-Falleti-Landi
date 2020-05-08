@@ -4,6 +4,8 @@ import Controller.Network.ServerNetworkHandler;
 import Controller.Network.VCEvent;
 import Model.*;
 import Client.View.Data;
+
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collections;
@@ -547,5 +549,11 @@ public class VirtualView {
                 return false;
         }
         return true;
+    }
+
+    public void closeAll(){
+        try {
+            this.serverHandler.getServer().close();
+        }catch (Exception e){}
     }
 }

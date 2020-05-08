@@ -19,6 +19,10 @@ import java.util.concurrent.TimeUnit;
 public class ServerNetworkHandler implements Runnable, ClientObserver {
 
 
+    public ServerSocket getServer() {
+        return server;
+    }
+
     private ServerSocket server;
     private Socket[] clients;
     private ClientAdapter[] adapters;

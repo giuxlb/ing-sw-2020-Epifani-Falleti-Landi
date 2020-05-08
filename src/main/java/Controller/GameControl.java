@@ -21,6 +21,9 @@ public class GameControl {
     private ArrayList<Player> players;
     private boolean athenaEffectTurn;
     private VirtualView virtualView;
+    public Thread thread;
+    private volatile boolean exit = false;
+
 
 
     /***
@@ -30,6 +33,8 @@ public class GameControl {
     public GameControl() {
          this.game = new Game();
          this.virtualView = new VirtualView();
+
+
         players = new ArrayList<Player>();
         //waitForOk();
 
@@ -111,120 +116,127 @@ public class GameControl {
             System.out.println(players.get(i).getBirthDate().toString());
         }
         virtualView.sendNumberOfPlayer();
+
+
+
+
+
     }
 
-//TODO creare test per classi in model e controller ove possibile
 //TODO gestione dello scollegamento di un client
 
     public void startGame(){
-        game.startGame();
-        virtualView.upload(game.getBoardGame());
+        while(!exit) {
+            game.startGame();
+            virtualView.upload(game.getBoardGame());
 
-        //scelta delle carte del primo player
-        System.out.println(players.get(game.getTurnNumber()).getBirthDate().toString());
-        ArrayList<String> chosenCards = virtualView.sendAllCards(players.get(game.getTurnNumber()),game.getAvailableCards());
-        game.setChosenCards(chosenCards);
-        game.nextTurnNumber();
-
-
-
-        String cardChoice;
-
-        //mando array delle carte scelte dal primo player al secondo player
-        while(game.getTurnNumber()!=0) {
-            cardChoice = virtualView.sendChosenCards(players.get(game.getTurnNumber()), chosenCards);
-            players.get(game.getTurnNumber()).chooseCard(cardChoice);
-            chosenCards.remove(cardChoice);
+            //scelta delle carte del primo player
+            System.out.println(players.get(game.getTurnNumber()).getBirthDate().toString());
+            ArrayList<String> chosenCards = virtualView.sendAllCards(players.get(game.getTurnNumber()), game.getAvailableCards());
+            game.setChosenCards(chosenCards);
             game.nextTurnNumber();
-        }
-
-        cardChoice = virtualView.sendChosenCards(players.get(game.getTurnNumber()),chosenCards);
-
-        //setto l'ultima carta rimasta al primo player
-        players.get(game.getTurnNumber()).chooseCard(cardChoice);
-
-        //creo e riempio una lista con tutte le posizioni valide
-        ArrayList<Coordinates> initial_valid_pos = new ArrayList<>();
-        for(int i = 0;i < 5;i++){
-            for(int j = 0;j < 5;j++){
-                initial_valid_pos.add(new Coordinates(i,j));
-            }
-        }
-        int index;
-        //chiedo a tutti i player le posizioni iniziali
-        do{
-            for(int worker_index = 0;worker_index<2;worker_index++) {
-
-                //mando al current player la lista delle posizioni valide e ricevo l'indice della posizione scelta
-                index = virtualView.sendAvailableMove(players.get(game.getTurnNumber()),initial_valid_pos);
-
-                //inserisco il worker nella la posizione scelta
-
-                insertInitialPosition(game.getTurnNumber(),initial_valid_pos.get(index).getX(),initial_valid_pos.get(index).getY(),worker_index);
-
-                System.out.println(game.getBoardGame().getBoardWorker(1,1));
-
-                System.out.println(game.getBoardGame().getBoardHeight(1,1));
-
-                virtualView.upload(game.getBoardGame());
-
-                System.out.println(game.getBoardGame().getBoardWorker(1,1));
-                //rimuovo la posizione scelta dall'array
-                initial_valid_pos.remove(index);
 
 
-            }
+            String cardChoice;
 
-            game.nextTurnNumber();
-        }while(game.getTurnNumber()!=0);
-
-
-        //loop della partita:
-        //next_turn_effect è il valore di ritorno di startNextTurn, e sta ad indicare che nel ciclo di turno successivo ci sarà un effetto extra (tipo Athena)
-        //extra_turn_effect è il parametro passato a startNextTurn, che indica se e quali effetti extra ci saranno in  questo turno
-        //effect_duration indica per quanti turni l'effetto si applica, viene settato al numero di giocatori-1 quando next_turn_effect indica che c'è un effetto
-        int next_turn_effect = 0;
-        int extra_turn_effect = 0;
-        int effect_duration = 0;
-        while(!game.isGameStopped()) {
-            if (effect_duration > 0) {
-                next_turn_effect = startNextTurn(extra_turn_effect);
-                effect_duration--;
-            } else {
-                next_turn_effect = startNextTurn(0);
-            }
-
-            if(game.getLastLostPlayer()==null){
+            //mando array delle carte scelte dal primo player al secondo player
+            while (game.getTurnNumber() != 0) {
+                cardChoice = virtualView.sendChosenCards(players.get(game.getTurnNumber()), chosenCards);
+                players.get(game.getTurnNumber()).chooseCard(cardChoice);
+                chosenCards.remove(cardChoice);
                 game.nextTurnNumber();
             }
-            else{
-                players.remove(game.getLastLostPlayer());
-                virtualView.youLost(game.getLastLostPlayer(),true,null);
-                game.clearLastLostPlayer();
-            }
 
-            if (next_turn_effect != 0) {
-                extra_turn_effect = next_turn_effect;
-                effect_duration = players.size() - 1;
-            }
-        }
+            cardChoice = virtualView.sendChosenCards(players.get(game.getTurnNumber()), chosenCards);
 
-        Player winner = game.getWinner();
+            //setto l'ultima carta rimasta al primo player
+            players.get(game.getTurnNumber()).chooseCard(cardChoice);
 
-        if(winner!=null){
-            //manda il messaggio ai giocatori con scritto il vincitore
-            virtualView.youWon(winner);
-
-            //manda a tutti i giocatori non winner il messaggio di perdita
-            for(Player p: players){
-                if(!p.getUsername().equals(winner.getUsername())){
-                    virtualView.youLost(p,false,winner);
+            //creo e riempio una lista con tutte le posizioni valide
+            ArrayList<Coordinates> initial_valid_pos = new ArrayList<>();
+            for (int i = 0; i < 5; i++) {
+                for (int j = 0; j < 5; j++) {
+                    initial_valid_pos.add(new Coordinates(i, j));
                 }
             }
+            int index;
+            //chiedo a tutti i player le posizioni iniziali
+            do {
+                for (int worker_index = 0; worker_index < 2; worker_index++) {
+
+                    //mando al current player la lista delle posizioni valide e ricevo l'indice della posizione scelta
+                    index = virtualView.sendAvailableMove(players.get(game.getTurnNumber()), initial_valid_pos);
+
+                    //inserisco il worker nella la posizione scelta
+
+                    insertInitialPosition(game.getTurnNumber(), initial_valid_pos.get(index).getX(), initial_valid_pos.get(index).getY(), worker_index);
+
+                    System.out.println(game.getBoardGame().getBoardWorker(1, 1));
+
+                    System.out.println(game.getBoardGame().getBoardHeight(1, 1));
+
+                    virtualView.upload(game.getBoardGame());
+
+                    System.out.println(game.getBoardGame().getBoardWorker(1, 1));
+                    //rimuovo la posizione scelta dall'array
+                    initial_valid_pos.remove(index);
+
+
+                }
+
+                game.nextTurnNumber();
+            } while (game.getTurnNumber() != 0);
+
+
+            //loop della partita:
+            //next_turn_effect è il valore di ritorno di startNextTurn, e sta ad indicare che nel ciclo di turno successivo ci sarà un effetto extra (tipo Athena)
+            //extra_turn_effect è il parametro passato a startNextTurn, che indica se e quali effetti extra ci saranno in  questo turno
+            //effect_duration indica per quanti turni l'effetto si applica, viene settato al numero di giocatori-1 quando next_turn_effect indica che c'è un effetto
+            int next_turn_effect = 0;
+            int extra_turn_effect = 0;
+            int effect_duration = 0;
+            while (!game.isGameStopped()) {
+                if (effect_duration > 0) {
+                    next_turn_effect = startNextTurn(extra_turn_effect);
+                    effect_duration--;
+                } else {
+                    next_turn_effect = startNextTurn(0);
+                }
+                if(next_turn_effect == -1){
+                    return;
+                }
+
+                if (game.getLastLostPlayer() == null) {
+                    game.nextTurnNumber();
+                } else {
+                    players.remove(game.getLastLostPlayer());
+                    virtualView.youLost(game.getLastLostPlayer(), true, null);
+                    game.clearLastLostPlayer();
+                }
+
+                if (next_turn_effect != 0) {
+                    extra_turn_effect = next_turn_effect;
+                    effect_duration = players.size() - 1;
+                }
+            }
+
+            Player winner = game.getWinner();
+
+            if (winner != null) {
+                //manda il messaggio ai giocatori con scritto il vincitore
+                virtualView.youWon(winner);
+
+                //manda a tutti i giocatori non winner il messaggio di perdita
+                for (Player p : players) {
+                    if (!p.getUsername().equals(winner.getUsername())) {
+                        virtualView.youLost(p, false, winner);
+                    }
+                }
+            } else {
+                //virtualView.playerHasDisconnected();
+            }
         }
-        else{
-            //virtualView.playerHasDisconnected();
-        }
+        System.out.println("Server Stopped");
     }
 
     /***
@@ -320,8 +332,20 @@ public class GameControl {
 
  */
     public static void main(String[] args){
-        GameControl partita = new GameControl();
-        System.out.println("AVVIO LA PARTITA");
-        partita.startGame();
+        GameControl partita;
+
+        while (true) {
+
+            partita = new GameControl();
+            partita.startGame();
+            partita.closeAll();
+        }
+    }
+
+
+    public void closeAll(){
+        this.virtualView.closeAll();
     }
 }
+
+
