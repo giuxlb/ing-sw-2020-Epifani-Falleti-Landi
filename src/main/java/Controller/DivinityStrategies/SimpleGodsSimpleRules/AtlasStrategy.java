@@ -1,6 +1,7 @@
-package Controller.DivinityStrategies;
+package Controller.DivinityStrategies.SimpleGodsSimpleRules;
 
 import Controller.Coordinates;
+import Controller.DivinityStrategies.DefaultStrategy;
 import Controller.TurnStrategy;
 import Model.Board;
 import Model.Game;
@@ -9,7 +10,8 @@ import Model.Worker;
 import java.util.ArrayList;
 
 /*
-Tua costruzione: il tuo lavoratore può costruire una cupola su qualsiasi livello, compreso il terreno
+Tua costruzione: il tuo lavoratore può costruire una cupola su qualsiasi livello, compreso il terreno.
+Da chiedere prima della costruzione.
  */
 public class AtlasStrategy extends DefaultStrategy implements TurnStrategy {
 

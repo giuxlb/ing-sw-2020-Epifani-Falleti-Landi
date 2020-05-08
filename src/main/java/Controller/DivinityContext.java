@@ -1,6 +1,8 @@
 package Controller;
 
 import Controller.DivinityStrategies.*;
+import Controller.DivinityStrategies.SimpleGodsCompleteRules.PanStrategy;
+import Controller.DivinityStrategies.SimpleGodsSimpleRules.*;
 import Model.*;
 
 import java.util.ArrayList;
@@ -39,6 +41,8 @@ public class DivinityContext {
             case "ATLAS": this.setTurnStrategy(new AtlasStrategy());
                 break;
             case "DEMETER": this.setTurnStrategy(new DemeterStrategy());
+                break;
+            case "PAN": this.setTurnStrategy(new PanStrategy());
                 break;
             default: this.setTurnStrategy(new DefaultStrategy());
 

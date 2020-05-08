@@ -11,6 +11,10 @@ import java.net.Socket;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
 
+/***
+ * @author Giuseppe Epifani
+ */
+
 public class GameControl {
     private Game game;
     private Socket[] sockets;
@@ -114,8 +118,6 @@ public class GameControl {
 
     public void startGame(){
         game.startGame();
-        //game.getBoardGame().setBoardHeight(1,1,1);
-       // game.getBoardGame().setBoardWorker(1,1,new Worker(1,1,Color.ANSI_YELLOW));
         virtualView.upload(game.getBoardGame());
 
         //scelta delle carte del primo player

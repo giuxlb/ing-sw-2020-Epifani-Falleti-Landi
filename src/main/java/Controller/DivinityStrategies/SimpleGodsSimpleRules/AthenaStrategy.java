@@ -1,10 +1,12 @@
-package Controller.DivinityStrategies;
+package Controller.DivinityStrategies.SimpleGodsSimpleRules;
 
 /*
 Turno dell'avversario: se nel tuo ultimo turno un tuo lavoratore è salito di livello, in questo turno i lavoratori avversari non possono salire di livello
+ Non c'è bisogno di chiedere l'attivazione.
  */
 
 import Controller.Coordinates;
+import Controller.DivinityStrategies.DefaultStrategy;
 import Controller.TurnStrategy;
 import Controller.VirtualView;
 import Model.Board;

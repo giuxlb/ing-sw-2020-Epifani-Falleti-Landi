@@ -1,6 +1,7 @@
-package Controller.DivinityStrategies;
+package Controller.DivinityStrategies.SimpleGodsSimpleRules;
 
 import Controller.Coordinates;
+import Controller.DivinityStrategies.DefaultStrategy;
 import Controller.TurnStrategy;
 import Controller.VirtualView;
 import Model.Board;
@@ -13,6 +14,7 @@ import java.util.List;
 
 /*
 Tuo spostamento: il tuo lavoratore può spostarsi una volta in più, ma non può tornare dove è partito
+Chiedere l'attivazione dopo il primo spostamento.
  */
 
 

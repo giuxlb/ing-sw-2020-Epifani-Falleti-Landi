@@ -52,7 +52,7 @@ public class ClientNetworkHandler implements Runnable, ServerObserver {
     public void run() {
 
         try {
-            server = new Socket("127.0.0.1",7776);
+            server = new Socket("127.0.0.1",65000);
             output = new ObjectOutputStream(server.getOutputStream());
             input = new ObjectInputStream((server.getInputStream()));
         } catch (IOException e) {
