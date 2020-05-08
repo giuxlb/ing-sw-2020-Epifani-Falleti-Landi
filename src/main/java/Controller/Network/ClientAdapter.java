@@ -17,6 +17,11 @@ public class ClientAdapter implements Runnable {
     private ObjectInputStream input;
     private List<ClientObserver> observers = new ArrayList<ClientObserver>();
     private int number;//from 0 to 2 maximum in case there are 3 players
+
+    public boolean isFinishClientAdapter() {
+        return finishClientAdapter;
+    }
+
     private boolean finishClientAdapter;
 
     /**

@@ -136,7 +136,11 @@ public class ServerNetworkHandler implements Runnable, ClientObserver {
             numberOfPlayers--;
 
         }
+        while (checkFinishFlags())
+        {
 
+        }
+        virtualView.closeAll();
 
     }
 
@@ -272,5 +276,13 @@ public class ServerNetworkHandler implements Runnable, ClientObserver {
 
     public ClientAdapter[] getAdapters() {
         return adapters;
+    }
+    public boolean checkFinishFlags()
+    {
+        for (int i = 0; i < numberOfPlayers ; i++) {
+            if (!adapters[i].isFinishClientAdapter())
+                return false;
+        }
+        return true;
     }
 }

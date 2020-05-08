@@ -311,8 +311,13 @@ public class VirtualView {
      */
     public int sendAvailableMove(Player p, ArrayList<Coordinates> move_spots)
     {
-        if (checkConnections() == false)
+        for (int i = 0; i <3 ; i++) {
+            System.out.println(connected[i]);
+        }
+        if (checkConnections() == false) {
+            System.out.println("Un player si è disconnesso");
             return -1;
+        }
         ArrayList<Coordinates> coordinate = new ArrayList<Coordinates>();
         for (int i = 0; i <move_spots.size(); i++)
         {
@@ -325,7 +330,7 @@ public class VirtualView {
         }
         synchronized(this) {
             received = null;
-            while(received == null && !checkConnections())
+            while(received == null && checkConnections())
             {
                 try{
                     wait(1000);
@@ -490,7 +495,7 @@ public class VirtualView {
      */
     public void playerDisconnected(int playerIndex)
     {
-
+            System.out.println("Sto scollegando un player...");
             connected[playerIndex] = false;
             player_disconnected_game_ended(players.get(playerIndex));
 
