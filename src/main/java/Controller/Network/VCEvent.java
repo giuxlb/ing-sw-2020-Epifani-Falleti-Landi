@@ -36,6 +36,7 @@ public class VCEvent implements Serializable {
         id,
         send_your_card,
         ask_for_worker,
+        ask_for_divinity_activation,
         send_color
 
     }

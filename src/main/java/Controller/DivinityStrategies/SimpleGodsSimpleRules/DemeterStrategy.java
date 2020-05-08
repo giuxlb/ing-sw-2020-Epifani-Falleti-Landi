@@ -79,17 +79,19 @@ public class DemeterStrategy extends DefaultStrategy implements TurnStrategy {
         vview.upload(board);
         //vview.upload(game.getBoardGameImmutable());
 
-        /*Rimuovo da build_spots la posizione dove il player ha fatto la prina costruzione*/
-        build_spots.remove(index);
+        if (vview.askDivinityActivation(player,player.getGameCard())) {
+            /*Rimuovo da build_spots la posizione dove il player ha fatto la prina costruzione*/
+            build_spots.remove(index);
 
-        /*Mando le caselle al client, ricevo indice per seconda costruzione*/
-        index = vview.sendAvailableBuild(player,build_spots);
+            /*Mando le caselle al client, ricevo indice per seconda costruzione*/
+            index = vview.sendAvailableBuild(player, build_spots);
 
-        /*Costruisco*/
-        build(worker,build_spots,index,game,board);
+            /*Costruisco*/
+            build(worker, build_spots, index, game, board);
 
-        vview.upload(board);
-        //vview.upload(game.getBoardGameImmutable());
+            vview.upload(board);
+            //vview.upload(game.getBoardGameImmutable());
+        }
 
         return 0;
     }

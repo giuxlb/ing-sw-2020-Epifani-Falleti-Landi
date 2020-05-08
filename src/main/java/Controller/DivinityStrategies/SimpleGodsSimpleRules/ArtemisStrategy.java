@@ -67,47 +67,52 @@ public class ArtemisStrategy extends DefaultStrategy implements TurnStrategy {
             return 0;
         }
 
-        /*Calcolo le caselle disponibili per il secondo spostamento*/
-        move_spots = checkAvailableMoveSpots(player,worker,board,athenaeffect);
+        //chiedo al client se vuole fare il secondo spostamento
+        if(vview.askDivinityActivation(player,player.getGameCard())) {
 
-        /*Rimuovo dall'Array la posizione iniziale*/
-        int count = 0;
-        int to_delete = -1;
-        for(Coordinates c : move_spots){
-            if(c.getX()==starting_position.getX() && c.getY()==starting_position.getY()){
-                System.out.println("TROVATO");
-                to_delete = count;
+            /*Calcolo le caselle disponibili per il secondo spostamento*/
+            move_spots = checkAvailableMoveSpots(player, worker, board, athenaeffect);
+
+            /*Rimuovo dall'Array la posizione iniziale*/
+            int count = 0;
+            int to_delete = -1;
+            for (Coordinates c : move_spots) {
+                if (c.getX() == starting_position.getX() && c.getY() == starting_position.getY()) {
+                    System.out.println("TROVATO");
+                    to_delete = count;
+                }
+                count++;
             }
-            count++;
-        }
-        if(to_delete!=-1) {
-            move_spots.remove(to_delete);
-        }
+            if (to_delete != -1) {
+                move_spots.remove(to_delete);
+            }
 
 
-        /*Se l'array è vuoto, il worker non puo spostarsi, quindi il player ha perso*/
-        if (move_spots.size()==0) {
-            game.playerLose(player);
-            return 0;
-        }
+            /*Se l'array è vuoto, il worker non puo spostarsi, quindi il player ha perso*/
+            if (move_spots.size() == 0) {
+                game.playerLose(player);
+                return 0;
+            }
 
-        /*Mando le caselle al client, ricevo l'indice dello spostamento*/
-        index = vview.sendAvailableMove(player,move_spots);
+            /*Mando le caselle al client, ricevo l'indice dello spostamento*/
+            index = vview.sendAvailableMove(player, move_spots);
 
-        /*Muovo il worker*/
-        move(worker,move_spots,index,game,board);
+            /*Muovo il worker*/
+            move(worker, move_spots, index, game, board);
 
-        vview.upload(board);
-        //vview.upload(game.getBoardGameImmutable());
+            vview.upload(board);
+            //vview.upload(game.getBoardGameImmutable());
 
-        /*Salvo la finale intermedia*/
-        Coordinates final_position = new Coordinates(worker.getPositionX(),worker.getPositionY());
+            /*Salvo la finale intermedia*/
+            Coordinates final_position = new Coordinates(worker.getPositionX(), worker.getPositionY());
 
-        /*Controllo se il giocatore ha vinto*/
-         win = checkWinCondition(middle_position,final_position,board);
-        if (win) {
-            game.stopGame(player);
-            return 0;
+            /*Controllo se il giocatore ha vinto*/
+            win = checkWinCondition(middle_position, final_position, board);
+            if (win) {
+                game.stopGame(player);
+                return 0;
+            }
+
         }
 
         /*Calcolo le caselle disponibili per la costruzione*/

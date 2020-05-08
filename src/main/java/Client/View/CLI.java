@@ -267,6 +267,39 @@ public class CLI {
                 case number_of_players:
                     playersNumber = (Integer)evento.getBox();
                     break;
+                case ask_for_divinity_activation:
+                    Object objectGod = evento.getBox();
+                    String god_name = (String) objectGod;
+                    switch (god_name.toUpperCase()){
+                        case "ARTEMIS":
+                            System.out.println("Vuoi attivare l'effetto di Artemis e fare un secondo movimento?");
+                            break;
+                        case "ATLAS":
+                            System.out.println("Vuoi attivare l'effetto di Atlas e costruire una cupola?");
+                            break;
+                        case "DEMETER":
+                            System.out.println("Vuoi attivare l'effetto di Demeter e fare una seconda costruzione?");
+                            break;
+                    }
+                    boolean temp = false;
+                    while(temp == false) {
+                        System.out.println("(Y) per attivare, (N) per non attivare:");
+                        String response = s.nextLine();
+                        switch (response.toUpperCase()) {
+                            case "Y":
+                                temp = true;
+                                buildEvent(cnh, true, VCEvent.Event.ask_for_divinity_activation);
+                                break;
+                            case "N":
+                                temp = true;
+                                buildEvent(cnh, false, VCEvent.Event.ask_for_divinity_activation);
+                                break;
+                            default:
+                                System.out.println("Input non valido, riprova.");
+                                break;
+                        }
+                    }
+                    break;
                 case send_all_cards:
                     System.out.println("Hai a disposizione le seguenti divinità:");
                     Object objectGods = evento.getBox();
