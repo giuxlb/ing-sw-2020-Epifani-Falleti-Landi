@@ -71,7 +71,7 @@ public class ClientNetworkHandler implements Runnable, ServerObserver {
             {
                 synchronized (this) {
                     ping = 0;
-                    while (ping == 0) {
+                    while (ping == 0 && !finish) {
                         try {
                             wait(10000);
                         } catch (InterruptedException e) {
