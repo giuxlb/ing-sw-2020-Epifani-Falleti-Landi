@@ -4,6 +4,8 @@ import Controller.Network.ServerNetworkHandler;
 import Controller.Network.VCEvent;
 import Model.*;
 import Client.View.Data;
+
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collections;
@@ -325,7 +327,7 @@ public class VirtualView {
         }
         synchronized(this) {
             received = null;
-            while(received == null && !checkConnections())
+            while(received == null && checkConnections())
             {
                 try{
                     wait(1000);
@@ -542,5 +544,11 @@ public class VirtualView {
                 return false;
         }
         return true;
+    }
+
+    public void closeAll(){
+        try {
+            this.serverHandler.getServer().close();
+        }catch (Exception e){}
     }
 }

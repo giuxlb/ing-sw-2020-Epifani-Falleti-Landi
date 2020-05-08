@@ -46,6 +46,10 @@ public class DefaultStrategy implements TurnStrategy {
         }
         /*Mando le caselle al client, ricevo l'indice dello spostamento*/
         int index = vview.sendAvailableMove(player,move_spots);
+        if(index==-1){
+            return -1;
+        }
+
 
         /*Muovo il worker*/
         move(worker,move_spots,index,game,board);
@@ -68,6 +72,9 @@ public class DefaultStrategy implements TurnStrategy {
 
         /*Mando le caselle al client, ricevo indice della costruzione*/
         index = vview.sendAvailableBuild(player,build_spots);
+        if(index==-1){
+            return -1;
+        }
 
         /*Costruisco*/
         build(worker,build_spots,index,game,board);
