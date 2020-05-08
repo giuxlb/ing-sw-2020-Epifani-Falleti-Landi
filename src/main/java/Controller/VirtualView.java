@@ -306,7 +306,8 @@ public class VirtualView {
      */
     public int sendAvailableMove(Player p, ArrayList<Coordinates> move_spots)
     {
-
+        if (checkConnections() == false)
+            return -1;
         ArrayList<Coordinates> coordinate = new ArrayList<Coordinates>();
         for (int i = 0; i <move_spots.size(); i++)
         {
@@ -319,15 +320,17 @@ public class VirtualView {
         }
         synchronized(this) {
             received = null;
-            while(received == null)
+            while(received == null && !checkConnections())
             {
                 try{
-                    wait();
+                    wait(1000);
                 }
                 catch(InterruptedException e){}
             }
 
         }
+        if (checkConnections() == false)
+            return -1;
         //System.out.println("Ricevo..."+received);
         if (received instanceof Integer) {
             int x = ((Integer) received).intValue();
@@ -480,11 +483,11 @@ public class VirtualView {
      * It notifies the GameControl that a player has disconnected
      * @param playerIndex
      */
-    public synchronized void playerDisconnected(int playerIndex)
+    public void playerDisconnected(int playerIndex)
     {
 
             connected[playerIndex] = false;
-            notifyAll();
+            player_disconnected_game_ended(players.get(playerIndex));
 
     }
 
@@ -526,5 +529,13 @@ public class VirtualView {
 
     public ArrayList<Player> getPlayers() {
         return players;
+    }
+    public boolean checkConnections()
+    {
+        for (int i = 0; i <numberOfPlayers ; i++) {
+            if (connected[i] == false)
+                return false;
+        }
+        return true;
     }
 }
