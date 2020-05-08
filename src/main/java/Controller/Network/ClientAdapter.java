@@ -85,8 +85,9 @@ public class ClientAdapter implements Runnable {
         try {
             handleClientConnection();
         } catch (IOException e) {
-           for(ClientObserver obs : observersCpy)
-               obs.playerDisconnectedNumber(number);
+            if (!finishClientAdapter)
+                for(ClientObserver obs : observersCpy)
+                    obs.playerDisconnectedNumber(number);
         }
         catch (ClassNotFoundException e)
         {
@@ -94,6 +95,7 @@ public class ClientAdapter implements Runnable {
         try {
             client.close();
         } catch (IOException e) { }
+        finishClientAdapter = true;
 
     }
 

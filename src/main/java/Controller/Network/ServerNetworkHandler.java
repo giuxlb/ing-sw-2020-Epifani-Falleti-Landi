@@ -107,7 +107,7 @@ public class ServerNetworkHandler implements Runnable, ClientObserver {
                 } catch (InterruptedException e) { }
             }
         }
-
+        int n = numberOfPlayers;
 
 
         while (numberOfPlayers != 1) {
@@ -140,10 +140,17 @@ public class ServerNetworkHandler implements Runnable, ClientObserver {
             numberOfPlayers--;
 
         }
-        while (!checkFinishFlags())
-        {
+        numberOfPlayers = n;
 
+        while (checkFinishFlags() == false)
+        {
+            try {
+                TimeUnit.SECONDS.sleep(10);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
         }
+
         virtualView.closeAll();
 
     }
@@ -157,9 +164,7 @@ public class ServerNetworkHandler implements Runnable, ClientObserver {
         switch (n)
         {
             case 0:
-
                 receiver1.didReceiveEvent(eventFromClient);
-
                 break;
             case 1:
                receiver2.didReceiveEvent(eventFromClient);
@@ -201,6 +206,21 @@ public class ServerNetworkHandler implements Runnable, ClientObserver {
      */
     @Override
     public void playerDisconnectedNumber(int index) {
+        switch (index){
+            case 0:
+                receiver1.setFinishClientReceiver(true);
+                receiver1.setFinishPing(true);
+                break;
+            case 1:
+                receiver2.setFinishClientReceiver(true);
+                receiver2.setFinishPing(true);
+                break;
+            case 2:
+                receiver3.setFinishClientReceiver(true);
+                receiver3.setFinishPing(true);
+                break;
+            default:break;
+        }
         virtualView.playerDisconnected(index);
     }
 
@@ -281,12 +301,17 @@ public class ServerNetworkHandler implements Runnable, ClientObserver {
     public ClientAdapter[] getAdapters() {
         return adapters;
     }
+
     public boolean checkFinishFlags()
     {
+
         for (int i = 0; i < numberOfPlayers ; i++) {
-            if (!adapters[i].isFinishClientAdapter())
+
+            if (adapters[i].isFinishClientAdapter() == false) {
                 return false;
+            }
         }
-        return true;
+
+        return true;//se invece erano tutti true, allora è il momento di scollegare
     }
 }

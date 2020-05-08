@@ -81,8 +81,8 @@ public class ClientNetworkHandler implements Runnable, ServerObserver {
 
                     }
                 }
-
-                sendPing();//appena riceve manda indietro il ping per fargli sapere che è ancora attivo
+                if (!finishPing)
+                    sendPing();//appena riceve manda indietro il ping per fargli sapere che è ancora attivo
 
 
             }

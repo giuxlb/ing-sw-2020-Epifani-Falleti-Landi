@@ -339,7 +339,7 @@ public class GameControl {
             partita = new GameControl();
             partita.startGame();
             while (!partita.checkNewGame()){
-                System.out.println("IN ATTESA");
+                //System.out.println("IN ATTESA");
             }
         }
     }

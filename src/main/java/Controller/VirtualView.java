@@ -59,16 +59,22 @@ public class VirtualView {
      */
     public int playerNumber()
     {
+        if (checkConnections() == false) {
+            return -1;
+        }
         VCEvent evento = new VCEvent(null, VCEvent.Event.setup_request);
         serverHandler.sendVCEventTo(evento,0);
         synchronized (this) {
             received = null;
-            while (received == null) {
+            while (received == null && checkConnections()) {
                 try {
                     wait();
                 } catch (InterruptedException e) {
                 }
             }
+        }
+        if (checkConnections() == false) {
+            return -1;
         }
         if (received instanceof Integer) {
             numberOfPlayers = (Integer) received;
@@ -102,7 +108,9 @@ public class VirtualView {
      */
     public String askForUsername(int index,boolean wasWrong)
     {
-
+        if (checkConnections() == false) {
+            return null;
+        }
         VCEvent evento;
         if (wasWrong == false) {
              evento = new VCEvent("username", VCEvent.Event.username_request);
@@ -113,7 +121,7 @@ public class VirtualView {
         serverHandler.sendVCEventTo(evento,index);
         synchronized(this) {
             received = null;
-            while(received == null)
+            while(received == null && checkConnections())
             {
                 try{
                     wait();
@@ -121,6 +129,9 @@ public class VirtualView {
                 catch(InterruptedException e){}
             }
 
+        }
+        if (checkConnections() == false) {
+            return null;
         }
         System.out.println(received);
         if (received instanceof String)
@@ -137,11 +148,14 @@ public class VirtualView {
      */
     public Data askForDate(int index)
     {
+        if (checkConnections() == false) {
+            return null;
+        }
         VCEvent evento = new VCEvent("Data", VCEvent.Event.date_request);
         serverHandler.sendVCEventTo(evento,index);
         synchronized(this) {
             received = null;
-            while(received == null)
+            while(received == null && checkConnections())
             {
                 try{
                     wait();
@@ -149,6 +163,9 @@ public class VirtualView {
                 catch(InterruptedException e){}
             }
 
+        }
+        if (checkConnections() == false) {
+            return null;
         }
         if (received instanceof Data)
             return (Data) received;
@@ -214,7 +231,10 @@ public class VirtualView {
         }
     }
 
-    public boolean askDivinityActivation(Player p, String divinity){
+    public int askDivinityActivation(Player p, String divinity){
+        if (checkConnections() == false) {
+            return -1;
+        }
         VCEvent evento = new VCEvent(divinity, VCEvent.Event.ask_for_divinity_activation);
         for(int i = 0; i<numberOfPlayers;i++){
             if (p.getUsername().equals(players.get(i).getUsername()))
@@ -222,15 +242,21 @@ public class VirtualView {
         }
         synchronized (this){
             received = null;
-            while (received == null){
+            while (received == null && checkConnections()){
                 try{
                     wait();
                 }
                 catch (InterruptedException e){}
             }
         }
-
-        return (boolean) received;
+        if (checkConnections() == false) {
+            return -1;
+        }
+        if (received instanceof Integer) {
+            int x = ((Integer) received).intValue();
+            return x;
+        }
+        return -1;
     }
 
     /**
@@ -241,6 +267,9 @@ public class VirtualView {
      */
     public ArrayList<String> sendAllCards(Player p, ArrayList<String> cards)
     {
+        if (checkConnections() == false) {
+            return null;
+        }
         VCEvent evento = new VCEvent(cards, VCEvent.Event.send_all_cards);
         for (int i = 0; i <numberOfPlayers ; i++) {
             if (p.getUsername().equals(players.get(i).getUsername()))
@@ -248,7 +277,7 @@ public class VirtualView {
         }
         synchronized(this) {
             received = null;
-            while(received == null)
+            while(received == null && checkConnections())
             {
                 try{
                     wait();
@@ -256,6 +285,9 @@ public class VirtualView {
                 catch(InterruptedException e){}
             }
 
+        }
+        if (checkConnections() == false) {
+            return null;
         }
         ArrayList<String> chosenCards = (ArrayList<String>) received;
 
@@ -270,6 +302,9 @@ public class VirtualView {
      */
     public String sendChosenCards(Player p,ArrayList<String> chosenCards)
     {
+        if (checkConnections() == false) {
+            return null;
+        }
         ArrayList<String> cards = new ArrayList<String>();
         for (int i = 0; i <chosenCards.size(); i++)
         {
@@ -282,7 +317,7 @@ public class VirtualView {
         }
         synchronized(this) {
             received = null;
-            while(received == null)
+            while(received == null && checkConnections())
             {
                 try{
                     wait();
@@ -290,6 +325,9 @@ public class VirtualView {
                 catch(InterruptedException e){}
             }
 
+        }
+        if (checkConnections() == false) {
+            return null;
         }
         if (received instanceof String)
             return (String) received;
@@ -320,11 +358,8 @@ public class VirtualView {
      */
     public int sendAvailableMove(Player p, ArrayList<Coordinates> move_spots)
     {
-        for (int i = 0; i <3 ; i++) {
-            System.out.println(connected[i]);
-        }
+
         if (checkConnections() == false) {
-            System.out.println("Un player si è disconnesso");
             return -1;
         }
         ArrayList<Coordinates> coordinate = new ArrayList<Coordinates>();
@@ -369,6 +404,9 @@ public class VirtualView {
      */
     public int sendAvailableBuild(Player p, ArrayList<Coordinates> build_spots)
     {
+        if (checkConnections() == false) {
+            return -1;
+        }
         ArrayList<Coordinates> coordinate = new ArrayList<Coordinates>();
         for (int i = 0; i <build_spots.size(); i++)
         {
@@ -381,7 +419,7 @@ public class VirtualView {
         }
         synchronized(this) {
             received = null;
-            while(received == null)
+            while(received == null && checkConnections())
             {
                 try{
                     wait();
@@ -389,6 +427,9 @@ public class VirtualView {
                 catch(InterruptedException e){}
             }
 
+        }
+        if (checkConnections() == false) {
+            return -1;
         }
         if (received instanceof Integer) {
             int x = ((Integer) received).intValue();
@@ -408,6 +449,9 @@ public class VirtualView {
      */
     public Coordinates askForWorker(Player p, ArrayList<Coordinates> workersPosition)
     {
+        if (checkConnections() == false) {
+            return null;
+        }
         ArrayList<Coordinates> coordinate = new ArrayList<Coordinates>();
         for (int i = 0; i <workersPosition.size(); i++)
         {
@@ -420,7 +464,7 @@ public class VirtualView {
         }
         synchronized(this) {
             received = null;
-            while(received == null)
+            while(received == null && checkConnections())
             {
                 try{
                     wait();
@@ -428,6 +472,9 @@ public class VirtualView {
                 catch(InterruptedException e){}
             }
 
+        }
+        if (checkConnections() == false) {
+            return null;
         }
         if (received instanceof Integer) {
             int x = ((Integer) received).intValue();
@@ -504,9 +551,11 @@ public class VirtualView {
      */
     public void playerDisconnected(int playerIndex)
     {
+        if (connected[playerIndex] == true) {
             System.out.println("Sto scollegando un player...");
             connected[playerIndex] = false;
             player_disconnected_game_ended(players.get(playerIndex));
+        }
 
     }
 
