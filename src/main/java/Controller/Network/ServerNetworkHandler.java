@@ -269,4 +269,8 @@ public class ServerNetworkHandler implements Runnable, ClientObserver {
     public Socket[] getClients() {
         return clients;
     }
+
+    public ClientAdapter[] getAdapters() {
+        return adapters;
+    }
 }

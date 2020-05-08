@@ -32,8 +32,8 @@ public class TurnControl {
 
         //ask the player if they want to use the card effect
 
-        ctx.selectStrategy(this.card);
-
+        //ctx.selectStrategy(this.card);
+        ctx.selectStrategy("");
         ArrayList<Coordinates> workers_pos = new ArrayList<>();
         Coordinates position_0 = new Coordinates(player.getWorker(0).getPositionX(),player.getWorker(0).getPositionY());
         Coordinates position_1 = new Coordinates(player.getWorker(1).getPositionX(),player.getWorker(1).getPositionY());

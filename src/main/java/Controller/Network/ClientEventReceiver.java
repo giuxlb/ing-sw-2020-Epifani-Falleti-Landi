@@ -13,6 +13,8 @@ public class ClientEventReceiver implements Runnable {
     private ServerNetworkHandler snh;
     private Integer clientIndex;
     private boolean startReceivingEvents;
+    private boolean finishClientReceiver;
+    private boolean finishPing;
 
     /**
      * Constructor for ClientEventReceiver
@@ -29,8 +31,9 @@ public class ClientEventReceiver implements Runnable {
     @Override
     public void run() {
 
+        finishPing = false;
         Runnable runPingClient = ()->{
-            while(true)
+            while(!finishPing)
             {
                 VCEvent pingEvent = new VCEvent( clientIndex+1, VCEvent.Event.ping);
 
@@ -59,11 +62,12 @@ public class ClientEventReceiver implements Runnable {
 
             }
 
+
         };
         Thread pingThread = new Thread(runPingClient);
         pingThread.start();
         //sendID(clientIndex.intValue());
-
+        finishClientReceiver = false;
 
         synchronized (this)
         {
@@ -76,7 +80,7 @@ public class ClientEventReceiver implements Runnable {
             }
         }
 
-        while (true)
+        while (!finishClientReceiver)
         {
             synchronized (this)
             {
@@ -96,17 +100,16 @@ public class ClientEventReceiver implements Runnable {
             // se il client ha perso,ha vinto oppure riceve il messaggio che un giocatore si è disconnesso e quindi la partita è finita
             if ((fromClient.getCommand() == VCEvent.Event.you_lost) || (fromClient.getCommand() == VCEvent.Event.you_won) || (fromClient.getCommand() == VCEvent.Event.player_disconnected_game_ended))
             {
-                try {
-                    snh.getClients()[clientIndex].close();
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
+                finishPing = true; // faccio terminare il thread del ping dato che sto andando a chiudere la socket
+                snh.getAdapters()[clientIndex].setFinishClientAdapter(true); // faccio terminare il clientAdapter e chiudo la socket del client
+                finishClientReceiver = true;// faccio terminare il thread del client receiver
             }
             else {
                 snh.virtualView.receivedResponse(fromClient.getBox());
             }
 
         }
+
 
 
     }

@@ -25,6 +25,7 @@ public class CLI {
 
         //Messagio di arriverci
         System.out.println("Partita terminata, grazie per aver giocato");
+        cnh.setFinish(true);
 
     }
 
