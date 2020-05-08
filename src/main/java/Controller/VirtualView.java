@@ -37,6 +37,9 @@ public class VirtualView {
         serverThread.start();
         this.setUpisReady = false;
         this.okFromClient = false;
+        for (int i = 0; i < 3; i++) {
+            connected[i] = true;
+        }
 
     }
 
@@ -60,6 +63,8 @@ public class VirtualView {
         }
         if (received instanceof Integer) {
             numberOfPlayers = (Integer) received;
+            if (numberOfPlayers == 2)
+                connected[2] = false;
             setUpisReady = true;
             System.out.println("continuo a ricevere eventi...");
             serverHandler.setPlayerNumber(numberOfPlayers);
