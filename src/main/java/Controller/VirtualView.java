@@ -200,6 +200,25 @@ public class VirtualView {
         }
     }
 
+    public boolean askDivinityActivation(Player p, String divinity){
+        VCEvent evento = new VCEvent(divinity, VCEvent.Event.ask_for_divinity_activation);
+        for(int i = 0; i<numberOfPlayers;i++){
+            if (p.getUsername().equals(players.get(i).getUsername()))
+                serverHandler.sendVCEventTo(evento,i);
+        }
+        synchronized (this){
+            received = null;
+            while (received == null){
+                try{
+                    wait();
+                }
+                catch (InterruptedException e){}
+            }
+        }
+
+        return (boolean) received;
+    }
+
     /**
      * It sends all the cards to the first client connected
      * @param p is the first client connected
