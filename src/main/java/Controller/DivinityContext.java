@@ -1,6 +1,7 @@
 package Controller;
 
 import Controller.DivinityStrategies.*;
+import Controller.DivinityStrategies.SimpleGodsCompleteRules.HephaestusStrategy;
 import Controller.DivinityStrategies.SimpleGodsCompleteRules.PanStrategy;
 import Controller.DivinityStrategies.SimpleGodsSimpleRules.*;
 import Model.*;
@@ -41,6 +42,8 @@ public class DivinityContext {
             case "ATLAS": this.setTurnStrategy(new AtlasStrategy());
                 break;
             case "DEMETER": this.setTurnStrategy(new DemeterStrategy());
+                break;
+            case "HEPHAESTUS": this.setTurnStrategy(new HephaestusStrategy());
                 break;
             case "PAN": this.setTurnStrategy(new PanStrategy());
                 break;
