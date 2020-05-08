@@ -338,10 +338,16 @@ public class GameControl {
 
             partita = new GameControl();
             partita.startGame();
-            partita.closeAll();
+            while (!partita.checkNewGame()){
+                System.out.println("IN ATTESA");
+            }
         }
     }
 
+
+    public boolean checkNewGame(){
+       return this.virtualView.isStartNewGame();
+    }
 
     public void closeAll(){
         this.virtualView.closeAll();

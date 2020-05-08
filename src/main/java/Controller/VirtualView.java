@@ -22,6 +22,12 @@ public class VirtualView {
     private boolean setUpisReady;
     private boolean[] connected;
 
+    public boolean isStartNewGame() {
+        return startNewGame;
+    }
+
+    private boolean startNewGame;
+
 
 
     private boolean okFromClient;
@@ -42,6 +48,7 @@ public class VirtualView {
         for (int i = 0; i < 3; i++) {
             connected[i] = true;
         }
+        this.startNewGame=false;
 
     }
 
@@ -555,5 +562,6 @@ public class VirtualView {
         try {
             this.serverHandler.getServer().close();
         }catch (Exception e){}
+        this.startNewGame=true;
     }
 }

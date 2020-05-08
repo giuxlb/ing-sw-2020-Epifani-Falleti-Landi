@@ -140,7 +140,7 @@ public class ServerNetworkHandler implements Runnable, ClientObserver {
             numberOfPlayers--;
 
         }
-        while (checkFinishFlags())
+        while (!checkFinishFlags())
         {
 
         }
