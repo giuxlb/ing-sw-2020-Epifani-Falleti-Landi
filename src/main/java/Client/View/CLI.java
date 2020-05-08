@@ -280,6 +280,9 @@ public class CLI {
                         case "DEMETER":
                             System.out.println("Vuoi attivare l'effetto di Demeter e fare una seconda costruzione?");
                             break;
+                        case "HEPHAESTUS":
+                            System.out.println("Vuoi attivare l'effetto di Hephaestus e costruire una seconda volta sullo stesso blocco?");
+                            break;
                     }
                     boolean temp = false;
                     while(temp == false) {
