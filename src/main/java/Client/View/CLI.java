@@ -291,11 +291,11 @@ public class CLI {
                         switch (response.toUpperCase()) {
                             case "Y":
                                 temp = true;
-                                buildEvent(cnh, true, VCEvent.Event.ask_for_divinity_activation);
+                                buildEvent(cnh, 1, VCEvent.Event.ask_for_divinity_activation);
                                 break;
                             case "N":
                                 temp = true;
-                                buildEvent(cnh, false, VCEvent.Event.ask_for_divinity_activation);
+                                buildEvent(cnh, 0, VCEvent.Event.ask_for_divinity_activation);
                                 break;
                             default:
                                 System.out.println("Input non valido, riprova.");

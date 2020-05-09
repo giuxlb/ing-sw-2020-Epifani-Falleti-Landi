@@ -51,6 +51,10 @@ public class ArtemisStrategy extends DefaultStrategy implements TurnStrategy {
         /*Mando le caselle al client, ricevo l'indice dello spostamento*/
         int index = vview.sendAvailableMove(player,move_spots);
 
+        if(index==-1){
+            return -1;
+        }
+
         /*Muovo il worker*/
         move(worker,move_spots,index,game,board);
 
@@ -68,7 +72,12 @@ public class ArtemisStrategy extends DefaultStrategy implements TurnStrategy {
         }
 
         //chiedo al client se vuole fare il secondo spostamento
-        if(vview.askDivinityActivation(player,player.getGameCard())) {
+        int ask_divinity = vview.askDivinityActivation(player,player.getGameCard());
+        if(ask_divinity==-1){
+            return -1;
+        }
+
+        if(ask_divinity==1) {
 
             /*Calcolo le caselle disponibili per il secondo spostamento*/
             move_spots = checkAvailableMoveSpots(player, worker, board, athenaeffect);
@@ -97,6 +106,10 @@ public class ArtemisStrategy extends DefaultStrategy implements TurnStrategy {
             /*Mando le caselle al client, ricevo l'indice dello spostamento*/
             index = vview.sendAvailableMove(player, move_spots);
 
+            if(index==-1){
+                return -1;
+            }
+
             /*Muovo il worker*/
             move(worker, move_spots, index, game, board);
 
@@ -120,6 +133,10 @@ public class ArtemisStrategy extends DefaultStrategy implements TurnStrategy {
 
         /*Mando le caselle al client, ricevo indice della costruzione*/
         index = vview.sendAvailableBuild(player,build_spots);
+
+        if(index==-1){
+            return -1;
+        }
 
         /*Costruisco*/
         build(worker,build_spots,index,game,board);

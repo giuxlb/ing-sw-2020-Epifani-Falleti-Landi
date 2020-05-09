@@ -51,6 +51,10 @@ public class DemeterStrategy extends DefaultStrategy implements TurnStrategy {
         /*Mando le caselle al client, ricevo l'indice dello spostamento*/
         int index = vview.sendAvailableMove(player,move_spots);
 
+        if(index==-1){
+            return -1;
+        }
+
         /*Muovo il worker*/
         move(worker,move_spots,index,game,board);
 
@@ -73,18 +77,30 @@ public class DemeterStrategy extends DefaultStrategy implements TurnStrategy {
         /*Mando le caselle al client, ricevo indice della costruzione*/
         index = vview.sendAvailableBuild(player,build_spots);
 
+        if(index==-1){
+            return -1;
+        }
+
         /*Costruisco*/
         build(worker,build_spots,index,game,board);
 
         vview.upload(board);
         //vview.upload(game.getBoardGameImmutable());
 
-        if (vview.askDivinityActivation(player,player.getGameCard())) {
+        int askDivinity = vview.askDivinityActivation(player,player.getGameCard());
+        if(askDivinity==-1){
+            return -1;
+        }
+        if(askDivinity==1) {
             /*Rimuovo da build_spots la posizione dove il player ha fatto la prina costruzione*/
             build_spots.remove(index);
 
             /*Mando le caselle al client, ricevo indice per seconda costruzione*/
             index = vview.sendAvailableBuild(player, build_spots);
+
+            if(index==-1){
+                return -1;
+            }
 
             /*Costruisco*/
             build(worker, build_spots, index, game, board);

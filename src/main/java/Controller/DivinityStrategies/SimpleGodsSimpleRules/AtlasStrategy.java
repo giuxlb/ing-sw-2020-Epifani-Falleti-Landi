@@ -65,6 +65,10 @@ public class AtlasStrategy extends DefaultStrategy implements TurnStrategy {
         /*Mando le caselle al client, ricevo l'indice dello spostamento*/
         int index = vview.sendAvailableMove(player,move_spots);
 
+        if(index==-1){
+            return -1;
+        }
+
         /*Muovo il worker*/
         move(worker,move_spots,index,game,board);
 
@@ -81,7 +85,11 @@ public class AtlasStrategy extends DefaultStrategy implements TurnStrategy {
             return 0;
         }
 
-        boolean atlas_build = vview.askDivinityActivation(player,player.getGameCard());
+        int atlas_build = vview.askDivinityActivation(player,player.getGameCard());
+
+        if(atlas_build==-1){
+            return -1;
+        }
 
         /*Calcolo le caselle disponibili per la costruzione*/
         ArrayList<Coordinates> build_spots = checkAvailableBuildSpots(player,worker,board);
@@ -89,8 +97,12 @@ public class AtlasStrategy extends DefaultStrategy implements TurnStrategy {
         /*Mando le caselle al client, ricevo indice della costruzione*/
         index = vview.sendAvailableBuild(player,build_spots);
 
+        if(index==-1){
+            return -1;
+        }
+
         /*Costruisco*/
-        if(atlas_build) { build(worker, build_spots, index, game, board); }
+        if(atlas_build==1) { build(worker, build_spots, index, game, board); }
         else
         { super.build(worker,build_spots,index,game,board);}
 
