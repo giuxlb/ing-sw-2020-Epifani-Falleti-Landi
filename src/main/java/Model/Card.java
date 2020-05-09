@@ -6,6 +6,7 @@ public enum Card {
     ATHENA,
     ATLAS,
     DEMETER,
-    HEPHESTUS,
-    PAN;
+    HEPHAESTUS,
+    PAN,
+    PROMETHEUS;
 }

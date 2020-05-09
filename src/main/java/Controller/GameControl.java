@@ -22,7 +22,7 @@ public class GameControl {
     private boolean athenaEffectTurn;
     private VirtualView virtualView;
     public Thread thread;
-    private volatile boolean exit = false;
+    private boolean exit;
 
 
 
@@ -33,7 +33,7 @@ public class GameControl {
     public GameControl() {
          this.game = new Game();
          this.virtualView = new VirtualView();
-
+        exit=false;
 
         players = new ArrayList<Player>();
 
@@ -56,7 +56,15 @@ public class GameControl {
 
 
         String player_name_0 = this.virtualView.askForUsername(0,false);
+        if(player_name_0==null){
+            exit=true;
+            return;
+        }
         Data player_date_0 = virtualView.askForDate(0);
+        if(player_date_0==null){
+            exit=true;
+            return;
+        }
         System.out.println(player_date_0.toString());
 
         //aggiungo il player 0
@@ -72,12 +80,20 @@ public class GameControl {
         while (!flag) {
             //ricevo dal client nome 2
             player_name_1 = virtualView.askForUsername(1,!first_time);
+            if(player_name_1==null){
+                exit=true;
+                return;
+            }
             if(!player_name_1.equals(player_name_0)){ flag=true;}
             first_time = false;
 
         }
 
         Data player_date_1 = virtualView.askForDate(1);
+        if(player_date_1==null){
+            exit=true;
+            return;
+        }
         System.out.println(player_date_1.toString());
         this.addPlayer(new Player(player_name_1,player_date_1));
         virtualView.sendColor("green",1);
@@ -90,10 +106,18 @@ public class GameControl {
             first_time = true;
             while (!flag){
                 player_name_2 = virtualView.askForUsername(2,!first_time);
+                if(player_name_2==null){
+                    exit=true;
+                    return;
+                }
                 if(!player_name_2.equals(player_name_1) && !player_name_2.equals(player_name_0)){flag=true;}
                 first_time = false;
             }
             Data player_date_2 = virtualView.askForDate(2);
+            if(player_date_2==null){
+                exit=true;
+                return;
+            }
             this.addPlayer(new Player(player_name_2,player_date_2));
             virtualView.sendColor("purple",2);
         }
@@ -120,15 +144,13 @@ public class GameControl {
         }
         virtualView.sendNumberOfPlayer();
 
-
-
-
-
     }
 
-//TODO gestione dello scollegamento di un client
 
     public void startGame(){
+
+        if(this.exit==true) return;
+
         while(!exit) {
             game.startGame();
             virtualView.upload(game.getBoardGame());
@@ -136,6 +158,7 @@ public class GameControl {
             //scelta delle carte del primo player
             System.out.println(players.get(game.getTurnNumber()).getBirthDate().toString());
             ArrayList<String> chosenCards = virtualView.sendAllCards(players.get(game.getTurnNumber()), game.getAvailableCards());
+            if(chosenCards==null) return;
             game.setChosenCards(chosenCards);
             game.nextTurnNumber();
 
@@ -145,12 +168,14 @@ public class GameControl {
             //mando array delle carte scelte dal primo player al secondo player
             while (game.getTurnNumber() != 0) {
                 cardChoice = virtualView.sendChosenCards(players.get(game.getTurnNumber()), chosenCards);
+                if (cardChoice==null) return;
                 players.get(game.getTurnNumber()).chooseCard(cardChoice);
                 chosenCards.remove(cardChoice);
                 game.nextTurnNumber();
             }
 
             cardChoice = virtualView.sendChosenCards(players.get(game.getTurnNumber()), chosenCards);
+            if(cardChoice==null) return;
 
             //setto l'ultima carta rimasta al primo player
             players.get(game.getTurnNumber()).chooseCard(cardChoice);
@@ -169,6 +194,7 @@ public class GameControl {
 
                     //mando al current player la lista delle posizioni valide e ricevo l'indice della posizione scelta
                     index = virtualView.sendAvailableMove(players.get(game.getTurnNumber()), initial_valid_pos);
+                    if(index==-1) return;
 
                     //inserisco il worker nella la posizione scelta
 
@@ -280,16 +306,6 @@ public class GameControl {
         game.chooseInitialPosition(players.get(currentPlayer),x,y,index);
     }
 
-    /*public void win(Player player){
-        virtualView.sendWinMessage(player);
-        game.win(player);
-    }*/
-
-    /*public void lose(Player player){
-        virtualView.sendLoseMessage(player);
-        game.lose(player);
-    }*/
-
     /***
      * Adds a player in both the model and the controller
      * @param player the player to be added
@@ -321,19 +337,7 @@ public class GameControl {
             }
         }
     }
-/*
-    public void waitForOk()
-    {
-        while(virtualView.isOkFromClient() == false){
-          System.out.println(virtualView.isOkFromClient());
-            try{
-                TimeUnit.MILLISECONDS.sleep(10);}
-            catch (InterruptedException e){System.out.println("Interrupted exception");};
-        }
-        virtualView.setOkFromClient(false);
-    }
 
- */
     public static void main(String[] args){
         GameControl partita;
 

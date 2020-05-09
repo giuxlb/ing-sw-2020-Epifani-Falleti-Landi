@@ -3,6 +3,7 @@ package Controller;
 import Controller.DivinityStrategies.*;
 import Controller.DivinityStrategies.SimpleGodsCompleteRules.HephaestusStrategy;
 import Controller.DivinityStrategies.SimpleGodsCompleteRules.PanStrategy;
+import Controller.DivinityStrategies.SimpleGodsCompleteRules.PrometheusStrategy;
 import Controller.DivinityStrategies.SimpleGodsSimpleRules.*;
 import Model.*;
 
@@ -46,6 +47,8 @@ public class DivinityContext {
             case "HEPHAESTUS": this.setTurnStrategy(new HephaestusStrategy());
                 break;
             case "PAN": this.setTurnStrategy(new PanStrategy());
+                break;
+            case "PROMETHEUS": this.setTurnStrategy(new PrometheusStrategy());
                 break;
             default: this.setTurnStrategy(new DefaultStrategy());
 

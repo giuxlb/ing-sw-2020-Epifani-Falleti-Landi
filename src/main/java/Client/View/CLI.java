@@ -283,6 +283,9 @@ public class CLI {
                         case "HEPHAESTUS":
                             System.out.println("Vuoi attivare l'effetto di Hephaestus e costruire una seconda volta sullo stesso blocco?");
                             break;
+                        case "PROMETHEUS":
+                            System.out.println("Vuoi attivare l'effetto di Prometheus? (Costruisci prima e dopo il movimento però non puoi salire di livello)");
+                            break;
                     }
                     boolean temp = false;
                     while(temp == false) {
