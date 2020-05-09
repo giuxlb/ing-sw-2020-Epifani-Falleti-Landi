@@ -6,7 +6,7 @@ import java.util.concurrent.TimeUnit;
 /**
  * @author Adriano Falleti
  */
-public class ClientEventReceiver implements Runnable {
+public class ClientEventReceiver extends Thread {
 
     private VCEvent fromClient;
     private Integer pingFromClient;
@@ -43,13 +43,14 @@ public class ClientEventReceiver implements Runnable {
                     pingFromClient = 0;
                     while (pingFromClient == 0 && !finishPing) {
                         try {
-                            wait(10000);
+                            wait(1000);
                         } catch (InterruptedException e) {
                         }
                     }
                 }
                 if(pingFromClient == 0)
                 {
+                    System.out.println("Scollego perchè mi arriva il ping uguale a 0");
                     snh.virtualView.playerDisconnected(clientIndex);
 
                 }
@@ -88,10 +89,9 @@ public class ClientEventReceiver implements Runnable {
                 while(fromClient == null && !finishClientReceiver)
                 {
                     try {
-                        wait(10000);
+                        wait(1000);
                     } catch (InterruptedException e) {
-                        System.out.println("Errore");
-                        e.printStackTrace();
+
                     }
                 }
 
@@ -110,6 +110,7 @@ public class ClientEventReceiver implements Runnable {
             }
 
         }
+        System.out.println("CHiudo il receiver "+clientIndex);
 
 
 

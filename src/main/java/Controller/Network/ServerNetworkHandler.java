@@ -16,7 +16,7 @@ import java.util.concurrent.TimeUnit;
  * @author Adriano Falleti
  */
 
-public class ServerNetworkHandler implements Runnable, ClientObserver {
+public class ServerNetworkHandler  implements Runnable, ClientObserver {
 
 
     public ServerSocket getServer() {
@@ -37,6 +37,7 @@ public class ServerNetworkHandler implements Runnable, ClientObserver {
     private ClientEventReceiver receiver2;
     private ClientEventReceiver receiver3;
     private boolean idIsSent;
+
 
     public ServerNetworkHandler(VirtualView vv)
     {
@@ -66,72 +67,79 @@ public class ServerNetworkHandler implements Runnable, ClientObserver {
             return;
         }
 
-        Thread th1 = new Thread(receiver1);
-        Thread th2 = new Thread(receiver2);
-        Thread th3 = new Thread(receiver3);
+
+
 
         //per ogni client che prendiamo dobbiamo  salvarci l'adapter nell'array adapters e la sua socket nell'array clients e aggiungere il server come observer
-        int counter = 0;
-        try {
-            clients[counter] = server.accept();
-            clients[counter].setSoTimeout(20000);
-            virtualView.setConnectedIndexToTrue(counter);
-            outputs[counter] = new ObjectOutputStream(clients[counter].getOutputStream());
-            inputs[counter] = new ObjectInputStream( clients[counter].getInputStream());
-            adapters[counter] = new ClientAdapter(clients[counter], counter);
-            adapters[counter].addObserver(this);
-            adapters[counter].setInput(inputs[counter]);
-            adapters[counter].setOutput(outputs[counter]);
-            canWrite[counter] = true;
-            Thread thread1 = new Thread(adapters[counter]);
-            thread1.start();
-            counter++;
-        }
-        catch(IOException e)
-        {
-            System.out.println("connection dropped");
-        }
-        receiver1.canReceiveEvents();
-        th1.start();
-
-
-        //qui dovrò aspettare un VCEvent dal primo client connesso con il numero di giocatori perchè poi mi serve per accettare gli altri
-
-
-        synchronized (this)
-        {
-            numberOfPlayers = 0;
-            while (numberOfPlayers == 0) {
-                try {
-                    wait();
-                } catch (InterruptedException e) { }
+        int counter;
+       do {
+            counter = 0;
+            System.out.println(counter);
+            receiver1 = new ClientEventReceiver(this,0);
+            canWrite[counter] = false;
+           try {
+               if (clients[counter] != null)
+                    clients[counter].close();
+           } catch (IOException e) {
+               e.printStackTrace();
+           }
+           try {
+                clients[counter] = server.accept();
+                clients[counter].setSoTimeout(20000);
+                virtualView.setConnectedIndexToTrue(counter);
+                outputs[counter] = new ObjectOutputStream(clients[counter].getOutputStream());
+               System.out.println("L'output stream c'è!");
+                inputs[counter] = new ObjectInputStream(clients[counter].getInputStream());
+                adapters[counter] = new ClientAdapter(clients[counter], counter);
+                adapters[counter].addObserver(this);
+                adapters[counter].setInput(inputs[counter]);
+                adapters[counter].setOutput(outputs[counter]);
+                canWrite[counter] = true;
+                adapters[counter].start();
+                counter++;
+            } catch (IOException e) {
+                System.out.println("connection dropped");
             }
-        }
+            receiver1.canReceiveEvents();
+            receiver1.start();
+
+            //qui dovrò aspettare un VCEvent dal primo client connesso con il numero di giocatori perchè poi mi serve per accettare gli altri
+            synchronized (this) {
+                numberOfPlayers = 1;
+                while (numberOfPlayers == 1 && !checkFinishFlags()) {
+                    try {
+                        wait(1000);
+                    } catch (InterruptedException e) {
+                    }
+                }
+            }
+            System.out.println(counter);
+        }  while (numberOfPlayers  == 1);
         int n = numberOfPlayers;
 
-
-        while (numberOfPlayers != 1) {
+        System.out.println(n);
+        while (numberOfPlayers > 1) {
             try{
                 clients[counter] = server.accept();
                 clients[counter].setSoTimeout(20000);
                 virtualView.setConnectedIndexToTrue(counter);
                 outputs[counter] = new ObjectOutputStream( clients[counter].getOutputStream());
+
                 inputs[counter] = new ObjectInputStream( clients[counter].getInputStream());
                 adapters[counter] = new ClientAdapter(clients[counter],counter);
                 adapters[counter].addObserver(this);
                 adapters[counter].setInput(inputs[counter]);
                 canWrite[counter] = true;
                 adapters[counter].setOutput(outputs[counter]);
-                Thread thread = new Thread(adapters[counter]);
-                thread.start();
+                adapters[counter].start();
                 counter++;
                 if (counter == 2) {
                     receiver2.canReceiveEvents();
-                    th2.start();
+                    receiver2.start();
                 }
                 if (counter == 3) {
                     receiver3.canReceiveEvents();
-                    th3.start();
+                   receiver3.start();
                 }
             }catch(IOException e)
             {
@@ -150,7 +158,7 @@ public class ServerNetworkHandler implements Runnable, ClientObserver {
                 e.printStackTrace();
             }
         }
-
+        System.out.println("Chiudo tutto...");
         virtualView.closeAll();
 
     }
@@ -208,20 +216,23 @@ public class ServerNetworkHandler implements Runnable, ClientObserver {
     public void playerDisconnectedNumber(int index) {
         switch (index){
             case 0:
-                receiver1.setFinishClientReceiver(true);
-                receiver1.setFinishPing(true);
+                this.receiver1.setFinishClientReceiver(true);
+                this.receiver1.setFinishPing(true);
+                this.adapters[index].setFinishClientAdapter(true);
                 break;
             case 1:
-                receiver2.setFinishClientReceiver(true);
-                receiver2.setFinishPing(true);
+                this.receiver2.setFinishClientReceiver(true);
+                this.receiver2.setFinishPing(true);
+                this.adapters[index].setFinishClientAdapter(true);
                 break;
             case 2:
-                receiver3.setFinishClientReceiver(true);
-                receiver3.setFinishPing(true);
+                this.receiver3.setFinishClientReceiver(true);
+                this.receiver3.setFinishPing(true);
+                this.adapters[index].setFinishClientAdapter(true);
                 break;
             default:break;
         }
-        virtualView.playerDisconnected(index);
+        this.virtualView.playerDisconnected(index);
     }
 
     /**
@@ -231,26 +242,31 @@ public class ServerNetworkHandler implements Runnable, ClientObserver {
      */
     public synchronized void sendVCEventTo(VCEvent eventToClient, int clientIndex)
     {
-        System.out.println("Mando "+eventToClient.getCommand());
-        synchronized (this)
-        {
-            while (canWrite[clientIndex] == false)
-            {
-                try {
-                    wait();
-                }catch(InterruptedException e){}
-            }
-        }
-        // qui avrò che la canWrite sarà true, quindi lo pongo a false
-        canWrite[clientIndex] = false;
 
-        try {
-            outputs[clientIndex].writeObject(eventToClient);
-        } catch (IOException e) {
-            virtualView.playerDisconnected(clientIndex);
+            System.out.println("Mando " + eventToClient.getCommand());
+
+            synchronized (this) {
+                while (this.canWrite[clientIndex] == false) {
+                    try {
+                        wait();
+                    } catch (InterruptedException e) {
+                    }
+                }
+            }
+            // qui avrò che la canWrite sarà true, quindi lo pongo a false
+            this.canWrite[clientIndex] = false;
+            if (clientIndex == 0 || outputs[clientIndex] != null) {
+            try {
+                this.outputs[clientIndex].writeObject(eventToClient);
+            } catch (IOException e) {
+
+                System.out.println("Scollego perchè non riesco a mandare un evento");
+                e.printStackTrace();
+                this.virtualView.playerDisconnected(clientIndex);
+            }
+            this.canWrite[clientIndex] = true;
+            notifyAll();
         }
-        canWrite[clientIndex] = true;
-        notifyAll();
     }
 
     /**
@@ -262,7 +278,7 @@ public class ServerNetworkHandler implements Runnable, ClientObserver {
     {
         synchronized (this)
         {
-            while (canWrite[clientIndex] == false)
+            while (this.canWrite[clientIndex] == false)
             {
                 try {
                     wait();
@@ -270,14 +286,15 @@ public class ServerNetworkHandler implements Runnable, ClientObserver {
             }
         }
         // qui avrò che la canWrite sarà true, quindi lo pongo a false
-        canWrite[clientIndex] = false;
+        this.canWrite[clientIndex] = false;
 
         try {
-            outputs[clientIndex].writeObject(pingEvent);
+            this.outputs[clientIndex].writeObject(pingEvent);
         } catch (IOException e) {
-            virtualView.playerDisconnected(clientIndex);
+            System.out.println("Scollego perchè non riesco a mandare il ping");
+           this.virtualView.playerDisconnected(clientIndex);
         }
-        canWrite[clientIndex] = true;
+        this.canWrite[clientIndex] = true;
         notifyAll();
 
     }
@@ -305,9 +322,9 @@ public class ServerNetworkHandler implements Runnable, ClientObserver {
     public boolean checkFinishFlags()
     {
 
-        for (int i = 0; i < numberOfPlayers ; i++) {
+        for (int i = 0; i < this.numberOfPlayers ; i++) {
 
-            if (adapters[i].isFinishClientAdapter() == false) {
+            if (this.adapters[i].isFinishClientAdapter() == false) {
                 return false;
             }
         }

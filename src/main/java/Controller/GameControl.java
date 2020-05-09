@@ -36,11 +36,14 @@ public class GameControl {
 
 
         players = new ArrayList<Player>();
+
         //waitForOk();
 
-        virtualView.playerNumber();
+        int x = virtualView.playerNumber();
         //aspetto che SetupItReady sia true
-
+        while (x <= 1) {
+                x = virtualView.playerNumber();
+        }
         while(virtualView.isSetUpisReady() == false){
             System.out.println("Qui");
             try{
@@ -225,7 +228,7 @@ public class GameControl {
             if (winner != null) {
                 //manda il messaggio ai giocatori con scritto il vincitore
                 virtualView.youWon(winner);
-
+                exit = true;
                 //manda a tutti i giocatori non winner il messaggio di perdita
                 for (Player p : players) {
                     if (!p.getUsername().equals(winner.getUsername())) {

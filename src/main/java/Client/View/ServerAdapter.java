@@ -10,7 +10,7 @@ import java.io.*;
 /**
  * @author Adriano Falleti
  */
-public class ServerAdapter implements Runnable {
+public class ServerAdapter extends Thread {
 
 
 

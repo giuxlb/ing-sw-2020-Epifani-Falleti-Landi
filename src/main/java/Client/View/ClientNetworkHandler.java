@@ -56,7 +56,7 @@ public class ClientNetworkHandler implements Runnable, ServerObserver {
             output = new ObjectOutputStream(server.getOutputStream());
             input = new ObjectInputStream((server.getInputStream()));
         } catch (IOException e) {
-            System.out.println("server unreachable");
+            System.out.println("Server unreachable, because first client left the game before setting up the number of players!");
             return;
         }
         System.out.println("Connected");
@@ -91,8 +91,7 @@ public class ClientNetworkHandler implements Runnable, ServerObserver {
         adapter.addObserver(this);
         adapter.setInput(input);
         adapter.setOutput(output);
-        Thread thread = new Thread(adapter);
-        thread.start();
+        adapter.start();
         Thread threadPing = new Thread(runPing);
         threadPing.start();
         canWrite = true;

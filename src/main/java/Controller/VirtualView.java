@@ -39,6 +39,9 @@ public class VirtualView {
     public VirtualView()
     {
         this.players = new ArrayList<Player>();
+        players.add(new Player("client 1",new Data(1,1,1998)));
+        players.add(new Player("client 2",new Data(1,1,1998)));
+        players.add(new Player("client 3",new Data(1,1,1998)));
         this.connected = new boolean[3];
         this.serverHandler = new ServerNetworkHandler(this);
         Thread serverThread = new Thread(serverHandler);
@@ -59,16 +62,29 @@ public class VirtualView {
      */
     public int playerNumber()
     {
-        if (checkConnections() == false) {
-            return -1;
+
+        System.out.println("Chiamo la playerNumber");
+        synchronized (this)
+        {
+            while (this.connected[0] == false)
+            {
+                System.out.println("Aspetto il collegamento...");
+                try {
+                    wait();
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            }
         }
+        System.out.println("È collegato...");
         VCEvent evento = new VCEvent(null, VCEvent.Event.setup_request);
+        System.out.println("La virtual view manda la set up request ");
         serverHandler.sendVCEventTo(evento,0);
         synchronized (this) {
             received = null;
             while (received == null && checkConnections()) {
                 try {
-                    wait();
+                    wait(1000);
                 } catch (InterruptedException e) {
                 }
             }
@@ -124,7 +140,7 @@ public class VirtualView {
             while(received == null && checkConnections())
             {
                 try{
-                    wait();
+                    wait(1000);
                 }
                 catch(InterruptedException e){}
             }
@@ -158,7 +174,7 @@ public class VirtualView {
             while(received == null && checkConnections())
             {
                 try{
-                    wait();
+                    wait(1000);
                 }
                 catch(InterruptedException e){}
             }
@@ -244,7 +260,7 @@ public class VirtualView {
             received = null;
             while (received == null && checkConnections()){
                 try{
-                    wait();
+                    wait(1000);
                 }
                 catch (InterruptedException e){}
             }
@@ -270,6 +286,7 @@ public class VirtualView {
         if (checkConnections() == false) {
             return null;
         }
+        System.out.println("Mando la sendAllCards");
         VCEvent evento = new VCEvent(cards, VCEvent.Event.send_all_cards);
         for (int i = 0; i <numberOfPlayers ; i++) {
             if (p.getUsername().equals(players.get(i).getUsername()))
@@ -320,7 +337,7 @@ public class VirtualView {
             while(received == null && checkConnections())
             {
                 try{
-                    wait();
+                    wait(1000);
                 }
                 catch(InterruptedException e){}
             }
@@ -422,7 +439,7 @@ public class VirtualView {
             while(received == null && checkConnections())
             {
                 try{
-                    wait();
+                    wait(1000);
                 }
                 catch(InterruptedException e){}
             }
@@ -467,7 +484,7 @@ public class VirtualView {
             while(received == null && checkConnections())
             {
                 try{
-                    wait();
+                    wait(1000);
                 }
                 catch(InterruptedException e){}
             }
@@ -524,14 +541,17 @@ public class VirtualView {
 
     /***
      * It notifies to player p that a player has disconnected, so the game is ended with no winner
+     * If  numberOfPlayers is null, it means the first client has disconnected,before sending the number of players he wants for the game
      * @param p is the player to notify
      */
     public void player_disconnected_game_ended(Player p)
     {
-        VCEvent evento = new VCEvent(p.getUsername(), VCEvent.Event.player_disconnected_game_ended);
-        for (int i = 0; i <numberOfPlayers ; i++) {
-            if (!(p.getUsername().equals(players.get(i).getUsername())))
-                serverHandler.sendVCEventTo(evento,i);
+        if (numberOfPlayers != null) {
+            VCEvent evento = new VCEvent(p.getUsername(), VCEvent.Event.player_disconnected_game_ended);
+            for (int i = 0; i < numberOfPlayers; i++) {
+                if (!(p.getUsername().equals(players.get(i).getUsername())))
+                    serverHandler.sendVCEventTo(evento, i);
+            }
         }
     }
 
@@ -549,11 +569,12 @@ public class VirtualView {
      * It notifies the GameControl that a player has disconnected
      * @param playerIndex
      */
-    public void playerDisconnected(int playerIndex)
+    public synchronized void playerDisconnected(int playerIndex)
     {
         if (connected[playerIndex] == true) {
             System.out.println("Sto scollegando un player...");
-            connected[playerIndex] = false;
+            this.connected[playerIndex] = false;
+            notifyAll();
             player_disconnected_game_ended(players.get(playerIndex));
         }
 
@@ -563,8 +584,14 @@ public class VirtualView {
      * Setter for the boolean array connected
      * @param index identifies the client
      */
-    public void setConnectedIndexToTrue(int index) {
+    public synchronized void setConnectedIndexToTrue(int index) {
        this.connected[index] = true;
+       if (index == 0) {
+           notifyAll();
+       }
+        for (int i = 0; i <3 ; i++) {
+            System.out.println(connected[i]);
+        }
     }
 
 
@@ -590,6 +617,8 @@ public class VirtualView {
      * @param players
      */
     public void setPlayers(ArrayList<Player> players) {
+        this.players = null;
+        this.players = new ArrayList<Player>();
         for (int i = 0; i < players.size(); i++) {
             this.players.add(players.get(i));
         }
@@ -600,9 +629,13 @@ public class VirtualView {
     }
     public boolean checkConnections()
     {
-        for (int i = 0; i <numberOfPlayers ; i++) {
-            if (connected[i] == false)
+        int x = 3;
+        if (numberOfPlayers != null)
+            x = numberOfPlayers;
+        for (int i = 0; i <x ; i++) {
+            if (this.connected[i] == false) {
                 return false;
+            }
         }
         return true;
     }

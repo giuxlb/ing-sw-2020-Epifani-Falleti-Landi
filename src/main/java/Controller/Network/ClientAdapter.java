@@ -10,7 +10,7 @@ import java.util.ArrayList;
 /**
  * @author Adriano Falleti
  */
-public class ClientAdapter implements Runnable {
+public class ClientAdapter extends Thread {
 
     private Socket client;
     private ObjectOutputStream output;
@@ -85,6 +85,7 @@ public class ClientAdapter implements Runnable {
         try {
             handleClientConnection();
         } catch (IOException e) {
+
             if (!finishClientAdapter)
                 for(ClientObserver obs : observersCpy)
                     obs.playerDisconnectedNumber(number);
@@ -96,6 +97,7 @@ public class ClientAdapter implements Runnable {
             client.close();
         } catch (IOException e) { }
         finishClientAdapter = true;
+        System.out.println("Chiudo l'adapter "+ number);
 
     }
 
