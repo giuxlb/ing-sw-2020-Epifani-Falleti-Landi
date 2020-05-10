@@ -8,5 +8,7 @@ public enum Card {
     DEMETER,
     HEPHAESTUS,
     PAN,
-    PROMETHEUS;
+    PROMETHEUS,
+    MINOTAUR,
+    ZEUS;
 }
