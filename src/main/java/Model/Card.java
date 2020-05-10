@@ -10,5 +10,8 @@ public enum Card {
     PAN,
     PROMETHEUS,
     MINOTAUR,
-    ZEUS;
+    ZEUS,
+    HESTIA,
+    CHRONUS,
+    TRITON;
 }

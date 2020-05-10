@@ -154,7 +154,12 @@ public class GameControl {
 
             //scelta delle carte del primo player
             System.out.println(players.get(game.getTurnNumber()).getBirthDate().toString());
-            ArrayList<String> chosenCards = virtualView.sendAllCards(players.get(game.getTurnNumber()), game.getAvailableCards());
+            ArrayList<String> allCards = game.getAvailableCards();
+            //rimuovo le carte non censentite nelle partite con 3 giocatori
+            if(players.size()==3){
+                allCards.remove("CHRONUS");
+            }
+            ArrayList<String> chosenCards = virtualView.sendAllCards(players.get(game.getTurnNumber()), allCards);
             if(chosenCards==null) return;
             game.setChosenCards(chosenCards);
             game.nextTurnNumber();

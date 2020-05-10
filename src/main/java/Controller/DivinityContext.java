@@ -1,6 +1,9 @@
 package Controller;
 
 import Controller.DivinityStrategies.*;
+import Controller.DivinityStrategies.AdvancedGods.ChronusStrategy;
+import Controller.DivinityStrategies.AdvancedGods.HestiaStrategy;
+import Controller.DivinityStrategies.AdvancedGods.TritonStrategy;
 import Controller.DivinityStrategies.AdvancedGods.ZeusStrategy;
 import Controller.DivinityStrategies.SimpleGodsCompleteRules.HephaestusStrategy;
 import Controller.DivinityStrategies.SimpleGodsCompleteRules.MinotaurStrategy;
@@ -55,6 +58,12 @@ public class DivinityContext {
             case "MINOTAUR": this.setTurnStrategy(new MinotaurStrategy());
                 break;
             case "ZEUS": this.setTurnStrategy(new ZeusStrategy());
+                break;
+            case "HESTIA": this.setTurnStrategy(new HestiaStrategy());
+                break;
+            case "CHRONUS": this.setTurnStrategy(new ChronusStrategy());
+                break;
+            case "TRITON": this.setTurnStrategy(new TritonStrategy());
                 break;
             default: this.setTurnStrategy(new DefaultStrategy());
 
