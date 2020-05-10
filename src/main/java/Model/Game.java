@@ -231,6 +231,10 @@ public class Game {
     }
 
 
+    public void setBoardGame(Board boardGame) {
+        this.boardGame = boardGame;
+    }
+
     public List<Board> getBoardGameImmutable()
     {
         ArrayList<Board> board = new ArrayList<Board>();

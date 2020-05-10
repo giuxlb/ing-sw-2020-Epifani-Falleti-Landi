@@ -145,6 +145,8 @@ public class CLI {
      */
     public void checkEvent(ClientNetworkHandler cnh)  {
         boolean endGame = false;
+      // Board copy = new Board();
+      // int firstTimeHeMoves = 1;
         while(endGame==false){
             update();
             VCEvent evento = cnh.getFromServer();
@@ -243,11 +245,21 @@ public class CLI {
                     buildEvent(cnh,findIndex(positionWorkers,chosenCoordinates), VCEvent.Event.ask_for_worker);
                     break;
                 case send_cells_move:
+                    /*
+                    if (firstTimeHeMoves == 1) {
+                        firstTimeHeMoves = 0;
+                        copy.deepCopy(this.b);
+                    }
+
+                     */
                     sendCells(movingPhase, cnh, VCEvent.Event.send_cells_move,evento);
                     break;
                 case send_cells_build:
+                   // copy.deepCopy(this.b);
+                   // firstTimeHeMoves = 1;
                     sendCells(buildingPhase, cnh, VCEvent.Event.send_cells_build,evento);
                     break;
+                    /*
                 case undo_request:
                     System.out.println("Hai 5 secondi per fare l'undo della mossa appena fatta. Scrivi 1 per fare undo o 0 per non farlo");
                     BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
@@ -264,8 +276,19 @@ public class CLI {
                     } catch (IOException ex) {
                         ex.printStackTrace();
                     }
+
+
+                    if (choose == 1) {
+                        firstTimeHeMoves = 1;
+                        this.b.deepCopy(copy);
+                    }
+
+
+
+
                     buildEvent(cnh,choose, VCEvent.Event.undo_request);
                     break;
+                    */
                 case you_lost:
                     Object objectWinner = evento.getBox();
                     if(objectWinner instanceof String){

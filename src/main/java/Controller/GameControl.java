@@ -1,11 +1,7 @@
 package Controller;
 
 import Client.View.Data;
-import Model.Card;
-import Model.Color;
-import Model.Game;
-import Model.Player;
-import Model.Worker;
+import Model.*;
 
 import java.net.Socket;
 import java.util.*;
@@ -33,7 +29,7 @@ public class GameControl {
     public GameControl() {
          this.game = new Game();
          this.virtualView = new VirtualView();
-         this.virtualView.setUndoOn(true);
+         //this.virtualView.setUndoOn(true);
         exit=false;
 
         players = new ArrayList<Player>();
@@ -190,7 +186,15 @@ public class GameControl {
             }
             int index;
             //chiedo a tutti i player le posizioni iniziali
+            boolean reDoTurn;
             do {
+                reDoTurn = false;
+                Board copy = new Board();
+                copy.deepCopy(game.getBoardGame());
+                ArrayList<Coordinates> copyCoordinates = new ArrayList<>();
+                for (int i = 0; i < initial_valid_pos.size(); i++) {
+                    copyCoordinates.add(initial_valid_pos.get(i));
+                }
                 for (int worker_index = 0; worker_index < 2; worker_index++) {
 
                     //mando al current player la lista delle posizioni valide e ricevo l'indice della posizione scelta
@@ -213,9 +217,41 @@ public class GameControl {
 
 
                 }
+                //chiedo di fare l'undo e se è true devo saltare la game.nextTurnNumber, chiamare deepCopy sulla board del game
+                //devo riportare l'array delle initial_valid_pos alla situazione precedente
+                if (this.virtualView.isUndoOn())
+                {
+                    int response = virtualView.sendUndoRequest(players.get(game.getTurnNumber()));
+                    if (response == 1)
+                    {
+                        reDoTurn = true;
 
-                game.nextTurnNumber();
-            } while (game.getTurnNumber() != 0);
+                        game.setBoardGame(copy); //ripristino la board del game alla situazione precedente al turno
+                        for (int i = 0; i <initial_valid_pos.size() ; i++) {
+                            initial_valid_pos.remove(i); //tolgo tutte le posizione valide
+                        }
+                        for (int i = 0; i <copyCoordinates.size() ; i++) { //inserisco tutte le posizioni valide prima del turno
+                            initial_valid_pos.add(copyCoordinates.get(i));
+                        }
+
+                        System.out.println("Sto per andare a rifare il turno");
+                    }
+                    else if (response == 0)
+                    {
+                        game.nextTurnNumber();
+                        virtualView.upload(game.getBoardGame());
+                    }
+                    else{ // se response è -1
+                        System.out.println("Finisco la partita");
+                        return;
+                    }
+                }
+                else {
+                    game.nextTurnNumber();
+                    System.out.println("Non rifaccio il turno");
+                }
+                System.out.println("Rifaccio il turno...");
+            } while (game.getTurnNumber() != 0 || reDoTurn) ;
 
 
             //loop della partita:

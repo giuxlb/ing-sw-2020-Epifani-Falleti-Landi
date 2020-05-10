@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.Serializable;
+import java.util.ArrayList;
 
 public class Board implements Serializable {
     private final static int DIM=5;
@@ -93,6 +94,25 @@ public class Board implements Serializable {
         return this.boardGame[i][j].getWorkerBuilder();
     }
 
+    public void deepCopy(Board b)
+    {
+        int counter = 0;
+        for (int i = 0; i <5 ; i++) {
+            for (int j = 0; j < 5; j++) {
+                this.boardGame[i][j].setBoardCellHeight(0);
+                this.boardGame[i][j].setBoardCellHeight(b.getBoardGame()[i][j].getHeight());
+                this.boardGame[i][j].setBoardCellWorker(null);
+                if (b.getBoardGame()[i][j].getWorkerBuilder() != null) {
+
+                    this.boardGame[i][j].setBoardCellWorker(new Worker(i,j,b.getBoardGame()[i][j].getWorkerBuilder().getColor()));
+                }
+                else {
+                    this.boardGame[i][j].setBoardCellWorker(null);
+                }
+                counter++;
+            }
+        }
+    }
     public void readObject(ObjectInputStream stream) throws IOException,ClassNotFoundException
     {
         stream.defaultReadObject();
