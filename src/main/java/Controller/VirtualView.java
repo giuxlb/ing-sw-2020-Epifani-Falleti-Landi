@@ -21,6 +21,8 @@ public class VirtualView {
     private Object received;
     private boolean setUpisReady;
     private boolean[] connected;
+    private boolean undoOn;
+    private Object undoReceived;
 
     public boolean isStartNewGame() {
         return startNewGame;
@@ -46,6 +48,7 @@ public class VirtualView {
         this.serverHandler = new ServerNetworkHandler(this);
         Thread serverThread = new Thread(serverHandler);
         serverThread.start();
+        this.undoOn = false;
         this.setUpisReady = false;
         this.okFromClient = false;
         for (int i = 0; i < 3; i++) {
@@ -84,7 +87,7 @@ public class VirtualView {
             received = null;
             while (received == null && checkConnections()) {
                 try {
-                    wait(1000);
+                    wait();
                 } catch (InterruptedException e) {
                 }
             }
@@ -140,7 +143,7 @@ public class VirtualView {
             while(received == null && checkConnections())
             {
                 try{
-                    wait(1000);
+                    wait();
                 }
                 catch(InterruptedException e){}
             }
@@ -174,7 +177,7 @@ public class VirtualView {
             while(received == null && checkConnections())
             {
                 try{
-                    wait(1000);
+                    wait();
                 }
                 catch(InterruptedException e){}
             }
@@ -260,7 +263,7 @@ public class VirtualView {
             received = null;
             while (received == null && checkConnections()){
                 try{
-                    wait(1000);
+                    wait();
                 }
                 catch (InterruptedException e){}
             }
@@ -337,7 +340,7 @@ public class VirtualView {
             while(received == null && checkConnections())
             {
                 try{
-                    wait(1000);
+                    wait();
                 }
                 catch(InterruptedException e){}
             }
@@ -375,7 +378,7 @@ public class VirtualView {
      */
     public int sendAvailableMove(Player p, ArrayList<Coordinates> move_spots)
     {
-
+        int index = -1;
         if (checkConnections() == false) {
             return -1;
         }
@@ -386,15 +389,17 @@ public class VirtualView {
         }
         VCEvent evento = new VCEvent(coordinate, VCEvent.Event.send_cells_move);
         for (int i = 0; i <numberOfPlayers ; i++) {
-            if (p.getUsername().equals(players.get(i).getUsername()))
-                serverHandler.sendVCEventTo(evento,i);
+            if (p.getUsername().equals(players.get(i).getUsername())) {
+                index = i;
+                serverHandler.sendVCEventTo(evento, i);
+            }
         }
         synchronized(this) {
             received = null;
             while(received == null && checkConnections())
             {
                 try{
-                    wait(1000);
+                    wait();
                 }
                 catch(InterruptedException e){}
             }
@@ -403,9 +408,21 @@ public class VirtualView {
         if (checkConnections() == false)
             return -1;
         //System.out.println("Ricevo..."+received);
+
         if (received instanceof Integer) {
+            if (undoOn)
+            {
+               int response = sendUndoRequest(index);
+               if (response == 1)
+                   return sendAvailableMove(p,move_spots);
+               else if (response == -1)
+                   return -1;
+            }
+
             int x = ((Integer) received).intValue();
+            System.out.println("Ritorno " + move_spots.get(x).toString());
             return x;
+
         }
 
 
@@ -421,6 +438,7 @@ public class VirtualView {
      */
     public int sendAvailableBuild(Player p, ArrayList<Coordinates> build_spots)
     {
+        int index = -1;
         if (checkConnections() == false) {
             return -1;
         }
@@ -431,15 +449,17 @@ public class VirtualView {
         }
         VCEvent evento = new VCEvent(coordinate, VCEvent.Event.send_cells_build);
         for (int i = 0; i <numberOfPlayers ; i++) {
-            if (p.getUsername().equals(players.get(i).getUsername()))
-                serverHandler.sendVCEventTo(evento,i);
+            if (p.getUsername().equals(players.get(i).getUsername())) {
+                index = i;
+                serverHandler.sendVCEventTo(evento, i);
+            }
         }
         synchronized(this) {
             received = null;
             while(received == null && checkConnections())
             {
                 try{
-                    wait(1000);
+                    wait();
                 }
                 catch(InterruptedException e){}
             }
@@ -449,6 +469,14 @@ public class VirtualView {
             return -1;
         }
         if (received instanceof Integer) {
+            if (undoOn)
+            {
+                int response = sendUndoRequest(index);
+                if (response == 1)
+                    return sendAvailableMove(p,build_spots);
+                else if (response == -1)
+                    return -1;
+            }
             int x = ((Integer) received).intValue();
             return x;
         }
@@ -458,6 +486,37 @@ public class VirtualView {
 
     }
 
+    public int sendUndoRequest(int clientIndex)
+    {
+        if (checkConnections() == false) {
+            return -1;
+        }
+        VCEvent evento = new VCEvent("Undo", VCEvent.Event.undo_request);
+        serverHandler.sendVCEventTo(evento,clientIndex);
+        synchronized(this) {
+            undoReceived = null;
+            while(undoReceived == null && checkConnections())
+            {
+                try{
+                    wait();
+                }
+                catch(InterruptedException e){}
+                if (undoReceived == null && checkConnections()) // se ancora non ho ricevuto nulla e sono ancora tutti collegat, vuol dire che il tempo è scaduto
+                    return 0;
+            }
+
+        }
+        if (checkConnections() == false) {
+            return -1;
+        }
+        if (undoReceived instanceof Integer) {
+            int x = ((Integer) undoReceived).intValue();
+            return x;
+        }
+
+        return -1;
+
+    }
     /***
      * It asks to the player, which worker he wants to use for moving/building
      * @param p is the player who will receive this request
@@ -484,7 +543,7 @@ public class VirtualView {
             while(received == null && checkConnections())
             {
                 try{
-                    wait(1000);
+                    wait();
                 }
                 catch(InterruptedException e){}
             }
@@ -565,6 +624,16 @@ public class VirtualView {
         notifyAll();
     }
 
+    /***
+     * It notifies the method sendUndoRequest of the virtual view that has arrived a response from the client about undo
+     * @param response
+     */
+    public synchronized void undoReceivedResponse(Object response)
+    {
+        undoReceived = response;
+        notifyAll();
+    }
+
     /**
      * It notifies the GameControl that a player has disconnected
      * @param playerIndex
@@ -638,6 +707,10 @@ public class VirtualView {
             }
         }
         return true;
+    }
+
+    public void setUndoOn(boolean undoOn) {
+        this.undoOn = undoOn;
     }
 
     public void closeAll(){
