@@ -11,5 +11,6 @@ public enum Card {
     PROMETHEUS,
     MINOTAUR,
     ZEUS,
-    HESTIA;
+    HESTIA,
+    CHRONUS;
 }
