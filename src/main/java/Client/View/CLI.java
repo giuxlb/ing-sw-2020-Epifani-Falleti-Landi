@@ -5,8 +5,12 @@ import Model.*;
 import Client.Controller.Controller;
 import Controller.Coordinates;
 
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.Scanner;
+import java.util.concurrent.atomic.AtomicInteger;
 
 public class CLI {
     public static void main(String[] args){
@@ -243,6 +247,24 @@ public class CLI {
                     break;
                 case send_cells_build:
                     sendCells(buildingPhase, cnh, VCEvent.Event.send_cells_build,evento);
+                    break;
+                case undo_request:
+                    System.out.println("Hai 5 secondi per fare l'undo della mossa appena fatta. Scrivi 1 per fare undo o 0 per non farlo");
+                    BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
+                    long start = System.currentTimeMillis();
+                    int choose = 0;
+                    while (true){
+                        try {
+                            if (!(((System.currentTimeMillis()-start) < 5000) && !reader.ready())) break;
+                        } catch (IOException ex) { }
+                    }
+                    try {
+                        if (reader.ready())
+                            choose = Integer.parseInt(reader.readLine());
+                    } catch (IOException ex) {
+                        ex.printStackTrace();
+                    }
+                    buildEvent(cnh,choose, VCEvent.Event.undo_request);
                     break;
                 case you_lost:
                     Object objectWinner = evento.getBox();

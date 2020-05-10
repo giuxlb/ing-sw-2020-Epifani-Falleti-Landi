@@ -104,7 +104,11 @@ public class ClientEventReceiver extends Thread {
                     snh.getAdapters()[clientIndex].setFinishClientAdapter(true); // faccio terminare il clientAdapter e chiudo la socket del client
                     finishClientReceiver = true;// faccio terminare il thread del client receiver
 
-                } else {
+                } else if (fromClient.getCommand() == VCEvent.Event.undo_request)
+                {
+                    snh.virtualView.undoReceivedResponse(fromClient.getBox());
+                }
+                else {
                     snh.virtualView.receivedResponse(fromClient.getBox());
                 }
             }
