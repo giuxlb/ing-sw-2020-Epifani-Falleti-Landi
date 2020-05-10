@@ -12,5 +12,6 @@ public enum Card {
     MINOTAUR,
     ZEUS,
     HESTIA,
-    CHRONUS;
+    CHRONUS,
+    TRITON;
 }

@@ -311,6 +311,9 @@ public class CLI {
                         case "HESTIA":
                             System.out.println("Vuoi attivare l'effetto di Hestia e fare una seconda costruzione, ma non in una casella perimetrale?");
                             break;
+                        case "TRITON":
+                            System.out.println("Vuoi attivare l'effetto di Triton e fare una altro movimento?");
+                            break;
                     }
                     boolean temp = false;
                     while(temp == false) {
