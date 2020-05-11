@@ -410,6 +410,7 @@ public class VirtualView {
         //System.out.println("Ricevo..."+received);
 
         if (received instanceof Integer) {
+            /*
             if (undoOn)
             {
                int response = sendUndoRequest(index);
@@ -418,6 +419,8 @@ public class VirtualView {
                else if (response == -1)
                    return -1;
             }
+
+             */
 
             int x = ((Integer) received).intValue();
             System.out.println("Ritorno " + move_spots.get(x).toString());
@@ -469,6 +472,7 @@ public class VirtualView {
             return -1;
         }
         if (received instanceof Integer) {
+            /*
             if (undoOn)
             {
                 int response = sendUndoRequest(index);
@@ -477,6 +481,8 @@ public class VirtualView {
                 else if (response == -1)
                     return -1;
             }
+
+             */
             int x = ((Integer) received).intValue();
             return x;
         }
@@ -519,6 +525,7 @@ public class VirtualView {
             return -1;
         }
         if (received instanceof Integer) {
+            /*
             if (undoOn)
             {
                 int response = sendUndoRequest(index);
@@ -527,6 +534,8 @@ public class VirtualView {
                 else if (response == -1)
                     return -1;
             }
+
+            */
             int x = ((Integer) received).intValue();
             return x;
         }
@@ -536,13 +545,17 @@ public class VirtualView {
 
     }
 
-    public int sendUndoRequest(int clientIndex)
+    public int sendUndoRequest(Player p)
     {
         if (checkConnections() == false) {
             return -1;
         }
         VCEvent evento = new VCEvent("Undo", VCEvent.Event.undo_request);
-        serverHandler.sendVCEventTo(evento,clientIndex);
+        for (int i = 0; i <numberOfPlayers ; i++) {
+            if (p.getUsername().equals(players.get(i).getUsername()))
+                serverHandler.sendVCEventTo(evento, i);
+
+        }
         synchronized(this) {
             undoReceived = null;
             while(undoReceived == null && checkConnections())
@@ -761,6 +774,10 @@ public class VirtualView {
 
     public void setUndoOn(boolean undoOn) {
         this.undoOn = undoOn;
+    }
+
+    public boolean isUndoOn() {
+        return undoOn;
     }
 
     public void closeAll(){
