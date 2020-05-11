@@ -35,13 +35,10 @@ public class TurnControl {
         ctx.selectStrategy(this.card);
         //ctx.selectStrategy("");
         ArrayList<Coordinates> workers_pos = new ArrayList<>();
-        Coordinates position_0 = new Coordinates(player.getWorker(0).getPositionX(),player.getWorker(0).getPositionY());
-        Coordinates position_1 = new Coordinates(player.getWorker(1).getPositionX(),player.getWorker(1).getPositionY());
-
-
-        workers_pos.add(position_0);
-        workers_pos.add(position_1);
-
+        for(int i = 0;i<2;i++){
+            Coordinates position = new Coordinates(player.getWorker(i).getPositionX(),player.getWorker(i).getPositionY());
+            workers_pos.add(position);
+        }
 
         Coordinates worker_pos = virtualView.askForWorker(player,workers_pos);
         if(worker_pos==null) return -1;

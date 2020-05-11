@@ -87,7 +87,6 @@ public class ArtemisStrategy extends DefaultStrategy implements TurnStrategy {
             int to_delete = -1;
             for (Coordinates c : move_spots) {
                 if (c.getX() == starting_position.getX() && c.getY() == starting_position.getY()) {
-                    System.out.println("TROVATO");
                     to_delete = count;
                 }
                 count++;

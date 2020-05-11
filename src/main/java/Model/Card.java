@@ -1,17 +1,18 @@
 package Model;
 
 public enum Card {
-    APOLLO,
-    ARTEMIS,
-    ATHENA,
-    ATLAS,
-    DEMETER,
-    HEPHAESTUS,
-    PAN,
-    PROMETHEUS,
-    MINOTAUR,
-    ZEUS,
-    HESTIA,
-    CHRONUS,
-    TRITON;
+    Apollo,
+    Artemis,
+    Athena,
+    Atlas,
+    Demeter,
+    Hephaestus,
+    Pan,
+    Prometheus,
+    Minotaur,
+    Zeus,
+    Hestia,
+    Chronus,
+    Triton,
+    Ares;
 }

@@ -26,6 +26,7 @@ public class VCEvent implements Serializable {
         update,
         send_cells_move,
         send_cells_build,
+        send_cells_remove,
         you_lost,
         game_ended_foryou,
         you_won,

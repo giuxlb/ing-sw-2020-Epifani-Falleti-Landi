@@ -486,6 +486,56 @@ public class VirtualView {
 
     }
 
+    public int sendAvailableRemove(Player p, ArrayList<Coordinates> build_spots)
+    {
+        int index = -1;
+        if (checkConnections() == false) {
+            return -1;
+        }
+        ArrayList<Coordinates> coordinate = new ArrayList<Coordinates>();
+        for (int i = 0; i <build_spots.size(); i++)
+        {
+            coordinate.add(build_spots.get(i));
+        }
+        VCEvent evento = new VCEvent(coordinate, VCEvent.Event.send_cells_remove);
+        for (int i = 0; i <numberOfPlayers ; i++) {
+            if (p.getUsername().equals(players.get(i).getUsername())) {
+                index = i;
+                serverHandler.sendVCEventTo(evento, i);
+            }
+        }
+        synchronized(this) {
+            received = null;
+            while(received == null && checkConnections())
+            {
+                try{
+                    wait();
+                }
+                catch(InterruptedException e){}
+            }
+
+        }
+        if (checkConnections() == false) {
+            return -1;
+        }
+        if (received instanceof Integer) {
+            if (undoOn)
+            {
+                int response = sendUndoRequest(index);
+                if (response == 1)
+                    return sendAvailableMove(p,build_spots);
+                else if (response == -1)
+                    return -1;
+            }
+            int x = ((Integer) received).intValue();
+            return x;
+        }
+
+
+        return -1;
+
+    }
+
     public int sendUndoRequest(int clientIndex)
     {
         if (checkConnections() == false) {

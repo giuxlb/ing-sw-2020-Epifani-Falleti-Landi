@@ -46,6 +46,7 @@ public class CLI {
     private String yPosition = "x";
     private String movingPhase = "Fase di movimento";
     private String buildingPhase = "Fase di costruzione";
+    private String removePhase = "Fase di rimozione";
     private int playersNumber;
     private int giorno;
     private int mese;
@@ -248,6 +249,9 @@ public class CLI {
                 case send_cells_build:
                     sendCells(buildingPhase, cnh, VCEvent.Event.send_cells_build,evento);
                     break;
+                case send_cells_remove:
+                    sendCells(removePhase,cnh, VCEvent.Event.send_cells_remove,evento);
+                    break;
                 case undo_request:
                     System.out.println("Hai 5 secondi per fare l'undo della mossa appena fatta. Scrivi 1 per fare undo o 0 per non farlo");
                     BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
@@ -313,6 +317,9 @@ public class CLI {
                             break;
                         case "TRITON":
                             System.out.println("Vuoi attivare l'effetto di Triton e fare una altro movimento?");
+                            break;
+                        case "ARES":
+                            System.out.println("Vuoi attivare l'effetto di Ares e rimuovere un blocco libero (non una cupola) con il worker che non hai mosso?");
                             break;
                     }
                     boolean temp = false;

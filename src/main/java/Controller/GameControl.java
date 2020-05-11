@@ -33,7 +33,7 @@ public class GameControl {
     public GameControl() {
          this.game = new Game();
          this.virtualView = new VirtualView();
-         this.virtualView.setUndoOn(true);
+         this.virtualView.setUndoOn(false);
         exit=false;
 
         players = new ArrayList<Player>();
