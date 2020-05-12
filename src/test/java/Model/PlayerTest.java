@@ -1,6 +1,7 @@
-/*
+
 package Model;
 
+import Client.View.Data;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -15,9 +16,7 @@ public class PlayerTest {
 
     @Before
     public void setUp() {
-        Calendar data = Calendar.getInstance();
-        data.set(1998, Calendar.NOVEMBER,30);
-        player = new Player("Giux", data);
+        player = new Player("Giux", new Data(30,11,1998));
     }
 
     @After
@@ -26,18 +25,11 @@ public class PlayerTest {
 
     @Test
     public void setCard(){
-        Card card =  Card.ARTEMIS;
-        player.chooseCard(card);
-        assertEquals(card,player.getGameCard());
+
+        player.chooseCard("ARTEMIS");
+        assertEquals("ARTEMIS",player.getGameCard());
     }
 
-    @Test
-    public void getColorAndDate(){
-        Calendar data = Calendar.getInstance();
-        data.set(1998,Calendar.NOVEMBER,30);
-        assertEquals(player.getBirthDate(),data);
-        assertEquals(player.getUsername(),"Giux");
-    }
 
     @Test
     public void setWorkers(){
@@ -61,5 +53,3 @@ public class PlayerTest {
         assertEquals(player.getWorker(1).getPositionY(),2);
     }
 }
-
- */

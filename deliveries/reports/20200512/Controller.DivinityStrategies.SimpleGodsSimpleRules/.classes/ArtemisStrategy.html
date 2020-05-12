@@ -1,0 +1,234 @@
+
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html id="htmlId">
+<head>
+  <title>Coverage Report :: ArtemisStrategy</title>
+  <style type="text/css">
+    @import "../../.css/coverage.css";
+  </style>
+</head>
+
+<body>
+<div class="header"></div>
+
+<div class="content">
+<div class="breadCrumbs">
+    [ <a href="../../index.html">all classes</a> ]
+    [ <a href="../index.html">Controller.DivinityStrategies.SimpleGodsSimpleRules</a> ]
+</div>
+
+<h1>Coverage Summary for Class: ArtemisStrategy (Controller.DivinityStrategies.SimpleGodsSimpleRules)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Class, %
+</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">ArtemisStrategy</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (1/ 1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (2/ 2)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    75,5%
+  </span>
+  <span class="absValue">
+    (40/ 53)
+  </span>
+</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<div class="sourceCode"><i>1</i>&nbsp;package Controller.DivinityStrategies.SimpleGodsSimpleRules;
+<i>2</i>&nbsp;
+<i>3</i>&nbsp;import Controller.Coordinates;
+<i>4</i>&nbsp;import Controller.DivinityStrategies.DefaultStrategy;
+<i>5</i>&nbsp;import Controller.TurnStrategy;
+<i>6</i>&nbsp;import Controller.VirtualView;
+<i>7</i>&nbsp;import Model.Board;
+<i>8</i>&nbsp;import Model.Game;
+<i>9</i>&nbsp;import Model.Player;
+<i>10</i>&nbsp;import Model.Worker;
+<i>11</i>&nbsp;
+<i>12</i>&nbsp;import java.util.ArrayList;
+<i>13</i>&nbsp;import java.util.List;
+<i>14</i>&nbsp;
+<i>15</i>&nbsp;/*
+<i>16</i>&nbsp;Tuo spostamento: il tuo lavoratore può spostarsi una volta in più, ma non può tornare dove è partito
+<i>17</i>&nbsp;Chiedere l&#39;attivazione dopo il primo spostamento.
+<i>18</i>&nbsp; */
+<i>19</i>&nbsp;
+<i>20</i>&nbsp;
+<b class="fc"><i>21</i>&nbsp;public class ArtemisStrategy extends DefaultStrategy implements TurnStrategy {</b>
+<i>22</i>&nbsp;
+<i>23</i>&nbsp;    /***
+<i>24</i>&nbsp;     * Similar to the Default turn, but after the first move it does another move, but first it
+<i>25</i>&nbsp;     * removes the initial position from the second move_spots Array
+<i>26</i>&nbsp;     * @param player player of this turn
+<i>27</i>&nbsp;     * @param worker worker that was chosen
+<i>28</i>&nbsp;     * @param board board
+<i>29</i>&nbsp;     * @param game game
+<i>30</i>&nbsp;     * @param extraEffect effect on this turn
+<i>31</i>&nbsp;     */
+<i>32</i>&nbsp;    public int turn(Player player, Worker worker, Board board, Game game, int extraEffect, VirtualView vview){
+<i>33</i>&nbsp;        /*Calcolo l&#39;extra effect di questo turno*/
+<b class="fc"><i>34</i>&nbsp;        boolean athenaeffect = false;</b>
+<b class="fc"><i>35</i>&nbsp;        if(extraEffect==1){</b>
+<b class="nc"><i>36</i>&nbsp;            athenaeffect = true;</b>
+<i>37</i>&nbsp;        }
+<i>38</i>&nbsp;
+<i>39</i>&nbsp;        /*Salvo le coordinate iniziali*/
+<b class="fc"><i>40</i>&nbsp;        Coordinates starting_position = new Coordinates(worker.getPositionX(),worker.getPositionY());</b>
+<i>41</i>&nbsp;
+<i>42</i>&nbsp;        /*Calcolo le caselle disponibili per lo spostamento*/
+<b class="fc"><i>43</i>&nbsp;        ArrayList&lt;Coordinates&gt; move_spots = checkAvailableMoveSpots(player,worker,board,athenaeffect);</b>
+<i>44</i>&nbsp;
+<i>45</i>&nbsp;        /*Se l&#39;array è vuoto, il worker non puo spostarsi, quindi il player ha perso*/
+<b class="fc"><i>46</i>&nbsp;        if (move_spots.size()==0) {</b>
+<b class="nc"><i>47</i>&nbsp;            game.playerLose(player);</b>
+<b class="nc"><i>48</i>&nbsp;            return 0;</b>
+<i>49</i>&nbsp;        }
+<i>50</i>&nbsp;
+<i>51</i>&nbsp;        /*Mando le caselle al client, ricevo l&#39;indice dello spostamento*/
+<b class="fc"><i>52</i>&nbsp;        int index = vview.sendAvailableMove(player,move_spots);</b>
+<i>53</i>&nbsp;
+<b class="fc"><i>54</i>&nbsp;        if(index==-1){</b>
+<b class="nc"><i>55</i>&nbsp;            return -1;</b>
+<i>56</i>&nbsp;        }
+<i>57</i>&nbsp;
+<i>58</i>&nbsp;        /*Muovo il worker*/
+<b class="fc"><i>59</i>&nbsp;        move(worker,move_spots,index,game,board);</b>
+<i>60</i>&nbsp;
+<b class="fc"><i>61</i>&nbsp;        vview.upload(board);</b>
+<i>62</i>&nbsp;        //vview.upload(game.getBoardGameImmutable());
+<i>63</i>&nbsp;
+<i>64</i>&nbsp;        /*Salvo la posizione intermedia*/
+<b class="fc"><i>65</i>&nbsp;        Coordinates middle_position = new Coordinates(worker.getPositionX(),worker.getPositionY());</b>
+<i>66</i>&nbsp;
+<i>67</i>&nbsp;        /*Controllo se il giocatore ha vinto*/
+<b class="fc"><i>68</i>&nbsp;        boolean win = checkWinCondition(starting_position,middle_position,board);</b>
+<b class="fc"><i>69</i>&nbsp;        if (win) {</b>
+<b class="nc"><i>70</i>&nbsp;            game.stopGame(player);</b>
+<b class="nc"><i>71</i>&nbsp;            return 0;</b>
+<i>72</i>&nbsp;        }
+<i>73</i>&nbsp;
+<i>74</i>&nbsp;        //chiedo al client se vuole fare il secondo spostamento
+<b class="fc"><i>75</i>&nbsp;        int ask_divinity = vview.askDivinityActivation(player,player.getGameCard());</b>
+<b class="fc"><i>76</i>&nbsp;        if(ask_divinity==-1){</b>
+<b class="nc"><i>77</i>&nbsp;            return -1;</b>
+<i>78</i>&nbsp;        }
+<i>79</i>&nbsp;
+<b class="fc"><i>80</i>&nbsp;        if(ask_divinity==1) {</b>
+<i>81</i>&nbsp;
+<i>82</i>&nbsp;            /*Calcolo le caselle disponibili per il secondo spostamento*/
+<b class="fc"><i>83</i>&nbsp;            move_spots = checkAvailableMoveSpots(player, worker, board, athenaeffect);</b>
+<i>84</i>&nbsp;
+<i>85</i>&nbsp;            /*Rimuovo dall&#39;Array la posizione iniziale*/
+<b class="fc"><i>86</i>&nbsp;            int count = 0;</b>
+<b class="fc"><i>87</i>&nbsp;            int to_delete = -1;</b>
+<b class="fc"><i>88</i>&nbsp;            for (Coordinates c : move_spots) {</b>
+<b class="fc"><i>89</i>&nbsp;                if (c.getX() == starting_position.getX() &amp;&amp; c.getY() == starting_position.getY()) {</b>
+<b class="fc"><i>90</i>&nbsp;                    to_delete = count;</b>
+<i>91</i>&nbsp;                }
+<b class="fc"><i>92</i>&nbsp;                count++;</b>
+<b class="fc"><i>93</i>&nbsp;            }</b>
+<b class="fc"><i>94</i>&nbsp;            if (to_delete != -1) {</b>
+<b class="fc"><i>95</i>&nbsp;                move_spots.remove(to_delete);</b>
+<i>96</i>&nbsp;            }
+<i>97</i>&nbsp;
+<i>98</i>&nbsp;
+<i>99</i>&nbsp;            /*Se l&#39;array è vuoto, il worker non puo spostarsi, quindi il player ha perso*/
+<b class="fc"><i>100</i>&nbsp;            if (move_spots.size() == 0) {</b>
+<b class="nc"><i>101</i>&nbsp;                game.playerLose(player);</b>
+<b class="nc"><i>102</i>&nbsp;                return 0;</b>
+<i>103</i>&nbsp;            }
+<i>104</i>&nbsp;
+<i>105</i>&nbsp;            /*Mando le caselle al client, ricevo l&#39;indice dello spostamento*/
+<b class="fc"><i>106</i>&nbsp;            index = vview.sendAvailableMove(player, move_spots);</b>
+<i>107</i>&nbsp;
+<b class="fc"><i>108</i>&nbsp;            if(index==-1){</b>
+<b class="nc"><i>109</i>&nbsp;                return -1;</b>
+<i>110</i>&nbsp;            }
+<i>111</i>&nbsp;
+<i>112</i>&nbsp;            /*Muovo il worker*/
+<b class="fc"><i>113</i>&nbsp;            move(worker, move_spots, index, game, board);</b>
+<i>114</i>&nbsp;
+<b class="fc"><i>115</i>&nbsp;            vview.upload(board);</b>
+<i>116</i>&nbsp;            //vview.upload(game.getBoardGameImmutable());
+<i>117</i>&nbsp;
+<i>118</i>&nbsp;            /*Salvo la finale intermedia*/
+<b class="fc"><i>119</i>&nbsp;            Coordinates final_position = new Coordinates(worker.getPositionX(), worker.getPositionY());</b>
+<i>120</i>&nbsp;
+<i>121</i>&nbsp;            /*Controllo se il giocatore ha vinto*/
+<b class="fc"><i>122</i>&nbsp;            win = checkWinCondition(middle_position, final_position, board);</b>
+<b class="fc"><i>123</i>&nbsp;            if (win) {</b>
+<b class="nc"><i>124</i>&nbsp;                game.stopGame(player);</b>
+<b class="nc"><i>125</i>&nbsp;                return 0;</b>
+<i>126</i>&nbsp;            }
+<i>127</i>&nbsp;
+<i>128</i>&nbsp;        }
+<i>129</i>&nbsp;
+<i>130</i>&nbsp;        /*Calcolo le caselle disponibili per la costruzione*/
+<b class="fc"><i>131</i>&nbsp;        ArrayList&lt;Coordinates&gt; build_spots = checkAvailableBuildSpots(player,worker,board);</b>
+<i>132</i>&nbsp;
+<i>133</i>&nbsp;        /*Mando le caselle al client, ricevo indice della costruzione*/
+<b class="fc"><i>134</i>&nbsp;        index = vview.sendAvailableBuild(player,build_spots);</b>
+<i>135</i>&nbsp;
+<b class="fc"><i>136</i>&nbsp;        if(index==-1){</b>
+<b class="nc"><i>137</i>&nbsp;            return -1;</b>
+<i>138</i>&nbsp;        }
+<i>139</i>&nbsp;
+<i>140</i>&nbsp;        /*Costruisco*/
+<b class="fc"><i>141</i>&nbsp;        build(worker,build_spots,index,game,board);</b>
+<i>142</i>&nbsp;
+<b class="fc"><i>143</i>&nbsp;        vview.upload(board);</b>
+<i>144</i>&nbsp;        //vview.upload(game.getBoardGameImmutable());
+<i>145</i>&nbsp;
+<b class="fc"><i>146</i>&nbsp;        return 0;</b>
+<i>147</i>&nbsp;    }
+<i>148</i>&nbsp;
+<i>149</i>&nbsp;
+<i>150</i>&nbsp;
+<i>151</i>&nbsp;}
+</div>
+</div>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2020-05-12 10:03</div>
+</div>
+</body>
+</html>

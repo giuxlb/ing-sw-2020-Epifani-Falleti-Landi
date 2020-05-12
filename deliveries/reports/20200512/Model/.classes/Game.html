@@ -1,0 +1,347 @@
+
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html id="htmlId">
+<head>
+  <title>Coverage Report :: Game</title>
+  <style type="text/css">
+    @import "../../.css/coverage.css";
+  </style>
+</head>
+
+<body>
+<div class="header"></div>
+
+<div class="content">
+<div class="breadCrumbs">
+    [ <a href="../../index.html">all classes</a> ]
+    [ <a href="../index.html">Model</a> ]
+</div>
+
+<h1>Coverage Summary for Class: Game (Model)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Class, %
+</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">Game</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (1/ 1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    45,8%
+  </span>
+  <span class="absValue">
+    (11/ 24)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    45,4%
+  </span>
+  <span class="absValue">
+    (44/ 97)
+  </span>
+</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<div class="sourceCode"><i>1</i>&nbsp;package Model;
+<i>2</i>&nbsp;
+<i>3</i>&nbsp;import java.util.ArrayList;
+<i>4</i>&nbsp;import java.util.Arrays;
+<i>5</i>&nbsp;import java.util.Collections;
+<i>6</i>&nbsp;import java.util.List;
+<i>7</i>&nbsp;
+<i>8</i>&nbsp;public class Game {
+<i>9</i>&nbsp;    private Player[] players;
+<i>10</i>&nbsp;    private Board boardGame;
+<i>11</i>&nbsp;    private int turnNumber;
+<i>12</i>&nbsp;    private TurnPhases turnPhase;
+<i>13</i>&nbsp;    private ArrayList&lt;String&gt; availableCards;
+<i>14</i>&nbsp;    private ArrayList&lt;String&gt; chosenCards;
+<i>15</i>&nbsp;    private boolean gameStopped;
+<i>16</i>&nbsp;    private Player winner;
+<i>17</i>&nbsp;    private Player lastLostPlayer;
+<i>18</i>&nbsp;
+<i>19</i>&nbsp;
+<i>20</i>&nbsp;    public Game()
+<b class="fc"><i>21</i>&nbsp;    {</b>
+<b class="fc"><i>22</i>&nbsp;        this.boardGame = new Board();</b>
+<b class="fc"><i>23</i>&nbsp;        this.gameStopped = false;</b>
+<b class="fc"><i>24</i>&nbsp;        this.winner = null;</b>
+<b class="fc"><i>25</i>&nbsp;        this.lastLostPlayer = null;</b>
+<i>26</i>&nbsp;
+<i>27</i>&nbsp;        //aggiungo tutte le carte implementate ad un array
+<b class="fc"><i>28</i>&nbsp;        availableCards = new ArrayList&lt;String&gt;();</b>
+<b class="fc"><i>29</i>&nbsp;        for(Card carta : Card.values()){</b>
+<b class="fc"><i>30</i>&nbsp;            availableCards.add(carta.toString());</b>
+<i>31</i>&nbsp;        }
+<b class="fc"><i>32</i>&nbsp;    }</b>
+<i>33</i>&nbsp;
+<i>34</i>&nbsp;    /**
+<i>35</i>&nbsp;     * It adds new players to the game. If turnNumber is equal to 0, it instantiates the array of players and add one to it.
+<i>36</i>&nbsp;     * If turnNumber is 1 or 2, it simply adds a player to the array. If turnNumber is greater than 2, it stops, because Game can
+<i>37</i>&nbsp;     * have maximum 3 players
+<i>38</i>&nbsp;     * @param p is the player it has to add to the array of player
+<i>39</i>&nbsp;     */
+<i>40</i>&nbsp;    public void addPlayer(Player p)
+<i>41</i>&nbsp;    {
+<b class="fc"><i>42</i>&nbsp;        if (turnNumber == 0)</b>
+<i>43</i>&nbsp;        {
+<b class="fc"><i>44</i>&nbsp;            players = new Player[3];</b>
+<b class="fc"><i>45</i>&nbsp;            players[turnNumber] = p;</b>
+<b class="fc"><i>46</i>&nbsp;            turnNumber++;</b>
+<i>47</i>&nbsp;        }
+<b class="fc"><i>48</i>&nbsp;        else if (turnNumber &gt; 2)</b>
+<i>49</i>&nbsp;        {
+<b class="nc"><i>50</i>&nbsp;            turnNumber = 0;</b>
+<i>51</i>&nbsp;        }
+<i>52</i>&nbsp;        else
+<i>53</i>&nbsp;        {
+<i>54</i>&nbsp;            //should control for other players with the same username of p
+<b class="fc"><i>55</i>&nbsp;            players[turnNumber] = p;</b>
+<b class="fc"><i>56</i>&nbsp;            turnNumber++;</b>
+<i>57</i>&nbsp;
+<i>58</i>&nbsp;        }
+<b class="fc"><i>59</i>&nbsp;        if(turnNumber==0){</b>
+<b class="nc"><i>60</i>&nbsp;            p.setColor(Color.ANSI_YELLOW);</b>
+<b class="fc"><i>61</i>&nbsp;        }else if(turnNumber==1){</b>
+<b class="fc"><i>62</i>&nbsp;            p.setColor(Color.ANSI_GREEN);</b>
+<b class="fc"><i>63</i>&nbsp;        }else if(turnNumber==2){</b>
+<b class="fc"><i>64</i>&nbsp;            p.setColor(Color.ANSI_PURPLE);</b>
+<i>65</i>&nbsp;        }
+<b class="fc"><i>66</i>&nbsp;    }</b>
+<i>67</i>&nbsp;
+<i>68</i>&nbsp;    /**
+<i>69</i>&nbsp;     * It manages the turns of a Game
+<i>70</i>&nbsp;     */
+<i>71</i>&nbsp;    public void startGame()
+<i>72</i>&nbsp;    {
+<b class="fc"><i>73</i>&nbsp;        gameStopped = false;</b>
+<b class="fc"><i>74</i>&nbsp;        turnNumber = 0;</b>
+<b class="fc"><i>75</i>&nbsp;    }</b>
+<i>76</i>&nbsp;
+<i>77</i>&nbsp;    /**
+<i>78</i>&nbsp;     * it manages the end of a game
+<i>79</i>&nbsp;     */
+<i>80</i>&nbsp;    public void stopGame(Player p)
+<i>81</i>&nbsp;    {
+<b class="nc"><i>82</i>&nbsp;        gameStopped = true;</b>
+<b class="nc"><i>83</i>&nbsp;        if(p!=null){</b>
+<b class="nc"><i>84</i>&nbsp;            winner = p;</b>
+<i>85</i>&nbsp;        }
+<b class="nc"><i>86</i>&nbsp;        boardGame.reset();</b>
+<b class="nc"><i>87</i>&nbsp;        chosenCards.clear();</b>
+<b class="nc"><i>88</i>&nbsp;        players[0]=null;</b>
+<b class="nc"><i>89</i>&nbsp;        players[1]=null;</b>
+<b class="nc"><i>90</i>&nbsp;        players[2]=null;</b>
+<b class="nc"><i>91</i>&nbsp;        turnNumber = 0;</b>
+<i>92</i>&nbsp;
+<b class="nc"><i>93</i>&nbsp;    }</b>
+<i>94</i>&nbsp;
+<i>95</i>&nbsp;    public void playerLose(Player p){
+<b class="nc"><i>96</i>&nbsp;        lastLostPlayer=p;</b>
+<i>97</i>&nbsp;
+<b class="nc"><i>98</i>&nbsp;        boardGame.setBoardWorker(p.getWorker(0).getPositionX(),p.getWorker(0).getPositionY(),null);</b>
+<b class="nc"><i>99</i>&nbsp;        boardGame.setBoardWorker(p.getWorker(1).getPositionX(),p.getWorker(1).getPositionY(),null);</b>
+<i>100</i>&nbsp;
+<i>101</i>&nbsp;
+<b class="nc"><i>102</i>&nbsp;        if(p.equals(players[2])){</b>
+<b class="nc"><i>103</i>&nbsp;            players[2]=null;</b>
+<i>104</i>&nbsp;        }
+<b class="nc"><i>105</i>&nbsp;        else if(p.equals(players[1])){</b>
+<b class="nc"><i>106</i>&nbsp;            players[1]=players[2];</b>
+<b class="nc"><i>107</i>&nbsp;            players[2]=null;</b>
+<i>108</i>&nbsp;        }
+<b class="nc"><i>109</i>&nbsp;        else if(p.equals(players[0])){</b>
+<b class="nc"><i>110</i>&nbsp;            players[0]=players[2];</b>
+<b class="nc"><i>111</i>&nbsp;            players[2]=null;</b>
+<i>112</i>&nbsp;        }
+<i>113</i>&nbsp;
+<b class="nc"><i>114</i>&nbsp;        if(turnNumber == 2){</b>
+<b class="nc"><i>115</i>&nbsp;            turnNumber = 0;</b>
+<i>116</i>&nbsp;        }
+<i>117</i>&nbsp;
+<i>118</i>&nbsp;        //controlla il numero di giocatori rimasti
+<b class="nc"><i>119</i>&nbsp;        int count = 0;</b>
+<b class="nc"><i>120</i>&nbsp;        Player winner = null;</b>
+<b class="nc"><i>121</i>&nbsp;        for(int i = 0; i&lt;3 ; i++){</b>
+<b class="nc"><i>122</i>&nbsp;            if(players[i]!=null){</b>
+<b class="nc"><i>123</i>&nbsp;                count++;</b>
+<b class="nc"><i>124</i>&nbsp;                winner=players[i];</b>
+<i>125</i>&nbsp;            }
+<i>126</i>&nbsp;        }
+<i>127</i>&nbsp;        //se è rimasto un solo giocatore, si ferma il gioco e lo setta come winner
+<b class="nc"><i>128</i>&nbsp;        if(count==1){</b>
+<b class="nc"><i>129</i>&nbsp;            gameStopped = true;</b>
+<b class="nc"><i>130</i>&nbsp;            this.winner = winner;</b>
+<i>131</i>&nbsp;        }
+<b class="nc"><i>132</i>&nbsp;    }</b>
+<i>133</i>&nbsp;
+<i>134</i>&nbsp;    /**
+<i>135</i>&nbsp;     * It changes the turnNumber, in order to allow the next player to make his moves
+<i>136</i>&nbsp;     */
+<i>137</i>&nbsp;    public void nextTurnNumber()
+<i>138</i>&nbsp;    {
+<b class="fc"><i>139</i>&nbsp;        if (players[2] != null)</b>
+<b class="fc"><i>140</i>&nbsp;            turnNumber = (turnNumber+1)%3;</b>
+<i>141</i>&nbsp;        else
+<b class="fc"><i>142</i>&nbsp;            turnNumber = (turnNumber+1)%2;</b>
+<b class="fc"><i>143</i>&nbsp;    }</b>
+<i>144</i>&nbsp;
+<i>145</i>&nbsp;    /**
+<i>146</i>&nbsp;     * it changes the phase of the turn of a player
+<i>147</i>&nbsp;     */
+<i>148</i>&nbsp;    public void nextTurnPhase()
+<i>149</i>&nbsp;    {
+<b class="nc"><i>150</i>&nbsp;        turnPhase = turnPhase.changeFrom();</b>
+<b class="nc"><i>151</i>&nbsp;        if (turnPhase == TurnPhases.CHANGE_PLAYER)</b>
+<b class="nc"><i>152</i>&nbsp;            this.nextTurnNumber();</b>
+<i>153</i>&nbsp;
+<b class="nc"><i>154</i>&nbsp;    }</b>
+<i>155</i>&nbsp;
+<i>156</i>&nbsp;    /***
+<i>157</i>&nbsp;     * Create, assign and places a worker on the board
+<i>158</i>&nbsp;     * @param player the player that places the worker
+<i>159</i>&nbsp;     * @param x pos x
+<i>160</i>&nbsp;     * @param y pos y
+<i>161</i>&nbsp;     * @param index the worker index
+<i>162</i>&nbsp;     */
+<i>163</i>&nbsp;    public void chooseInitialPosition(Player player,int x,int y,int index){
+<b class="fc"><i>164</i>&nbsp;        player.assignWorker(x,y,index);</b>
+<b class="fc"><i>165</i>&nbsp;        boardGame.setBoardWorker(x,y,player.getWorker(index));</b>
+<b class="fc"><i>166</i>&nbsp;    }</b>
+<i>167</i>&nbsp;
+<i>168</i>&nbsp;    /**
+<i>169</i>&nbsp;     * It removes the worker from the BoardCell previously occupied by that worker and assign it in the new BoardCell
+<i>170</i>&nbsp;     * where the player moved the worker
+<i>171</i>&nbsp;     * @param w is the worker moved
+<i>172</i>&nbsp;     * @param x is the x coordinate of the new position
+<i>173</i>&nbsp;     * @param y is the y coordinate of the new position
+<i>174</i>&nbsp;     */
+<i>175</i>&nbsp;    public void moveWorker(Worker w, int x, int y)
+<i>176</i>&nbsp;    {
+<b class="fc"><i>177</i>&nbsp;        boardGame.setBoardWorker(w.getPositionX(),w.getPositionY(),null);</b>
+<b class="fc"><i>178</i>&nbsp;        boardGame.setBoardWorker(x,y,w);</b>
+<b class="fc"><i>179</i>&nbsp;        w.moveTo(x,y);</b>
+<b class="fc"><i>180</i>&nbsp;    }</b>
+<i>181</i>&nbsp;
+<i>182</i>&nbsp;    /***
+<i>183</i>&nbsp;     * Just assign a worker to a cell, without removing the reference of the previous spot
+<i>184</i>&nbsp;     * Utility function to be used in strategies like Apollo
+<i>185</i>&nbsp;     * @param w the worker moved
+<i>186</i>&nbsp;     * @param x pos x
+<i>187</i>&nbsp;     * @param y pos y
+<i>188</i>&nbsp;     */
+<i>189</i>&nbsp;    public void moveWorkerWithoutNull(Worker w, int x, int y){
+<b class="fc"><i>190</i>&nbsp;        boardGame.setBoardWorker(x,y,w);</b>
+<b class="fc"><i>191</i>&nbsp;        w.moveTo(x,y);</b>
+<b class="fc"><i>192</i>&nbsp;    }</b>
+<i>193</i>&nbsp;
+<i>194</i>&nbsp;    /**
+<i>195</i>&nbsp;     *
+<i>196</i>&nbsp;     * @param x x coordinate of the position where player decided to built
+<i>197</i>&nbsp;     * @param y  y coordinate of the position where player decided to built
+<i>198</i>&nbsp;     * @param level level built
+<i>199</i>&nbsp;     */
+<i>200</i>&nbsp;
+<i>201</i>&nbsp;    public void buildTo(int x, int y,int level)
+<i>202</i>&nbsp;    {
+<b class="fc"><i>203</i>&nbsp;        boardGame.setBoardHeight(x,y,level);</b>
+<b class="fc"><i>204</i>&nbsp;    }</b>
+<i>205</i>&nbsp;
+<i>206</i>&nbsp;    /***
+<i>207</i>&nbsp;     * Does a +1 on the height of the cell
+<i>208</i>&nbsp;     * @param x pos x
+<i>209</i>&nbsp;     * @param y pos y
+<i>210</i>&nbsp;     */
+<b class="nc"><i>211</i>&nbsp;    public void buildUp(int x, int y){boardGame.buildOnBoard(x,y);}</b>
+<i>212</i>&nbsp;
+<i>213</i>&nbsp;    /**
+<i>214</i>&nbsp;     *
+<i>215</i>&nbsp;     * @return the turnNUmber
+<i>216</i>&nbsp;     */
+<i>217</i>&nbsp;    public int getTurnNumber() {
+<b class="fc"><i>218</i>&nbsp;        return turnNumber;</b>
+<i>219</i>&nbsp;    }
+<i>220</i>&nbsp;
+<i>221</i>&nbsp;    /**
+<i>222</i>&nbsp;     *
+<i>223</i>&nbsp;     * @return the players of the game
+<i>224</i>&nbsp;     */
+<i>225</i>&nbsp;    public Player[] getPlayers() {
+<b class="fc"><i>226</i>&nbsp;        return players;</b>
+<i>227</i>&nbsp;    }
+<i>228</i>&nbsp;
+<i>229</i>&nbsp;    public Board getBoardGame() {
+<b class="fc"><i>230</i>&nbsp;        return boardGame;</b>
+<i>231</i>&nbsp;    }
+<i>232</i>&nbsp;
+<i>233</i>&nbsp;
+<i>234</i>&nbsp;    public void setBoardGame(Board boardGame) {
+<b class="nc"><i>235</i>&nbsp;        this.boardGame = boardGame;</b>
+<b class="nc"><i>236</i>&nbsp;    }</b>
+<i>237</i>&nbsp;
+<i>238</i>&nbsp;    public List&lt;Board&gt; getBoardGameImmutable()
+<i>239</i>&nbsp;    {
+<b class="nc"><i>240</i>&nbsp;        ArrayList&lt;Board&gt; board = new ArrayList&lt;Board&gt;();</b>
+<b class="nc"><i>241</i>&nbsp;        board.add(boardGame);</b>
+<b class="nc"><i>242</i>&nbsp;        return Collections.unmodifiableList(board);</b>
+<i>243</i>&nbsp;    }
+<i>244</i>&nbsp;
+<i>245</i>&nbsp;    public TurnPhases getTurnPhase() {
+<b class="nc"><i>246</i>&nbsp;        return turnPhase;</b>
+<i>247</i>&nbsp;    }
+<i>248</i>&nbsp;
+<i>249</i>&nbsp;    public void setChosenCards(ArrayList&lt;String&gt; chosenCards) {
+<b class="nc"><i>250</i>&nbsp;        this.chosenCards = chosenCards;</b>
+<b class="nc"><i>251</i>&nbsp;    }</b>
+<i>252</i>&nbsp;
+<i>253</i>&nbsp;    public ArrayList&lt;String&gt; getAvailableCards() {
+<b class="nc"><i>254</i>&nbsp;        return availableCards;</b>
+<i>255</i>&nbsp;    }
+<i>256</i>&nbsp;
+<b class="nc"><i>257</i>&nbsp;    public boolean isGameStopped() {return gameStopped;}</b>
+<i>258</i>&nbsp;
+<b class="nc"><i>259</i>&nbsp;    public Player getWinner() {return winner;}</b>
+<i>260</i>&nbsp;
+<b class="nc"><i>261</i>&nbsp;    public Player getLastLostPlayer() {return lastLostPlayer;}</b>
+<i>262</i>&nbsp;
+<b class="nc"><i>263</i>&nbsp;    public void clearLastLostPlayer() {lastLostPlayer = null;}</b>
+<i>264</i>&nbsp;}
+</div>
+</div>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2020-05-12 10:03</div>
+</div>
+</body>
+</html>

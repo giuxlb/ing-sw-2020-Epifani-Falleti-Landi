@@ -1,0 +1,192 @@
+
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html id="htmlId">
+<head>
+  <title>Coverage Report :: HestiaStrategy</title>
+  <style type="text/css">
+    @import "../../.css/coverage.css";
+  </style>
+</head>
+
+<body>
+<div class="header"></div>
+
+<div class="content">
+<div class="breadCrumbs">
+    [ <a href="../../index.html">all classes</a> ]
+    [ <a href="../index.html">Controller.DivinityStrategies.AdvancedGods</a> ]
+</div>
+
+<h1>Coverage Summary for Class: HestiaStrategy (Controller.DivinityStrategies.AdvancedGods)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Class, %
+</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">HestiaStrategy</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/ 1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/ 3)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/ 48)
+  </span>
+</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<div class="sourceCode"><i>1</i>&nbsp;package Controller.DivinityStrategies.AdvancedGods;
+<i>2</i>&nbsp;
+<i>3</i>&nbsp;import Controller.Coordinates;
+<i>4</i>&nbsp;import Controller.DivinityStrategies.DefaultStrategy;
+<i>5</i>&nbsp;import Controller.TurnStrategy;
+<i>6</i>&nbsp;import Controller.VirtualView;
+<i>7</i>&nbsp;import Model.*;
+<i>8</i>&nbsp;
+<i>9</i>&nbsp;import java.util.ArrayList;
+<i>10</i>&nbsp;
+<i>11</i>&nbsp;/*Tua costruzione: il tuo lavoratore può costruire una volta in più, anche nella stessa casella ma non in una casella perimetrale.*/
+<b class="nc"><i>12</i>&nbsp;public class HestiaStrategy extends DefaultStrategy implements TurnStrategy {</b>
+<i>13</i>&nbsp;
+<i>14</i>&nbsp;
+<i>15</i>&nbsp;    public int turn(Player player, Worker worker, Board board, Game game, int extraEffect, VirtualView vview){
+<i>16</i>&nbsp;        /*Calcolo l&#39;extra effect di questo turno*/
+<b class="nc"><i>17</i>&nbsp;        boolean athenaeffect = false;</b>
+<b class="nc"><i>18</i>&nbsp;        if(extraEffect==1){</b>
+<b class="nc"><i>19</i>&nbsp;            athenaeffect = true;</b>
+<i>20</i>&nbsp;        }
+<i>21</i>&nbsp;
+<i>22</i>&nbsp;        /*Salvo la posizione iniziale*/
+<b class="nc"><i>23</i>&nbsp;        Coordinates starting_position = new Coordinates(worker.getPositionX(),worker.getPositionY());</b>
+<i>24</i>&nbsp;
+<i>25</i>&nbsp;        /*Calcolo le caselle disponibili per lo spostamento*/
+<b class="nc"><i>26</i>&nbsp;        ArrayList&lt;Coordinates&gt; move_spots = checkAvailableMoveSpots(player,worker,board,athenaeffect);</b>
+<i>27</i>&nbsp;
+<i>28</i>&nbsp;        /*Se l&#39;array è vuoto, il worker non puo spostarsi, quindi il player ha perso*/
+<b class="nc"><i>29</i>&nbsp;        if (move_spots.size()==0) {</b>
+<b class="nc"><i>30</i>&nbsp;            game.playerLose(player);</b>
+<b class="nc"><i>31</i>&nbsp;            return 0;</b>
+<i>32</i>&nbsp;        }
+<i>33</i>&nbsp;        /*Mando le caselle al client, ricevo l&#39;indice dello spostamento*/
+<b class="nc"><i>34</i>&nbsp;        int index = vview.sendAvailableMove(player,move_spots);</b>
+<i>35</i>&nbsp;
+<b class="nc"><i>36</i>&nbsp;        if(index==-1){</b>
+<b class="nc"><i>37</i>&nbsp;            return -1;</b>
+<i>38</i>&nbsp;        }
+<i>39</i>&nbsp;
+<i>40</i>&nbsp;
+<i>41</i>&nbsp;        /*Muovo il worker*/
+<b class="nc"><i>42</i>&nbsp;        move(worker,move_spots,index,game,board);</b>
+<i>43</i>&nbsp;
+<b class="nc"><i>44</i>&nbsp;        vview.upload(board);</b>
+<i>45</i>&nbsp;        // vview.upload(game.getBoardGame());
+<i>46</i>&nbsp;
+<i>47</i>&nbsp;        /*Salvo la posizione dopo lo spostamento*/
+<b class="nc"><i>48</i>&nbsp;        Coordinates final_position = new Coordinates(worker.getPositionX(),worker.getPositionY());</b>
+<i>49</i>&nbsp;
+<i>50</i>&nbsp;        /*Controllo se il giocatore ha vinto*/
+<b class="nc"><i>51</i>&nbsp;        boolean win = checkWinCondition(starting_position,final_position,board);</b>
+<b class="nc"><i>52</i>&nbsp;        if (win) {</b>
+<b class="nc"><i>53</i>&nbsp;            game.stopGame(player);</b>
+<b class="nc"><i>54</i>&nbsp;            return 0;</b>
+<i>55</i>&nbsp;        }
+<i>56</i>&nbsp;
+<i>57</i>&nbsp;        /*Calcolo le caselle disponibili per la costruzione*/
+<b class="nc"><i>58</i>&nbsp;        ArrayList&lt;Coordinates&gt; build_spots = super.checkAvailableBuildSpots(player,worker,board);</b>
+<i>59</i>&nbsp;
+<i>60</i>&nbsp;        /*Mando le caselle al client, ricevo indice della costruzione*/
+<b class="nc"><i>61</i>&nbsp;        index = vview.sendAvailableBuild(player,build_spots);</b>
+<i>62</i>&nbsp;
+<b class="nc"><i>63</i>&nbsp;        if(index==-1){</b>
+<b class="nc"><i>64</i>&nbsp;            return -1;</b>
+<i>65</i>&nbsp;        }
+<i>66</i>&nbsp;
+<i>67</i>&nbsp;        /*Costruisco*/
+<b class="nc"><i>68</i>&nbsp;        build(worker,build_spots,index,game,board);</b>
+<i>69</i>&nbsp;
+<b class="nc"><i>70</i>&nbsp;        vview.upload(board);</b>
+<i>71</i>&nbsp;        // vview.upload(game.getBoardGame());
+<i>72</i>&nbsp;
+<b class="nc"><i>73</i>&nbsp;        build_spots = checkAvailableBuildSpots(player,worker,board);</b>
+<i>74</i>&nbsp;
+<b class="nc"><i>75</i>&nbsp;        if(build_spots.size()!=0) {</b>
+<b class="nc"><i>76</i>&nbsp;            int ask_divinity = vview.askDivinityActivation(player, player.getGameCard());</b>
+<b class="nc"><i>77</i>&nbsp;            if (ask_divinity == -1) {</b>
+<b class="nc"><i>78</i>&nbsp;                return -1;</b>
+<i>79</i>&nbsp;            }
+<b class="nc"><i>80</i>&nbsp;            if (ask_divinity == 1) {</b>
+<b class="nc"><i>81</i>&nbsp;                index = vview.sendAvailableBuild(player,build_spots);</b>
+<b class="nc"><i>82</i>&nbsp;                if(index==-1) return -1;</b>
+<b class="nc"><i>83</i>&nbsp;                build(worker,build_spots,index,game,board);</b>
+<b class="nc"><i>84</i>&nbsp;                vview.upload(board);</b>
+<i>85</i>&nbsp;            }
+<i>86</i>&nbsp;        }
+<b class="nc"><i>87</i>&nbsp;        return 0;</b>
+<i>88</i>&nbsp;    }
+<i>89</i>&nbsp;
+<i>90</i>&nbsp;
+<i>91</i>&nbsp;    public ArrayList&lt;Coordinates&gt; checkAvailableBuildSpots(Player player,Worker worker, Board board){
+<b class="nc"><i>92</i>&nbsp;        int pos_x=worker.getPositionX();</b>
+<b class="nc"><i>93</i>&nbsp;        int pos_y=worker.getPositionY();</b>
+<b class="nc"><i>94</i>&nbsp;        BoardCell[][] boardCopy = board.getBoardGame();</b>
+<b class="nc"><i>95</i>&nbsp;        ArrayList&lt;Coordinates&gt; valid_positions = new ArrayList&lt;Coordinates&gt;();</b>
+<b class="nc"><i>96</i>&nbsp;        for(int i = pos_x-1; i&lt;= pos_x+1;i++){</b>
+<b class="nc"><i>97</i>&nbsp;            for(int j = pos_y-1; j&lt;= pos_y+1;j++){</b>
+<b class="nc"><i>98</i>&nbsp;                if(i&gt;0 &amp;&amp; i&lt;4 &amp;&amp; j&gt;0 &amp;&amp; j&lt;4){</b>
+<b class="nc"><i>99</i>&nbsp;                    if(!(i==pos_x &amp;&amp; j==pos_y) &amp;&amp;</b>
+<b class="nc"><i>100</i>&nbsp;                            boardCopy[i][j].getWorkerBuilder()==null &amp;&amp;</b>
+<b class="nc"><i>101</i>&nbsp;                            boardCopy[i][j].getHeight()&lt;4){</b>
+<b class="nc"><i>102</i>&nbsp;                        valid_positions.add(new Coordinates(i,j));</b>
+<i>103</i>&nbsp;                    }
+<i>104</i>&nbsp;                }
+<i>105</i>&nbsp;            }
+<i>106</i>&nbsp;        }
+<b class="nc"><i>107</i>&nbsp;        return valid_positions;</b>
+<i>108</i>&nbsp;    }
+<i>109</i>&nbsp;}
+</div>
+</div>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2020-05-12 10:03</div>
+</div>
+</body>
+</html>

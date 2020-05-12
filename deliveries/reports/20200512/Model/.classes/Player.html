@@ -1,0 +1,188 @@
+
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html id="htmlId">
+<head>
+  <title>Coverage Report :: Player</title>
+  <style type="text/css">
+    @import "../../.css/coverage.css";
+  </style>
+</head>
+
+<body>
+<div class="header"></div>
+
+<div class="content">
+<div class="breadCrumbs">
+    [ <a href="../../index.html">all classes</a> ]
+    [ <a href="../index.html">Model</a> ]
+</div>
+
+<h1>Coverage Summary for Class: Player (Model)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Class, %
+</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">Player</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (1/ 1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    58,3%
+  </span>
+  <span class="absValue">
+    (7/ 12)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    65%
+  </span>
+  <span class="absValue">
+    (13/ 20)
+  </span>
+</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<div class="sourceCode"><i>1</i>&nbsp;package Model;
+<i>2</i>&nbsp;
+<i>3</i>&nbsp;import Client.View.Data;
+<i>4</i>&nbsp;
+<i>5</i>&nbsp;import java.io.IOException;
+<i>6</i>&nbsp;import java.io.ObjectInputStream;
+<i>7</i>&nbsp;import java.io.ObjectOutputStream;
+<i>8</i>&nbsp;import java.io.Serializable;
+<i>9</i>&nbsp;import java.util.Calendar;
+<i>10</i>&nbsp;
+<i>11</i>&nbsp;public class Player implements Serializable {
+<i>12</i>&nbsp;
+<i>13</i>&nbsp;    private static final long serialVersionUID = 4053084588789160006L;
+<i>14</i>&nbsp;    private String username;
+<i>15</i>&nbsp;    private Worker[] workers;
+<i>16</i>&nbsp;    private String gameCard;
+<i>17</i>&nbsp;    private Color color;
+<i>18</i>&nbsp;    private Data birthDate;
+<i>19</i>&nbsp;
+<i>20</i>&nbsp;
+<i>21</i>&nbsp;    /***
+<i>22</i>&nbsp;     * Costruttore della classe Player
+<i>23</i>&nbsp;     * @param name nome da assegnare al giocatore
+<i>24</i>&nbsp;     */
+<b class="fc"><i>25</i>&nbsp;    public Player (String name,Data birthDate){</b>
+<b class="fc"><i>26</i>&nbsp;        this.username = name;</b>
+<b class="fc"><i>27</i>&nbsp;        this.birthDate = birthDate;</b>
+<b class="fc"><i>28</i>&nbsp;        this.workers = new Worker[2];</b>
+<b class="fc"><i>29</i>&nbsp;    }</b>
+<i>30</i>&nbsp;
+<i>31</i>&nbsp;
+<i>32</i>&nbsp;    /***
+<i>33</i>&nbsp;     * Creates and assign a worker to the player
+<i>34</i>&nbsp;     * @param x pos x
+<i>35</i>&nbsp;     * @param y pos y
+<i>36</i>&nbsp;     * @param index index of the worker
+<i>37</i>&nbsp;     */
+<b class="fc"><i>38</i>&nbsp;    public void assignWorker(int x,int y,int index){this.workers[index]= new Worker(x,y,this.color);}</b>
+<i>39</i>&nbsp;
+<i>40</i>&nbsp;    /***
+<i>41</i>&nbsp;     *
+<i>42</i>&nbsp;     * @param c
+<i>43</i>&nbsp;     */
+<b class="fc"><i>44</i>&nbsp;    public void setColor(Color c){this.color = c;}</b>
+<i>45</i>&nbsp;
+<i>46</i>&nbsp;    /***
+<i>47</i>&nbsp;     * Setter of the card
+<i>48</i>&nbsp;     * @param card the card to assigng to the Player
+<i>49</i>&nbsp;     */
+<i>50</i>&nbsp;    public void chooseCard(String card){
+<b class="fc"><i>51</i>&nbsp;        this.gameCard=card;</b>
+<b class="fc"><i>52</i>&nbsp;    }</b>
+<i>53</i>&nbsp;
+<i>54</i>&nbsp;    /***
+<i>55</i>&nbsp;     * calls the method to move a worker.
+<i>56</i>&nbsp;     * @param worker the worker to move
+<i>57</i>&nbsp;     * @param x new position x of the worker
+<i>58</i>&nbsp;     * @param y new position y of the worker
+<i>59</i>&nbsp;     */
+<i>60</i>&nbsp;    public void moveWith(Worker worker,int x, int y){
+<b class="fc"><i>61</i>&nbsp;        worker.moveTo(x,y);</b>
+<b class="fc"><i>62</i>&nbsp;    }</b>
+<i>63</i>&nbsp;
+<i>64</i>&nbsp;    /***
+<i>65</i>&nbsp;     * @author Alfredo Landi (to acknoledge some undebugged methods)
+<i>66</i>&nbsp;     * Get needed player&#39;s worker
+<i>67</i>&nbsp;     * @return
+<i>68</i>&nbsp;     */
+<i>69</i>&nbsp;    public Worker getWorker(int p){
+<b class="fc"><i>70</i>&nbsp;        return this.workers[p];</b>
+<i>71</i>&nbsp;    }
+<i>72</i>&nbsp;
+<i>73</i>&nbsp;    /***
+<i>74</i>&nbsp;     * @author Adriano Falleti
+<i>75</i>&nbsp;     * Get the attribute username
+<i>76</i>&nbsp;     * @return
+<i>77</i>&nbsp;     */
+<b class="nc"><i>78</i>&nbsp;    public String getUsername() {return username; }</b>
+<i>79</i>&nbsp;
+<i>80</i>&nbsp;    /***
+<i>81</i>&nbsp;     *
+<i>82</i>&nbsp;     * @return the card of this player
+<i>83</i>&nbsp;     */
+<b class="fc"><i>84</i>&nbsp;    public String getGameCard(){return this.gameCard;}</b>
+<i>85</i>&nbsp;
+<i>86</i>&nbsp;    /***
+<i>87</i>&nbsp;     *
+<i>88</i>&nbsp;     * @return the birth date of this player
+<i>89</i>&nbsp;     */
+<b class="nc"><i>90</i>&nbsp;    public Data getBirthDate(){return this.birthDate;}</b>
+<i>91</i>&nbsp;
+<i>92</i>&nbsp;    public Color getColor() {
+<b class="nc"><i>93</i>&nbsp;        return color;</b>
+<i>94</i>&nbsp;    }
+<i>95</i>&nbsp;
+<i>96</i>&nbsp;    public void readObject(ObjectInputStream stream) throws IOException,ClassNotFoundException
+<i>97</i>&nbsp;    {
+<b class="nc"><i>98</i>&nbsp;        stream.defaultReadObject();</b>
+<b class="nc"><i>99</i>&nbsp;    }</b>
+<i>100</i>&nbsp;
+<i>101</i>&nbsp;    public void writeObject(ObjectOutputStream stream) throws IOException
+<i>102</i>&nbsp;    {
+<b class="nc"><i>103</i>&nbsp;        stream.defaultWriteObject();</b>
+<b class="nc"><i>104</i>&nbsp;    }</b>
+<i>105</i>&nbsp;}
+</div>
+</div>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2020-05-12 10:03</div>
+</div>
+</body>
+</html>

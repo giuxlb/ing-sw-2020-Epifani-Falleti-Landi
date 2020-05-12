@@ -1,7 +1,8 @@
-/*
+
 package Model;
 
 
+import Client.View.Data;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.jupiter.api.AfterEach;
@@ -39,9 +40,8 @@ public class GameTest {
     @Test
     public void addPlayer_player_addPlayerToTheArrayAndIncrementTurnNUmber()
     {
-        Calendar date = Calendar.getInstance();
-        date.set(1998, Calendar.NOVEMBER,30);
-        Player p = new Player("giux",date);
+
+        Player p = new Player("giux", new Data(30,11,1998));
         game.addPlayer(p);
         assertEquals(game.getPlayers()[0],p);
         assertEquals(game.getTurnNumber(),1);
@@ -55,12 +55,10 @@ public class GameTest {
     @Test
     public void nextTurnNumber_1with2players_0()
     {
-        Calendar date = Calendar.getInstance();
-        date.set(1998, Calendar.NOVEMBER,30);
-        Player p = new Player("player1",date);
+        Player p = new Player("player1",new Data(30,11,1998));
         game.addPlayer(p);
 
-        Player p2 = new Player("player2",date);
+        Player p2 = new Player("player2",new Data(30,11,1998));
         game.addPlayer(p2);
 
         game.startGame();
@@ -73,15 +71,13 @@ public class GameTest {
     @Test
     public void nextTurnNumber_2with3players_0()
     {
-        Calendar date = Calendar.getInstance();
-        date.set(1998, Calendar.NOVEMBER,30);
-        Player p = new Player("player1",date);
+        Player p = new Player("player1",new Data(30,11,1998));
         game.addPlayer(p);
 
-        Player p2 = new Player("player2",date);
+        Player p2 = new Player("player2",new Data(30,11,1998));
         game.addPlayer(p2);
 
-        Player p3 = new Player("player3",date);
+        Player p3 = new Player("player3",new Data (30,11,1998));
         game.addPlayer(p3);
         game.startGame();
         game.nextTurnNumber();
@@ -94,9 +90,7 @@ public class GameTest {
     @Test
     public void chooseInitialPosition_playerCoordinatesAndIndex_SetBoardAndCreateWorker()
     {
-        Calendar date = Calendar.getInstance();
-        date.set(1998, Calendar.NOVEMBER,30);
-        Player p = new Player("player1",date);
+        Player p = new Player("player1",new Data(30,11,1998));
 
         game.addPlayer(p);
         game.chooseInitialPosition(p,1,1,0);
@@ -112,10 +106,7 @@ public class GameTest {
     @Test
     public void chooseInitialPosition1_playerAndCoordinates_SetTheBoardAndCreateNewWorker()
     {
-        Calendar date = Calendar.getInstance();
-        date.set(1998, Calendar.NOVEMBER,30);
-
-        Player p = new Player("player1",date);
+        Player p = new Player("player1",new Data(30,11,198));
         game.addPlayer(p);
         game.chooseInitialPosition(p,1,1,0);
 
@@ -130,10 +121,7 @@ public class GameTest {
     @Test
     public void moveWorker_worker_IsInTheCorrectPositionAndThePreviousOneIsFree()
     {
-        Calendar date = Calendar.getInstance();
-        date.set(1998, Calendar.NOVEMBER,30);
-
-        Player p = new Player("player1",date);
+        Player p = new Player("player1",new Data(30,11,1998));
         game.addPlayer(p);
         game.chooseInitialPosition(p,1,1,0);
         game.moveWorker(game.getPlayers()[0].getWorker(0),1,2);
@@ -145,10 +133,7 @@ public class GameTest {
     @Test
     public void buildTo_LevelAndCoordinates_BuiltTheLevelPassedInTheCoordinatesPassed()
     {
-        Calendar date = Calendar.getInstance();
-        date.set(1998, Calendar.NOVEMBER,30);
-
-        Player p = new Player("player1",date);
+        Player p = new Player("player1",new Data(30,11,1998));
         game.addPlayer(p);
         game.chooseInitialPosition(p,1,1,0);
         game.buildTo(1,2,1);
@@ -157,10 +142,7 @@ public class GameTest {
 
     @Test
     public void moveWorkerWithoutNull(){
-        Calendar date = Calendar.getInstance();
-        date.set(1998, Calendar.NOVEMBER,30);
-
-        Player p = new Player("player1",date);
+        Player p = new Player("player1",new Data(30,11,1998));
         game.addPlayer(p);
         game.chooseInitialPosition(p,0,0,0);
         game.moveWorkerWithoutNull(p.getWorker(0),1,1);
@@ -171,4 +153,3 @@ public class GameTest {
 
 
 }
-*/
