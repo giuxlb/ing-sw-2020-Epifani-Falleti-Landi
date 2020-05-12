@@ -93,7 +93,7 @@ public class GameControl {
         }
         System.out.println(player_date_1.toString());
         this.addPlayer(new Player(player_name_1,player_date_1));
-        virtualView.sendColor("green",1);
+        virtualView.sendColor("white",1);
         //se il numero di player è 3, chiedo i dati del terzo giocatore
         if(player_number==3){
            // waitForOk();

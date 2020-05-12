@@ -461,8 +461,8 @@ public class CLI {
             switch (b.getBoardWorker(i,j).getColor()){
                 case ANSI_YELLOW:
                     return " " + Color.ANSI_YELLOW + e.getWorker() + " ";
-                case ANSI_GREEN:
-                    return " " + Color.ANSI_GREEN + e.getWorker() + " ";
+                case ANSI_WHITE:
+                    return " " + Color.ANSI_WHITE + e.getWorker() + " ";
                 case ANSI_PURPLE:
                     return " " + Color.ANSI_PURPLE + e.getWorker() + " ";
             }

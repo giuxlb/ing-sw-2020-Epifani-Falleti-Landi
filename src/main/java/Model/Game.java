@@ -43,6 +43,7 @@ public class Game {
         {
             players = new Player[3];
             players[turnNumber] = p;
+            p.setColor(Color.ANSI_YELLOW);
             turnNumber++;
         }
         else if (turnNumber > 2)
@@ -53,16 +54,15 @@ public class Game {
         {
             //should control for other players with the same username of p
             players[turnNumber] = p;
+            if(turnNumber==1){
+                p.setColor(Color.ANSI_WHITE);
+            }else{
+                p.setColor(Color.ANSI_PURPLE);
+            }
             turnNumber++;
 
         }
-        if(turnNumber==0){
-            p.setColor(Color.ANSI_YELLOW);
-        }else if(turnNumber==1){
-            p.setColor(Color.ANSI_GREEN);
-        }else if(turnNumber==2){
-            p.setColor(Color.ANSI_PURPLE);
-        }
+
     }
 
     /**
