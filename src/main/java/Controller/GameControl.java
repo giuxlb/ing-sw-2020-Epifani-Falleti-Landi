@@ -13,9 +13,7 @@ import java.util.concurrent.TimeUnit;
 
 public class GameControl {
     private Game game;
-    private Socket[] sockets;
     private ArrayList<Player> players;
-    private boolean athenaEffectTurn;
     private VirtualView virtualView;
     public Thread thread;
     private boolean exit;
@@ -23,8 +21,8 @@ public class GameControl {
 
 
     /***
-     * Costructor of GameControl, it creates a new Game and,
-     * after receiving the names from the clients, it creates and inserts the player
+     * Costructor of GameControl, it creates a new Game and a new VirtualView,
+     * and get the number of player from the first client.
      */
     public GameControl() {
          this.game = new Game();
@@ -41,7 +39,7 @@ public class GameControl {
         while (x <= 1) {
                 x = virtualView.playerNumber();
         }
-        while(virtualView.isSetUpisReady() == false){
+        while(!virtualView.isSetUpisReady()){
             System.out.println("Qui");
             try{
                 TimeUnit.MILLISECONDS.sleep(10);}
@@ -51,94 +49,56 @@ public class GameControl {
         //prendo nome, data, e numero giocatori dal client 0
         int player_number = virtualView.getNumberOfPlayers();
 
+    }
 
-        String player_name_0 = this.virtualView.askForUsername(0,false);
-        if(player_name_0==null){
-            exit=true;
-            return;
-        }
-        Data player_date_0 = virtualView.askForDate(0);
-        if(player_date_0==null){
-            exit=true;
-            return;
-        }
-        System.out.println(player_date_0.toString());
+    /***
+     * Sends requests to the clients in order to receive the usernames and the dates.
+     * Ensures the uniqueness of the username.
+     * After adding all the player, send the unsorted array of players to the virtualview and
+     * then sorts the array in gamecontrol.
+     */
+    public void acceptPlayers(){
+        int playerNumber = virtualView.getNumberOfPlayers();
+        String received_player_name = null;
+        String color_to_send = null;
+        Data received_player_date;
+        boolean isWrong;
 
-        //aggiungo il player 0
-
-        this.addPlayer( new Player(player_name_0,player_date_0));
-
-        boolean flag = false;
-        String player_name_1 = null;
-        virtualView.sendColor("yellow",0);
-       // waitForOk();
-        //continuo a chiedere il nome al secondo giocatore finchè non è diverso dal primo
-        boolean first_time = true;
-        while (!flag) {
-            //ricevo dal client nome 2
-            player_name_1 = virtualView.askForUsername(1,!first_time);
-            if(player_name_1==null){
-                exit=true;
-                return;
-            }
-            if(!player_name_1.equals(player_name_0)){ flag=true;}
-            first_time = false;
-
-        }
-
-        Data player_date_1 = virtualView.askForDate(1);
-        if(player_date_1==null){
-            exit=true;
-            return;
-        }
-        System.out.println(player_date_1.toString());
-        this.addPlayer(new Player(player_name_1,player_date_1));
-        virtualView.sendColor("white",1);
-        //se il numero di player è 3, chiedo i dati del terzo giocatore
-        if(player_number==3){
-           // waitForOk();
-            flag=false;
-            String player_name_2 = null;
-
-            first_time = true;
-            while (!flag){
-                player_name_2 = virtualView.askForUsername(2,!first_time);
-                if(player_name_2==null){
-                    exit=true;
+        for(int i = 0; i < playerNumber; i++){
+            isWrong = false;
+            do {
+                received_player_name = virtualView.askForUsername(i, isWrong);
+                if (received_player_name == null) {
+                    exit = true;
                     return;
                 }
-                if(!player_name_2.equals(player_name_1) && !player_name_2.equals(player_name_0)){flag=true;}
-                first_time = false;
+                for (int j = 0; j < i; j++) {
+                    int count = 0;
+                    if (received_player_name.equals(this.players.get(j).getUsername())) {
+                        isWrong = true;
+                        count++;
+                        break;
+                    }
+                    if(count==0) isWrong = false;
+                }
+            } while (isWrong);
+            received_player_date = virtualView.askForDate(i);
+            if(received_player_date == null){exit = true; return;}
+            this.addPlayer(new Player(received_player_name,received_player_date));
+
+            switch (i){
+                case(0): color_to_send = "yellow";
+                break;
+                case(1): color_to_send = "white";
+                break;
+                case(2): color_to_send = "purple";
+                break;
             }
-            Data player_date_2 = virtualView.askForDate(2);
-            if(player_date_2==null){
-                exit=true;
-                return;
-            }
-            this.addPlayer(new Player(player_name_2,player_date_2));
-            virtualView.sendColor("purple",2);
+            virtualView.sendColor(color_to_send,i);
         }
 
-        //mando alla virtualview l'array dei player non ordinato
         virtualView.setPlayers(players);
-        System.out.println("Array della virtual view");
-        for (int i = 0; i < player_number; i++) {
-            System.out.println(virtualView.getPlayers().get(i).getBirthDate().toString());
-        }
-        System.out.println("Array del game control");
-        for (int i = 0; i < player_number; i++) {
-            System.out.println(players.get(i).getBirthDate().toString());
-        }
-        //riordino i giocatori in base all'età
         this.sortPlayersByAge();
-        System.out.println("Array della virtual view");
-        for (int i = 0; i < player_number; i++) {
-            System.out.println(virtualView.getPlayers().get(i).getBirthDate().toString());
-        }
-        System.out.println("Array del game control post ordinamento");
-        for (int i = 0; i < player_number; i++) {
-            System.out.println(players.get(i).getBirthDate().toString());
-        }
         virtualView.sendNumberOfPlayer();
 
     }
@@ -146,7 +106,7 @@ public class GameControl {
 
     public void startGame(){
 
-        if(this.exit==true) return;
+        if(this.exit) return;
 
         while(!exit) {
             game.startGame();
@@ -210,13 +170,9 @@ public class GameControl {
 
                     insertInitialPosition(game.getTurnNumber(), initial_valid_pos.get(index).getX(), initial_valid_pos.get(index).getY(), worker_index);
 
-                    System.out.println(game.getBoardGame().getBoardWorker(1, 1));
-
-                    System.out.println(game.getBoardGame().getBoardHeight(1, 1));
 
                     virtualView.upload(game.getBoardGame());
 
-                    System.out.println(game.getBoardGame().getBoardWorker(1, 1));
                     //rimuovo la posizione scelta dall'array
                     initial_valid_pos.remove(index);
 
@@ -303,8 +259,6 @@ public class GameControl {
                         virtualView.youLost(p, false, winner);
                     }
                 }
-            } else {
-                //virtualView.playerHasDisconnected();
             }
         }
         System.out.println("Server Stopped");
@@ -320,30 +274,12 @@ public class GameControl {
     }
 
     /***
-     * Check if it is possible to insert a worker on the position (x,y)
+     * Calls chooseInitialPosition from this.game.
+     * @param currentPlayer player that is inserting the worker
      * @param x pos x
      * @param y pos y
-     * @return true if it is possible
+     * @param index index of the worker
      */
-    private boolean checkValidInitialPosition(int x, int y){
-        if(x>4 || x<0 || y>4 || y<0) return false;
-
-        Player[] players = this.game.getPlayers();
-
-        for ( Player p : players)
-        {
-            for(int i=0;i<2;i++){
-                if(p.getWorker(i)!=null) {
-                    if (p.getWorker(i).getPositionX() == x && p.getWorker(i).getPositionY() == y) {
-                        return false;
-                    }
-                }
-            }
-        }
-
-        return true;
-    }
-
     private void insertInitialPosition(int currentPlayer, int x, int y, int index){
         game.chooseInitialPosition(players.get(currentPlayer),x,y,index);
     }
@@ -386,6 +322,7 @@ public class GameControl {
         while (true) {
 
             partita = new GameControl();
+            partita.acceptPlayers();
             partita.startGame();
             while (!partita.checkNewGame()){
                 //System.out.println("IN ATTESA");
@@ -398,9 +335,6 @@ public class GameControl {
        return this.virtualView.isStartNewGame();
     }
 
-    public void closeAll(){
-        this.virtualView.closeAll();
-    }
 }
 
 
