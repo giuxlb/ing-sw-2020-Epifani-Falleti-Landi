@@ -42,7 +42,7 @@ public class Controller {
      */
     public boolean checkRequestedPosition(ArrayList<Coordinates> validPositions, Coordinates requestedPosition){
         for(Coordinates c:validPositions){
-            if((c.getX() == requestedPosition.getX() && (c.getY() == requestedPosition.getY()))){
+            if(c.getX() == requestedPosition.getX() && c.getY() == requestedPosition.getY()){
                 return true;
             }
         }
@@ -104,5 +104,22 @@ public class Controller {
             }
         }
     }
+
+    /***
+     *
+     * @param insertion
+     * @param gods
+     * @return
+     */
+    public boolean isInArrayListOfGods(String insertion, ArrayList<String> gods){
+        for(String god: gods){
+            if(insertion.equals(god)){
+                return true;
+            }
+        }
+
+        return false;
+    }
+
 
 }

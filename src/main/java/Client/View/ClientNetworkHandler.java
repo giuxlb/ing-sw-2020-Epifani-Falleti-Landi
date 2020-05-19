@@ -1,5 +1,6 @@
 package Client.View;
 
+import Client.View.GUI.GUIHandler;
 import Controller.Coordinates;
 import Controller.Network.VCEvent;
 
@@ -32,11 +33,16 @@ public class ClientNetworkHandler implements Runnable, ServerObserver {
     private CLI cli;
     private boolean finish;
     private boolean finishPing;
+    private GUIHandler gh;
 
 
     private boolean idArrived;
 
     public ClientNetworkHandler(CLI cli){this.cli = cli;}
+
+    public ClientNetworkHandler(GUIHandler gh){
+        this.gh=gh;
+    }
 
     public boolean isUpdateView() {
         return updateView;
@@ -108,8 +114,16 @@ public class ClientNetworkHandler implements Runnable, ServerObserver {
 
                 }
             }
-            if (!finish)
-                cli.updateGo();
+            if (!finish){
+                if(this.cli!=null){
+                    cli.updateGo();
+                }else if(gh!=null){
+                    gh.updateGo();
+                }else{
+                    System.out.println("Errore nella costruzione delle interfacce");
+                }
+            }
+
             //System.out.println("è arrivato il comando"+ fromServer.getCommand());
             synchronized (this){
                 while(isRead == false && finish == false)

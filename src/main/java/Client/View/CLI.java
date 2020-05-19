@@ -41,6 +41,8 @@ public class CLI {
     private Board b;
     private String move="dove ti vuoi muovere";
     private String build="dove vuoi costruire";
+    private String sendCellsMove = "dove puoi muoverti";
+    private String sendCellsBuild = "dove puoi costruire";
     private Elements e;
     private String xPosition ="y";
     private String yPosition = "x";
@@ -223,6 +225,7 @@ public class CLI {
                     printBoard(b);
                     break;
                 case ask_for_worker:
+                    //ATTENZIONE: Una parte di ask_for_worker contiene del codice duplicato con sendCells(). CORREGGERE!!!
                     Object objectChoices = evento.getBox();
                     ArrayList<Coordinates> positionWorkers = (ArrayList<Coordinates>) objectChoices;
                     System.out.println("Puoi muovere i seguenti worker: ");
@@ -246,18 +249,9 @@ public class CLI {
                     buildEvent(cnh,findIndex(positionWorkers,chosenCoordinates), VCEvent.Event.ask_for_worker);
                     break;
                 case send_cells_move:
-                    /*
-                    if (firstTimeHeMoves == 1) {
-                        firstTimeHeMoves = 0;
-                        copy.deepCopy(this.b);
-                    }
-
-                     */
                     sendCells(movingPhase, cnh, VCEvent.Event.send_cells_move,evento);
                     break;
                 case send_cells_build:
-                   // copy.deepCopy(this.b);
-                   // firstTimeHeMoves = 1;
                     sendCells(buildingPhase, cnh, VCEvent.Event.send_cells_build,evento);
                     break;
                 case send_cells_remove:
@@ -367,19 +361,18 @@ public class CLI {
                 case send_all_cards:
                     System.out.println("Hai a disposizione le seguenti divinità:");
                     Object objectGods = evento.getBox();
-                    //Non possiamo controllare se l'ArrayList di Stringhe sia corrotto o meno
                     ArrayList<String> gods= (ArrayList<String>)  objectGods;
                     for(String god:gods){
                         System.out.print(god + " ");
                     }
                     System.out.println("");
-                    System.out.println("Scegli " + playersNumber + "carte");
+                    System.out.println("Scegli " + playersNumber + " carte");
 
                     for(int i=0;i<playersNumber;i++){
-                        System.out.print("Scegli la " + (i+1) + "°" + "carta ->");
+                        System.out.print("Scegli la " + (i+1) + "° carta -> ");
                         String card = s.nextLine();
-
-                        //Ricordati di chiamare il controller pure qui
+                        //card=validCard(card,gods);
+                        //card=isAlreadyChosen(i, card, chosenGods);
                         chosenGods.add(card);
                     }
                     System.out.println();
@@ -391,7 +384,7 @@ public class CLI {
                     //Non possiamo controllare se l'ArrayList di Stringhe sia corrotto o meno
                     ArrayList<String> sentGods= (ArrayList<String>)  objectSentGods;
                     if(sentGods.size()==1){
-                        System.out.println("La tua carta divinità sarà " + sentGods.get(0));
+                        System.out.println("La tua carta divinità sarà " + sentGods.get(0)); //Operazione sulla GUI
                         this.myCard=sentGods.get(0);
                         //In realtà non ci sarebbe bisogno dello statement successivo
                         buildEvent(cnh, sentGods.get(0), VCEvent.Event.send_chosen_cards);
@@ -402,7 +395,8 @@ public class CLI {
                         System.out.println();
                         System.out.print("Digita il nome della divinità che preferisci ->");
                         //Il controller deve controllare che effettivamente la divinità scelta sia un elemento delle divinità ricevute
-                        String chosenGod= s.nextLine();
+                        String chosenGod= s.nextLine(); //Operazione GUI
+                        //chosenGod=validCard(chosenGod,sentGods);
                         this.myCard=chosenGod;
                         System.out.println();
                         buildEvent(cnh, chosenGod, VCEvent.Event.send_chosen_cards);
@@ -515,6 +509,7 @@ public class CLI {
      */
     public void sendCells(String phase, ClientNetworkHandler cnh, VCEvent.Event command,VCEvent evento){
         System.out.println(phase);
+        System.out.println("Le celle in rosso ti dicono " /*+ specification*/);
         Object objectValidPositions = evento.getBox();
         //Attenzione: qui non possiamo controllare se il dato arrivi corrotto o meno!
         ArrayList<Coordinates> validPositions = (ArrayList<Coordinates>)objectValidPositions;
@@ -548,4 +543,44 @@ public class CLI {
         System.out.println();
     }
 
+    /***
+     *
+     * @param insertion
+     * @param gods
+     * @return
+     */
+    String validCard(String insertion, ArrayList<String> gods){
+        String convertedInsertion= insertion.toUpperCase();
+        while(c.isInArrayListOfGods(convertedInsertion,gods)==false){
+            System.out.println("Errore! Nome divinià non valido. Scegli una divinità tra quelle presenti!");
+            System.out.print("Reinserisci il nome della divinità -> ");
+            convertedInsertion=s.nextLine();
+            convertedInsertion.toUpperCase();
+        }
+
+        return insertion;
+    }
+
+    /***
+     *
+     * @param index
+     * @param insertion
+     * @param gods
+     * @return
+     */
+    String isAlreadyChosen(int index, String insertion, ArrayList<String> gods){
+        String convertedInsertion=insertion;
+        while(c.isInArrayListOfGods(convertedInsertion, gods)==true){
+            System.out.println("Errore! Non puoi selezionare una divinità due volte, per favore seleziona una nuova divinità");
+            System.out.print("Scegli la " + (index+1) + "°" + "carta -> ");
+            convertedInsertion=s.nextLine();
+            convertedInsertion.toUpperCase();
+        }
+
+        return convertedInsertion;
+    }
+
+    boolean isAMac(){
+        return false;
+    }
 }
