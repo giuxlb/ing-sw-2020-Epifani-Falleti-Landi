@@ -2,6 +2,7 @@ package Model;
 import Client.View.CLI;
 import Controller.Coordinates;
 
+import javax.swing.*;
 import java.util.ArrayList;
 import java.util.Calendar;
 
@@ -12,8 +13,7 @@ public class Main {
         p.setColor(Color.ANSI_YELLOW);
         System.out.println("Il tuo colore è: " + p.getColor());*/
 
-        //Prova del motore grafico della CLI
-        /*
+        /*//Prova del motore grafico della CLI
         Board boardGame= new Board();
         boardGame.setBoardHeight(0,0, 4);
         Worker w= new Worker(1,1, Color.ANSI_YELLOW);
@@ -30,11 +30,41 @@ public class Main {
         c.add(c3);
         c.add(c4);
         System.out.println();
-        prova.paintBoardCell(boardGame,c);
+        prova.paintBoardCell(boardGame,c);*/
 
-         */
+        String myGod = "Athena";
+        Object[] choices = {"Yes", "No"};
+        int choice = JOptionPane.showOptionDialog(null,
+                "Do you want to use " + myGod + "'s power ?",
+                "Card activation",
+                JOptionPane.YES_NO_OPTION,
+                JOptionPane.QUESTION_MESSAGE,
+                null, //Ricordati di mettere l'icona
+                choices,
+                choices[1]);
 
-       // System.out.println(Color.ANSI_GREEN+"hello"+ Color.ANSI_PURPLE+"world"+Color.ANSI_YELLOW+"ciao");
+        if(turnChoiceIntoCorrectOutput(choice)==0){
+           System.out.println("Non hai attivato l'effetto di " + myGod);
+        }else if(turnChoiceIntoCorrectOutput(choice)==1){
+            System.out.println("Hai attivato l'effetto di " + myGod);
+        }else if(turnChoiceIntoCorrectOutput(choice) == -1){
+            System.out.println("Errore di comversione " + myGod);
+        }
+        else{
+            System.out.println("Errore nella funzione");
+        }
+    }
+
+    private static int turnChoiceIntoCorrectOutput(int choice){
+        if(choice==0){
+            return 1;
+        }else if(choice==1){
+            return 0;
+        }else if(choice==-1){
+            return 0;
+        }else{
+            return -1;
+        }
     }
 
 }

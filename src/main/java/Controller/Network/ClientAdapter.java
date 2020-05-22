@@ -106,7 +106,7 @@ public class ClientAdapter extends Thread {
      * @throws IOException
      * @throws ClassNotFoundException
      */
-    public synchronized void handleClientConnection() throws IOException,ClassNotFoundException
+    public synchronized void handleClientConnection() throws IOException, ClassNotFoundException
     {
         List<ClientObserver> observersCpy;
         synchronized (observers) {

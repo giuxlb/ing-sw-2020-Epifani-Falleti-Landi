@@ -10,6 +10,7 @@ import Model.SocketBoardCell;
 import Model.Worker;
 
 import java.awt.*;
+import java.io.ObjectInputStream;
 import java.util.ArrayList;
 
 
@@ -26,6 +27,7 @@ public class GUIHandler {
     private Board b;
     //ATTENZIONE: potrebbe non servire
     private int playersNumber;
+    private String myGod;
 
     public GUIHandler(GUI GUI){
         this.GUI = GUI;
@@ -42,6 +44,8 @@ public class GUIHandler {
 
         //Ciclo di gioco
         checkEvent(cnh);
+
+        cnh.setFinish(true);
     }
 
     public synchronized void updateGo()
@@ -70,12 +74,12 @@ public class GUIHandler {
        boolean endGame = false;
         // Board copy = new Board();
         // int firstTimeHeMoves = 1;
-        /*while(endGame==false){
+        while(endGame==false){
             update();
             VCEvent evento = cnh.getFromServer();
             cnh.readByView();
             switch (evento.getCommand()){
-                case send_color:
+                /*case send_color:
                     Object objcectColorName = evento.getBox();
                     if(objcectColorName instanceof String){
                         this.myColor = (String) objcectColorName;
@@ -83,14 +87,28 @@ public class GUIHandler {
                     }else{
                         System.out.println("Errore! La stringa che dovrebbe rappresentare in nome del mio colore è arrivata corrotta");
                     }
-                    break;
+                    break;*/
                 case setup_request:
+                    //Da cambiare
+                    GUI.getMessageArea().setText("Sto chiedendo la data");
+                    Object options[] = {"2","3"};
+                    int n = JOptionPane.showOptionDialog(GUI.getMainFrame(),
+                            "How may players are going to connect?",
+                            "Select number of players",
+                            JOptionPane.YES_NO_OPTION,
+                            JOptionPane.QUESTION_MESSAGE,
+                            null, //Qua va inserita l'icona del gioco
+                            options,
+                            options[0]);//In realtà se chiude il gioco deve terminare
 
-
+                    System.out.println(n);
+                    n=n+2;
                     this.playersNumber=n;
                     buildEvent(cnh, n, VCEvent.Event.setup_request);
+                    //Togli dopo aver debuggato questa parte di codice
+                    endGame=true;
                     break;
-                case username_request :
+                /*case username_request :
                     System.out.println("Inserisci il tuo nome utente");
                     String username=s.nextLine();
                     buildEvent(cnh, username, VCEvent.Event.username_request);
@@ -193,56 +211,20 @@ public class GUIHandler {
                     break;
                 case number_of_players:
                     playersNumber = (Integer)evento.getBox();
-                    break;
+                    break;*/
                 case ask_for_divinity_activation:
-                    Object objectGod = evento.getBox();
-                    String god_name = (String) objectGod;
-                    switch (god_name.toUpperCase()){
-                        case "ARTEMIS":
-                            messageArea.setText("Vuoi attivare l'effetto di Artemis e fare un secondo movimento?");
-                            break;
-                        case "ATLAS":
-                            messageArea.setText("Vuoi attivare l'effetto di Atlas e costruire una cupola?");
-                            break;
-                        case "DEMETER":
-                            messageArea.setText("Vuoi attivare l'effetto di Demeter e fare una seconda costruzione?");
-                            break;
-                        case "HEPHAESTUS":
-                            messageArea.setText("Vuoi attivare l'effetto di Hephaestus e costruire una seconda volta sullo stesso blocco?");
-                            break;
-                        case "PROMETHEUS":
-                            messageArea.setText("Vuoi attivare l'effetto di Prometheus? (Costruisci prima e dopo il movimento però non puoi salire di livello)");
-                            break;
-                        case "HESTIA":
-                            messageArea.setText("Vuoi attivare l'effetto di Hestia e fare una seconda costruzione, ma non in una casella perimetrale?");
-                            break;
-                        case "TRITON":
-                            messageArea.setText("Vuoi attivare l'effetto di Triton e fare una altro movimento?");
-                            break;
-                        case "ARES":
-                            messageArea.setText("Vuoi attivare l'effetto di Ares e rimuovere un blocco libero (non una cupola) con il worker che non hai mosso?");
-                            break;
-                    }
-                    boolean temp = false;
-                    while(temp == false) {
-                        System.out.println("(Y) per attivare, (N) per non attivare:");
-                        String response = s.nextLine();
-                        switch (response.toUpperCase()) {
-                            case "Y":
-                                temp = true;
-                                buildEvent(cnh, 1, VCEvent.Event.ask_for_divinity_activation);
-                                break;
-                            case "N":
-                                temp = true;
-                                buildEvent(cnh, 0, VCEvent.Event.ask_for_divinity_activation);
-                                break;
-                            default:
-                                System.out.println("Input non valido, riprova.");
-                                break;
-                        }
-                    }
-                    break;
-                case send_all_cards:
+                    Object[] choices = {"Yes", "No"};
+                    int choice = JOptionPane.showOptionDialog(GUI.getMainFrame(),
+                                    "Do you want to use " + myGod + "'s power ?",
+                                    "Card activation",
+                                    JOptionPane.YES_NO_OPTION,
+                                    JOptionPane.QUESTION_MESSAGE,
+                                    null, //Ricordati di mettere l'icona
+                                    choices,
+                                    choices[1]);
+
+                    buildEvent(cnh, turnChoiceIntoCorrectOutput(choice), VCEvent.Event.ask_for_divinity_activation);
+                /*case send_all_cards:
                     System.out.println("Hai a disposizione le seguenti divinità:");
                     Object objectGods = evento.getBox();
                     ArrayList<String> gods= (ArrayList<String>)  objectGods;
@@ -279,19 +261,16 @@ public class GUIHandler {
                     messageArea.setText("Ops! Il giocatore " + playerDisconnected + " si è disconnesso, purtroppo la partita terminerà ora");
                     buildEvent(cnh, "ho ricevuto la disconnessione di un client", VCEvent.Event.player_disconnected_game_ended);
                     endGame=true;
-                    break;
+                    break;*/
                 default:
                     System.out.println("Errore nel protocollo");
                     break;
             }
 
         }
-    }*/
-
-
-
-
     }
+
+
     private void recreateBoardfromSocketBoardCell(ArrayList<SocketBoardCell> socketBoardCell) {
         this.b = new Board();
 
@@ -326,6 +305,18 @@ public class GUIHandler {
     private void buildEvent(ClientNetworkHandler cnh, Object o, VCEvent.Event command){
         VCEvent currentEvent= new VCEvent(o, command);
         cnh.sendVCEvent(currentEvent);
+    }
+
+    private int turnChoiceIntoCorrectOutput(int choice){
+        if(choice==0){
+            return 1;
+        }else if(choice==1){
+            return 0;
+        }else if(choice==-1){
+            return 0;
+        }else{
+            return -1;
+        }
     }
 
 }

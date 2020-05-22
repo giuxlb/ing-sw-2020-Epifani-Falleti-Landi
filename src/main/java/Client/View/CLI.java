@@ -15,21 +15,40 @@ import java.util.concurrent.atomic.AtomicInteger;
 public class CLI {
     public static void main(String[] args){
         System.out.println("Santorini - Epifani Falleti Landi");
-        CLI CLI = new CLI();
+        if(isAMac()==true){
+            CLI CLI = new CLIForMac("Mac");
+            ClientNetworkHandler cnh = new ClientNetworkHandler(CLI);
+            //Thread per l'esecuzione principale della CLI
+            Thread game = new Thread(cnh);
+            game.start();
+
+            //Ciclo di gioco
+            CLI.checkEvent(cnh);
+
+            //Messagio di arriverci
+            System.out.println("Partita terminata, grazie per aver giocato");
+            cnh.setFinish(true);
+
+        }else{
+            CLI CLI = new CLI("Win");
+            ClientNetworkHandler cnh = new ClientNetworkHandler(CLI);
+            //Thread per l'esecuzione principale della CLI
+            Thread game = new Thread(cnh);
+            game.start();
+
+            //Ciclo di gioco
+            CLI.checkEvent(cnh);
+
+            //Messagio di arriverci
+            System.out.println("Partita terminata, grazie per aver giocato");
+            cnh.setFinish(true);
+
+        }
+
 
         //Creazione della socket del client
-        ClientNetworkHandler cnh = new ClientNetworkHandler(CLI);
 
-        //Thread per l'esecuzione principale della CLI
-        Thread game = new Thread(cnh);
-        game.start();
 
-        //Ciclo di gioco
-        CLI.checkEvent(cnh);
-
-        //Messagio di arriverci
-        System.out.println("Partita terminata, grazie per aver giocato");
-        cnh.setFinish(true);
 
     }
 
@@ -62,12 +81,16 @@ public class CLI {
     /***
      *
      */
-    public CLI(){
+    public CLI(String OS){
         //cnh = new ClientNetworkHandler(CLI);
         s = new Scanner(System.in);
         c = new Controller();
         b = new Board();
         e = new Elements();
+    }
+
+    public CLI(){
+
     }
 
 
@@ -342,6 +365,7 @@ public class CLI {
                             break;
                     }
                     boolean temp = false;
+                    //Se ne deve occupare il clientSideController
                     while(temp == false) {
                         System.out.println("(Y) per attivare, (N) per non attivare:");
                         String response = s.nextLine();
@@ -582,7 +606,16 @@ public class CLI {
         return convertedInsertion;
     }
 
-    boolean isAMac(){
+    public static boolean isAMac(){
+        String OS = System.getProperty("os.name").toLowerCase();
+        if(OS.indexOf("mac")>=0){
+            return true;
+        }
         return false;
+    }
+
+    public Elements getE() {
+
+        return e;
     }
 }
