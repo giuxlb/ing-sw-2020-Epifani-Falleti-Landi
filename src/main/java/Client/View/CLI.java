@@ -226,7 +226,8 @@ public class CLI {
                 case not_your_turn:
                     Object objectCurrentPlayerInformation = evento.getBox();
                     ArrayList<String> currentPlayerInformation= (ArrayList<String>) objectCurrentPlayerInformation;
-                    System.out.println("Partita in corso, sta giocando " + currentPlayerInformation.get(0) + " con la carta " + currentPlayerInformation.get(0));
+                    System.out.println("Partita in corso, sta giocando " + currentPlayerInformation.get(0) +
+                            " con la carta " + currentPlayerInformation.get(1));
                     break;
                 case update:
                     Object objectBoardCell = evento.getBox();

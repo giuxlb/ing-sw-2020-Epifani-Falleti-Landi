@@ -16,8 +16,15 @@ public class GUI {
     private JPanel godPanel;
     private JLabel godImage;
     private JLabel godPower;
-    private JTextArea messageArea;
     private JLabel backgroud;
+
+    //messageAndUndoBar
+    private JPanel messageAndUndoPanel;
+    private JTextArea messageArea;
+    private JButton undo;
+
+    //
+    private JTextArea informationArea;
 
 
 
@@ -48,7 +55,9 @@ public class GUI {
         for(int i=0;i<Board.DIM;i++){
             for(int j=0;j<Board.DIM;j++){
                 board[i][j] = new JButton();
-                board[i][j].setOpaque(false);
+                board[i][j].setContentAreaFilled(false);
+                board[i][j].setBorderPainted(true);
+                //board[i][j].setOpaque(false);
                 //boardPanel.add(board[i][j]);
                 boardLabel.add(board[i][j]);
             }
@@ -72,19 +81,19 @@ public class GUI {
         //Ricordati di aggiungere WindowClosingListener
         mainFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
+        buildMessageAndUndoBar();
         buildBoard();
         buildGodBar();
-        messageArea = new JTextArea("Connected");
+        informationArea = new JTextArea("Move mouse on board to see more detailed information");
+
 
 
 
         mainFrame.setLayout(new BorderLayout());
-        messageArea.setOpaque(false);
-        mainFrame.add(messageArea, BorderLayout.NORTH);
-       // boardPanel.setOpaque(false);
+        mainFrame.add(messageAndUndoPanel, BorderLayout.NORTH);
+        mainFrame.add(informationArea, BorderLayout.SOUTH);
         //mainFrame.add(boardPanel, BorderLayout.CENTER);
         mainFrame.add(boardLabel);
-        godPanel.setOpaque(false);
         mainFrame.add(godPanel, BorderLayout.WEST);
 
         //mainFrame.pack();
@@ -145,6 +154,23 @@ public class GUI {
         godsFrame.setVisible(true);
     }*/
 
+    private void buildMessageAndUndoBar(){
+        messageArea = new JTextArea("Connected");
+
+        ImageIcon currentIcon= new ImageIcon("./resources/Undo.png");
+        Image tmp = currentIcon.getImage();
+        //Il bottone deve essere un po' meno largo e deve stare attacato al margine (mi serve un gridBagLayout)
+        Image newIcon = tmp.getScaledInstance(50,50, Image.SCALE_SMOOTH);
+        ImageIcon finalIcon = new ImageIcon(newIcon);
+
+        undo = new JButton("", finalIcon);
+
+        messageAndUndoPanel = new JPanel();
+        messageAndUndoPanel.setLayout(new FlowLayout());
+        messageAndUndoPanel.add(messageArea);
+        messageAndUndoPanel.add(undo);
+
+    }
     public JFrame getMainFrame() {
         return mainFrame;
     }

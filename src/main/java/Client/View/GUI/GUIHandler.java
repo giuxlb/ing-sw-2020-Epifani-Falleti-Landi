@@ -10,6 +10,7 @@ import Model.SocketBoardCell;
 import Model.Worker;
 
 import java.awt.*;
+import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.util.ArrayList;
 
@@ -130,18 +131,18 @@ public class GUIHandler {
                         this.dateOfBirth = new Data(giorno,mese,anno);
                     }
                     buildEvent(cnh,dateOfBirth, VCEvent.Event.date_request);
-                    break;
+                    break;*/
                 case not_your_turn:
                     Object objectCurrentPlayerInformation = evento.getBox();
                     ArrayList<String> currentPlayerInformation= (ArrayList<String>) objectCurrentPlayerInformation;
-                    System.out.println("Partita in corso, sta giocando " + currentPlayerInformation.get(0) + " con la carta " + currentPlayerInformation.get(0));
+                    GUI.getMessageArea().setText(currentPlayerInformation.get(0) + " is playing with god " + currentPlayerInformation.get(1));
                     break;
                 case update:
                     Object objectBoardCell = evento.getBox();
                     ArrayList<SocketBoardCell> socketBoardCell = (ArrayList<SocketBoardCell>) objectBoardCell;
                     recreateBoardfromSocketBoardCell(socketBoardCell);
                     turnModelBoardintoGUIBoard(b);
-                    break;
+                    break;/*
                 case ask_for_worker:
                     //ATTENZIONE: Una parte di ask_for_worker contiene del codice duplicato con sendCells(). CORREGGERE!!!
                     Object objectChoices = evento.getBox();
@@ -165,12 +166,10 @@ public class GUIHandler {
                     break;
                 case send_cells_remove:
                     sendCells(removePhase,cnh, VCEvent.Event.send_cells_remove,evento);
-                    break
+                    break;
                 case undo_request:
-                    System.out.println("Hai 5 secondi per fare l'undo della mossa appena fatta. Scrivi 1 per fare undo o 0 per non farlo");
-                    BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
+                    GUI.getMessageArea().setText("You can undo your move only in about 5 seconds. If you want to confirm press the button aside, please");
                     long start = System.currentTimeMillis();
-                    int choose = 0;
                     while (true){
                         try {
                             if (!(((System.currentTimeMillis()-start) < 5000) && !reader.ready())) break;
@@ -193,7 +192,7 @@ public class GUIHandler {
 
 
                     buildEvent(cnh,choose, VCEvent.Event.undo_request);
-                    break;
+                    break;*/
                 case you_lost:
                     Object objectWinner = evento.getBox();
                     String winner = (String) objectWinner;
@@ -211,7 +210,7 @@ public class GUIHandler {
                     break;
                 case number_of_players:
                     playersNumber = (Integer)evento.getBox();
-                    break;*/
+                    break;
                 case ask_for_divinity_activation:
                     Object[] choices = {"Yes", "No"};
                     int choice = JOptionPane.showOptionDialog(GUI.getMainFrame(),
@@ -253,15 +252,15 @@ public class GUIHandler {
                         System.out.println();
                         buildEvent(cnh, chosenGod, VCEvent.Event.send_chosen_cards);
                     }
-                    break;
+                    break;*/
                 case player_disconnected_game_ended:
                     Object objectPlayerDisconnected= evento.getBox();
                     String playerDisconnected = (String) objectPlayerDisconnected;
-                    //o sarebbe meglio una finestra di dialogo
-                    messageArea.setText("Ops! Il giocatore " + playerDisconnected + " si è disconnesso, purtroppo la partita terminerà ora");
+                    //o sarebbe meglio una finestra di dialogo? Da vedere quando testerò la GUI
+                    GUI.getMessageArea().setText("Ops! Il giocatore " + playerDisconnected + " si è disconnesso, purtroppo la partita terminerà ora");
                     buildEvent(cnh, "ho ricevuto la disconnessione di un client", VCEvent.Event.player_disconnected_game_ended);
                     endGame=true;
-                    break;*/
+                    break;
                 default:
                     System.out.println("Errore nel protocollo");
                     break;
