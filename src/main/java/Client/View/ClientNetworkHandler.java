@@ -197,8 +197,7 @@ public class ClientNetworkHandler implements Runnable, ServerObserver {
         try {
             output.writeObject(eventToServer);
         } catch (IOException e) {
-            e.printStackTrace();
-            System.out.println("server has died for vcevent");
+
         }
         canWrite = true;
         notifyAll();
@@ -230,7 +229,7 @@ public class ClientNetworkHandler implements Runnable, ServerObserver {
         try {
             output.writeObject(pingEventResponse);
         } catch (IOException e) {
-            System.out.println("server has died for ping");
+
         }
 
         canWrite = true;
