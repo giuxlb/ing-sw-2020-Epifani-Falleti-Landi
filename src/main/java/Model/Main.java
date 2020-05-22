@@ -13,6 +13,7 @@ public class Main {
         System.out.println("Il tuo colore è: " + p.getColor());*/
 
         //Prova del motore grafico della CLI
+        /*
         Board boardGame= new Board();
         boardGame.setBoardHeight(0,0, 4);
         Worker w= new Worker(1,1, Color.ANSI_YELLOW);
@@ -30,6 +31,10 @@ public class Main {
         c.add(c4);
         System.out.println();
         prova.paintBoardCell(boardGame,c);
+
+         */
+
+       // System.out.println(Color.ANSI_GREEN+"hello"+ Color.ANSI_PURPLE+"world"+Color.ANSI_YELLOW+"ciao");
     }
 
 }

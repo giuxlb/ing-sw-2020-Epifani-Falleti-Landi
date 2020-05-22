@@ -11,7 +11,7 @@ import java.net.Socket;
 import java.net.ServerSocket;
 import java.util.Calendar;
 import java.util.concurrent.TimeUnit;
-
+import java.net.SocketOption;
 /**
  * @author Adriano Falleti
  */
@@ -26,7 +26,6 @@ public class ServerNetworkHandler  implements Runnable, ClientObserver {
     private ServerSocket server;
     private Socket[] clients;
     private ClientAdapter[] adapters;
-    private VCEvent fromClient1;
     private Integer numberOfPlayers;
     public final static int SOCKET_PORT = 65000;
     private ObjectOutputStream[] outputs;
@@ -77,15 +76,21 @@ public class ServerNetworkHandler  implements Runnable, ClientObserver {
             System.out.println(counter);
             receiver1 = new ClientEventReceiver(this,0);
             canWrite[counter] = false;
+            this.numberOfPlayers = 0;
            try {
-               if (clients[counter] != null)
-                    clients[counter].close();
+               if (clients[counter] != null) {
+                   System.out.println("Client a 0 non è null, la chiudo");
+                   clients[counter].close();
+                   clients[counter] = null;
+               }
            } catch (IOException e) {
                e.printStackTrace();
            }
            try {
                 clients[counter] = server.accept();
+                System.out.println(clients[counter]);
                 clients[counter].setSoTimeout(20000);
+                System.out.println("Accetto una connessione");
                 virtualView.setConnectedIndexToTrue(counter);
                 outputs[counter] = new ObjectOutputStream(clients[counter].getOutputStream());
                System.out.println("L'output stream c'è!");
@@ -113,7 +118,8 @@ public class ServerNetworkHandler  implements Runnable, ClientObserver {
                     }
                 }
             }
-            System.out.println(counter);
+
+
         }  while (numberOfPlayers  == 1);
         int n = numberOfPlayers;
 
@@ -124,7 +130,6 @@ public class ServerNetworkHandler  implements Runnable, ClientObserver {
                 clients[counter].setSoTimeout(20000);
                 virtualView.setConnectedIndexToTrue(counter);
                 outputs[counter] = new ObjectOutputStream( clients[counter].getOutputStream());
-
                 inputs[counter] = new ObjectInputStream( clients[counter].getInputStream());
                 adapters[counter] = new ClientAdapter(clients[counter],counter);
                 adapters[counter].addObserver(this);
@@ -213,7 +218,7 @@ public class ServerNetworkHandler  implements Runnable, ClientObserver {
      * @param index identifies the client disconnected
      */
     @Override
-    public void playerDisconnectedNumber(int index) {
+    public synchronized void playerDisconnectedNumber(int index) {
         switch (index){
             case 0:
                 this.receiver1.setFinishClientReceiver(true);
@@ -232,6 +237,7 @@ public class ServerNetworkHandler  implements Runnable, ClientObserver {
                 break;
             default:break;
         }
+        notifyAll();
         this.virtualView.playerDisconnected(index);
     }
 
@@ -244,7 +250,7 @@ public class ServerNetworkHandler  implements Runnable, ClientObserver {
     {
 
             System.out.println("Mando " + eventToClient.getCommand());
-
+            
             synchronized (this) {
                 while (this.canWrite[clientIndex] == false) {
                     try {
@@ -261,7 +267,7 @@ public class ServerNetworkHandler  implements Runnable, ClientObserver {
             } catch (IOException e) {
 
                 System.out.println("Scollego perchè non riesco a mandare un evento");
-                e.printStackTrace();
+               // e.printStackTrace();
                 this.virtualView.playerDisconnected(clientIndex);
             }
             this.canWrite[clientIndex] = true;
@@ -281,7 +287,7 @@ public class ServerNetworkHandler  implements Runnable, ClientObserver {
             while (this.canWrite[clientIndex] == false)
             {
                 try {
-                    wait();
+                    wait(1000);
                 }catch(InterruptedException e){}
             }
         }
@@ -324,11 +330,11 @@ public class ServerNetworkHandler  implements Runnable, ClientObserver {
 
         for (int i = 0; i < this.numberOfPlayers ; i++) {
 
-            if (this.adapters[i].isFinishClientAdapter() == false) {
-                return false;
+            if (this.adapters[i].isFinishClientAdapter() == true) {
+                return true; // ancora non si è scollegato nessuno
             }
         }
 
-        return true;//se invece erano tutti true, allora è il momento di scollegare
+        return false;
     }
 }

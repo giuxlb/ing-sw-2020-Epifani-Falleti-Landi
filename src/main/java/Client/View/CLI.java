@@ -263,7 +263,7 @@ public class CLI {
                 case send_cells_remove:
                     sendCells(removePhase,cnh, VCEvent.Event.send_cells_remove,evento);
                     break;
-                    /*
+
                 case undo_request:
                     System.out.println("Hai 5 secondi per fare l'undo della mossa appena fatta. Scrivi 1 per fare undo o 0 per non farlo");
                     BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
@@ -281,18 +281,20 @@ public class CLI {
                         ex.printStackTrace();
                     }
 
-
+/*
                     if (choose == 1) {
                         firstTimeHeMoves = 1;
                         this.b.deepCopy(copy);
                     }
 
 
+ */
+
 
 
                     buildEvent(cnh,choose, VCEvent.Event.undo_request);
                     break;
-                    */
+
                 case you_lost:
                     Object objectWinner = evento.getBox();
                     if(objectWinner instanceof String){

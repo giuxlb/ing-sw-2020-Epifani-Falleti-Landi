@@ -410,7 +410,7 @@ public class VirtualView {
         //System.out.println("Ricevo..."+received);
 
         if (received instanceof Integer) {
-            /*
+
             if (undoOn)
             {
                int response = sendUndoRequest(index);
@@ -420,7 +420,7 @@ public class VirtualView {
                    return -1;
             }
 
-             */
+
 
             int x = ((Integer) received).intValue();
             System.out.println("Ritorno " + move_spots.get(x).toString());
@@ -472,7 +472,7 @@ public class VirtualView {
             return -1;
         }
         if (received instanceof Integer) {
-            /*
+
             if (undoOn)
             {
                 int response = sendUndoRequest(index);
@@ -482,7 +482,7 @@ public class VirtualView {
                     return -1;
             }
 
-             */
+
             int x = ((Integer) received).intValue();
             return x;
         }
@@ -545,17 +545,16 @@ public class VirtualView {
 
     }
 
-    public int sendUndoRequest(Player p)
+    public int sendUndoRequest(int  p)
     {
         if (checkConnections() == false) {
             return -1;
         }
         VCEvent evento = new VCEvent("Undo", VCEvent.Event.undo_request);
-        for (int i = 0; i <numberOfPlayers ; i++) {
-            if (p.getUsername().equals(players.get(i).getUsername()))
-                serverHandler.sendVCEventTo(evento, i);
 
-        }
+                serverHandler.sendVCEventTo(evento, p);
+
+
         synchronized(this) {
             undoReceived = null;
             while(undoReceived == null && checkConnections())
@@ -671,7 +670,7 @@ public class VirtualView {
         if (numberOfPlayers != null) {
             VCEvent evento = new VCEvent(p.getUsername(), VCEvent.Event.player_disconnected_game_ended);
             for (int i = 0; i < numberOfPlayers; i++) {
-                if (!(p.getUsername().equals(players.get(i).getUsername())))
+                if (!(p.getUsername().equals(players.get(i).getUsername())) && serverHandler.getClients()[i] != null)
                     serverHandler.sendVCEventTo(evento, i);
             }
         }
@@ -710,6 +709,7 @@ public class VirtualView {
             player_disconnected_game_ended(players.get(playerIndex));
         }
 
+
     }
 
     /**
@@ -721,6 +721,16 @@ public class VirtualView {
        if (index == 0) {
            notifyAll();
        }
+        for (int i = 0; i <3 ; i++) {
+            System.out.println(connected[i]);
+        }
+    }
+
+    public synchronized void setConnectedIndexToFalse(int index) {
+        this.connected[index] = false;
+        if (index == 0) {
+            notifyAll();
+        }
         for (int i = 0; i <3 ; i++) {
             System.out.println(connected[i]);
         }

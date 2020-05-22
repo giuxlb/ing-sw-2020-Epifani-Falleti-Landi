@@ -29,7 +29,7 @@ public class GameControl {
     public GameControl() {
          this.game = new Game();
          this.virtualView = new VirtualView();
-         //this.virtualView.setUndoOn(true);
+        // this.virtualView.setUndoOn(true);
         exit=false;
 
         players = new ArrayList<Player>();
@@ -224,6 +224,7 @@ public class GameControl {
                 }
                 //chiedo di fare l'undo e se è true devo saltare la game.nextTurnNumber, chiamare deepCopy sulla board del game
                 //devo riportare l'array delle initial_valid_pos alla situazione precedente
+                /*
                 if (this.virtualView.isUndoOn())
                 {
                     int response = virtualView.sendUndoRequest(players.get(game.getTurnNumber()));
@@ -252,10 +253,12 @@ public class GameControl {
                     }
                 }
                 else {
+
+                 */
                     game.nextTurnNumber();
-                    System.out.println("Non rifaccio il turno");
-                }
-                System.out.println("Rifaccio il turno...");
+                    //System.out.println("Non rifaccio il turno");
+
+              //  System.out.println("Rifaccio il turno...");
             } while (game.getTurnNumber() != 0 || reDoTurn) ;
 
 

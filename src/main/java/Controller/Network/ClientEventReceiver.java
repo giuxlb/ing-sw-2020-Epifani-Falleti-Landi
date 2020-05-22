@@ -114,7 +114,7 @@ public class ClientEventReceiver extends Thread {
             }
 
         }
-        System.out.println("CHiudo il receiver "+clientIndex);
+        System.out.println("Chiudo il receiver "+clientIndex);
 
 
 
