@@ -7,7 +7,7 @@ import java.io.Serializable;
 import java.util.ArrayList;
 
 public class Board implements Serializable {
-    private final static int DIM=5;
+    public final static int DIM=5;
     private static final long serialVersionUID = 1216730102358212421L;
     private BoardCell[][] boardGame;
 

@@ -1,5 +1,6 @@
 package Client.View;
 
+import Client.View.GUI.GUIHandler;
 import Controller.Coordinates;
 import Controller.Network.VCEvent;
 
@@ -32,12 +33,16 @@ public class ClientNetworkHandler implements Runnable, ServerObserver {
     private CLI cli;
     private boolean finish;
     private boolean finishPing;
-
+    private GUIHandler gh;
 
 
     private boolean idArrived;
 
     public ClientNetworkHandler(CLI cli){this.cli = cli;}
+
+    public ClientNetworkHandler(GUIHandler gh){
+        this.gh=gh;
+    }
 
     public boolean isUpdateView() {
         return updateView;
@@ -47,7 +52,7 @@ public class ClientNetworkHandler implements Runnable, ServerObserver {
     }
     /**
      * It sets up the connection with the server and prepare the client to receive ping and events from the server and to answer those
-     *127.0.0.1
+     *
      */
 
     public void run() {
@@ -60,7 +65,6 @@ public class ClientNetworkHandler implements Runnable, ServerObserver {
             System.out.println("Server unreachable, because first client left the game before setting up the number of players!");
             return;
         }
-
         System.out.println("Connected");
         /*qua creo un'istanza della View chiamando il suo costruttore e passandogli questo network handler
         in modo tale da poi permetterci di chiamare i metodi della View sotto che dovranno gestire l'input e l'output
@@ -110,10 +114,16 @@ public class ClientNetworkHandler implements Runnable, ServerObserver {
 
                 }
             }
-            if (!finish)
-                cli.updateGo();
+            if (!finish){
+                if(this.cli!=null){
+                    cli.updateGo();
+                }else if(gh!=null){
+                    gh.updateGo();
+                }else{
+                    System.out.println("Errore nella costruzione delle interfacce");
+                }
+            }
 
-            // per evitare di avere un'eccezione nel caso in cui il client scriva sull'output stream del server
             //System.out.println("è arrivato il comando"+ fromServer.getCommand());
             synchronized (this){
                 while(isRead == false && finish == false)
@@ -182,11 +192,10 @@ public class ClientNetworkHandler implements Runnable, ServerObserver {
         canWrite = false;
         //System.out.println("Mando l'evento "+ eventToServer.getBox());
         try {
-
-                output.writeObject(eventToServer);
+            output.writeObject(eventToServer);
         } catch (IOException e) {
-
-
+            e.printStackTrace();
+            System.out.println("server has died for vcevent");
         }
         canWrite = true;
         notifyAll();
@@ -216,10 +225,9 @@ public class ClientNetworkHandler implements Runnable, ServerObserver {
 
         VCEvent pingEventResponse = new VCEvent(ping, VCEvent.Event.ping);
         try {
-
-                output.writeObject(pingEventResponse);
+            output.writeObject(pingEventResponse);
         } catch (IOException e) {
-
+            System.out.println("server has died for ping");
         }
 
         canWrite = true;
