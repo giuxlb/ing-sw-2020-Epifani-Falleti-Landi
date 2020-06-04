@@ -32,6 +32,8 @@ public class TurnControl {
 
         //ask the player if they want to use the card effect
 
+        virtualView.notYourTurn(player);
+
         ctx.selectStrategy(this.card);
         //ctx.selectStrategy("");
         ArrayList<Coordinates> workers_pos = new ArrayList<>();

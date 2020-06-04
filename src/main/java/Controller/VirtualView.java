@@ -194,24 +194,20 @@ public class VirtualView {
     }
 
     /**
-     * It notifies the clientl that now it's not their turn
-     * @param playersNotPlaying are the players that won't play during this turn
+     * It notifies the clients that now it's not their turn
+     * @param playerPlaying is the player that is playing during this turn
      */
-    public void notYourTurn(Player[] playersNotPlaying,Player playerPlaying)
+    public void notYourTurn(Player playerPlaying)
     {
         ArrayList<String> player = new ArrayList<String>();
         player.add(playerPlaying.getUsername());
         player.add(playerPlaying.getGameCard());
         VCEvent evento = new VCEvent(player, VCEvent.Event.not_your_turn);
-        for (int i = 0; i <numberOfPlayers ; i++) {
-            for (int j = 0; j < numberOfPlayers-1; j++) {
-                if (players.get(i).getUsername().equals(playersNotPlaying[j].getUsername()))
-                {
-                    serverHandler.sendVCEventTo(evento,i);
-                }
+        for (int i = 0; i < numberOfPlayers; i++) {
+            if (!players.get(i).getUsername().equals(playerPlaying.getUsername())){
+                serverHandler.sendVCEventTo(evento,i);
             }
         }
-
     }
 
     /**
