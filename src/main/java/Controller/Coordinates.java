@@ -5,6 +5,9 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.Serializable;
 
+/***
+ * Utility object to store coordinates
+ */
 public class Coordinates implements Serializable {
     private int x;
     private int y;

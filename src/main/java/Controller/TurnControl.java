@@ -28,6 +28,10 @@ public class TurnControl {
         this.virtualView = virtualView;
     }
 
+    /**
+     * Standard flow of the turn
+     * @return an extra effect to be applied on the next turn, or a special error value (-1)
+     */
     public int start(){
 
         //ask the player if they want to use the card effect

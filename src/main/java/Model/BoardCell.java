@@ -16,7 +16,7 @@ public class BoardCell implements Serializable {
 
     /***
      * Put a worker on this BoardCell
-     * @param workerBuilder
+     * @param workerBuilder the worker to set
      */
     public void setBoardCellWorker(Worker workerBuilder){
         this.workerBuilder=workerBuilder;
@@ -24,12 +24,15 @@ public class BoardCell implements Serializable {
 
     /***
      * Set height of current BoardCell to 0 (0 floor), 1 (1st floor), 2 (2nd floor), 3 (3rd floor) or 4 (dome)
-     * @param height
+     * @param height the value of height to set
      */
     public void setBoardCellHeight(int height){
         this.height=height;
     }
 
+    /***
+     * Increments the cell height
+     */
     public void buildOnBoarCell(){
         this.height++;
     }
@@ -43,16 +46,14 @@ public class BoardCell implements Serializable {
     }
 
     /***
-     *
-     * @return
+     * @return the worker on this cell
      */
     public Worker getWorkerBuilder(){
         return this.workerBuilder;
     }
 
     /***
-     *
-     * @return
+     * @return the height of this cell
      */
     public int getHeight() {
         return height;

@@ -53,7 +53,7 @@ public class Worker implements Serializable {
 
     /***
      *
-     * @param c
+     * @param c set the color
      */
     public void setColor(Color c){
         this.color=c;

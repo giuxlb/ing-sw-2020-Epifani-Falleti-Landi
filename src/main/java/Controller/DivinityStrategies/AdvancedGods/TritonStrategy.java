@@ -12,6 +12,16 @@ import Model.Worker;
 import java.util.ArrayList;
 /*Tuo spostamento: ogni volta che il tuo lavoratore si sposta su una casella perimetrale, può subito spostarsi di nuovo*/
 public class TritonStrategy extends DefaultStrategy implements TurnStrategy {
+    /***
+     * Enters a move loop, and exits only when the worker lands on a perimetral spot or the player choses to stop.
+     * @param player the player that is playing this turn
+     * @param worker the chosen worker
+     * @param board the board
+     * @param game the game
+     * @param extraEffect applied on this turn
+     * @param vview the virtualview
+     * @return extra effect or error value
+     */
     public int turn(Player player, Worker worker, Board board, Game game, int extraEffect, VirtualView vview){
         /*Calcolo l'extra effect di questo turno*/
         boolean athenaeffect = false;

@@ -9,6 +9,18 @@ import java.util.ArrayList;
 /*Fine del tuo turno: puoi rimuovere un blocco libero (non una cupola) adiacente al lavoratore che non hai mosso.*/
 public class AresStrategy extends DefaultStrategy implements TurnStrategy {
 
+    /**
+     * After the normal turn, it finds the other worker and calculates the list of available remove spots.
+     * If the list is not empty, asks the player for the effect activation. If the player accept,
+     * asks the player which block to remove.
+     * @param player the player that is playing this turn
+     * @param worker the chosen worker
+     * @param board the board
+     * @param game the game
+     * @param extraEffect applied on this turn
+     * @param vview the virtual view
+     * @return extra effext or error value
+     */
     public int turn(Player player, Worker worker, Board board, Game game, int extraEffect, VirtualView vview){
         /*Calcolo l'extra effect di questo turno*/
         boolean athenaeffect = false;
@@ -91,6 +103,12 @@ public class AresStrategy extends DefaultStrategy implements TurnStrategy {
         return 0;
     }
 
+    /***
+     * Finds the spots that are available to be removed
+     * @param worker the worker that is removing
+     * @param board the board
+     * @return the arraylist of available positions
+     */
     public ArrayList<Coordinates> checkAvailableRemoveSpots(Worker worker, Board board){
         BoardCell[][] boardCopy = board.getBoardGame();
         int pos_x = worker.getPositionX();

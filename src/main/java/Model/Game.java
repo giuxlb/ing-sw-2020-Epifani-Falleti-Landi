@@ -9,7 +9,6 @@ public class Game {
     private Player[] players;
     private Board boardGame;
     private int turnNumber;
-    private TurnPhases turnPhase;
     private ArrayList<String> availableCards;
     private ArrayList<String> chosenCards;
     private boolean gameStopped;
@@ -92,6 +91,10 @@ public class Game {
 
     }
 
+    /***
+     * Removes a player from the game
+     * @param p the player to remove
+     */
     public void playerLose(Player p){
         lastLostPlayer=p;
 
@@ -140,17 +143,6 @@ public class Game {
             turnNumber = (turnNumber+1)%3;
         else
             turnNumber = (turnNumber+1)%2;
-    }
-
-    /**
-     * it changes the phase of the turn of a player
-     */
-    public void nextTurnPhase()
-    {
-        turnPhase = turnPhase.changeFrom();
-        if (turnPhase == TurnPhases.CHANGE_PLAYER)
-            this.nextTurnNumber();
-
     }
 
     /***
@@ -226,11 +218,18 @@ public class Game {
         return players;
     }
 
+    /***
+     *
+     * @return the board of this game
+     */
     public Board getBoardGame() {
         return boardGame;
     }
 
-
+    /***
+     *
+     * @param boardGame set the board
+     */
     public void setBoardGame(Board boardGame) {
         this.boardGame = boardGame;
     }
@@ -240,10 +239,6 @@ public class Game {
         ArrayList<Board> board = new ArrayList<Board>();
         board.add(boardGame);
         return Collections.unmodifiableList(board);
-    }
-
-    public TurnPhases getTurnPhase() {
-        return turnPhase;
     }
 
     public void setChosenCards(ArrayList<String> chosenCards) {

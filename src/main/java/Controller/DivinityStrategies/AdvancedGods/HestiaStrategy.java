@@ -11,7 +11,16 @@ import java.util.ArrayList;
 /*Tua costruzione: il tuo lavoratore può costruire una volta in più, anche nella stessa casella ma non in una casella perimetrale.*/
 public class HestiaStrategy extends DefaultStrategy implements TurnStrategy {
 
-
+    /***
+     * Standard turn but after the build it does another build but using the hestia checkAvailbleBuildSpots.
+     * @param player the player that is playing this turn
+     * @param worker the chosen worker
+     * @param board the board
+     * @param game the game
+     * @param extraEffect applied on this turn
+     * @param vview the virtualview
+     * @return extra effect or error value
+     */
     public int turn(Player player, Worker worker, Board board, Game game, int extraEffect, VirtualView vview){
         /*Calcolo l'extra effect di questo turno*/
         boolean athenaeffect = false;
@@ -87,7 +96,13 @@ public class HestiaStrategy extends DefaultStrategy implements TurnStrategy {
         return 0;
     }
 
-
+    /***
+     * Similar to the standard function, but excludes the perimetral cells
+     * @param player the player
+     * @param worker the worker that is building
+     * @param board board
+     * @return the list of available builds
+     */
     public ArrayList<Coordinates> checkAvailableBuildSpots(Player player,Worker worker, Board board){
         int pos_x=worker.getPositionX();
         int pos_y=worker.getPositionY();

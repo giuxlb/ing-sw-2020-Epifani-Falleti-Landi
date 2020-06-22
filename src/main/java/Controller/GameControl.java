@@ -43,7 +43,7 @@ public class GameControl {
             System.out.println("Qui");
             try{
                 TimeUnit.MILLISECONDS.sleep(10);}
-            catch (InterruptedException e){System.out.println("Interrupted exception");};
+            catch (InterruptedException e){System.out.println("Interrupted exception");}
         }
 
         //prendo nome, data, e numero giocatori dal client 0
@@ -57,9 +57,9 @@ public class GameControl {
      * After adding all the player, send the unsorted array of players to the virtualview and
      * then sorts the array in gamecontrol.
      */
-    public void acceptPlayers(){
+    private void acceptPlayers(){
         int playerNumber = virtualView.getNumberOfPlayers();
-        String received_player_name = null;
+        String received_player_name;
         String color_to_send = null;
         Data received_player_date;
         boolean isWrong;
@@ -104,7 +104,10 @@ public class GameControl {
     }
 
 
-    public void startGame(){
+    /**
+     * the standard loop of the game
+     */
+    private void startGame(){
 
         if(this.exit) return;
 
@@ -271,7 +274,7 @@ public class GameControl {
      * Method that starts the currentPlayer's turn, this
      * method will be inserted in a loop in startGame
      */
-    public int startNextTurn(int extra_turn_effect){
+    private int startNextTurn(int extra_turn_effect){
         TurnControl turn = new TurnControl(players.get(game.getTurnNumber()),extra_turn_effect,game.getBoardGame(),game,virtualView);
         return turn.start();
     }
@@ -300,7 +303,7 @@ public class GameControl {
     /***
      * Sorts the Arraylist of players in the Controller by age, the younger first
      */
-    public void sortPlayersByAge(){
+    private void sortPlayersByAge(){
         if(this.players.size()==3){
             if(!this.players.get(0).getBirthDate().isGreaterthan(this.players.get(1).getBirthDate())){
                 Collections.swap(players,0,1);
@@ -334,7 +337,7 @@ public class GameControl {
     }
 
 
-    public boolean checkNewGame(){
+    private boolean checkNewGame(){
        return this.virtualView.isStartNewGame();
     }
 

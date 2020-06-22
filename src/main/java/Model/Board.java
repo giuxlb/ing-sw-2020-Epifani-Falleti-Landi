@@ -94,6 +94,10 @@ public class Board implements Serializable {
         return this.boardGame[i][j].getWorkerBuilder();
     }
 
+    /***
+     * Creates a exact copy of board b
+     * @param b the board to copy
+     */
     public void deepCopy(Board b)
     {
         int counter = 0;
@@ -113,6 +117,7 @@ public class Board implements Serializable {
             }
         }
     }
+
     public void readObject(ObjectInputStream stream) throws IOException,ClassNotFoundException
     {
         stream.defaultReadObject();

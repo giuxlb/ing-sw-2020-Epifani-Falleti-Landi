@@ -13,6 +13,17 @@ import java.util.ArrayList;
 
 /*Condizione di vittoria: vinci anche quando ci sono 5 torri complete.*/
 public class ChronusStrategy extends DefaultStrategy implements TurnStrategy {
+
+    /***
+     * Standard turn, but it also checks the chronus win condition at the start of the turn and after the build.
+     * @param player the player that is playing this turn
+     * @param worker the chosen worker
+     * @param board the board
+     * @param game the game
+     * @param extraEffect applied on this turn
+     * @param vview the virtualview
+     * @return extra effect or error value
+     */
     public int turn(Player player, Worker worker, Board board, Game game, int extraEffect, VirtualView vview){
         boolean win = checkChronusWinCondition(board);
         if (win){
@@ -86,6 +97,11 @@ public class ChronusStrategy extends DefaultStrategy implements TurnStrategy {
         return 0;
     }
 
+    /***
+     * Checks if on the entire board there are at least 5 full towers (height = 4)
+     * @param board the board
+     * @return true if there are 5 or more towers
+     */
     private boolean checkChronusWinCondition(Board board){
         int count=0;
         for(int i=0;i<5;i++){

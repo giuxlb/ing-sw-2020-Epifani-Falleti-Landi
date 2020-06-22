@@ -17,6 +17,9 @@ import Model.Worker;
 import java.util.ArrayList;
 import java.util.List;
 
+/***
+ * Like a normal turn, but it detects if the player has gone up a level, and returns 1 if it is.
+ */
 public class AthenaStrategy extends DefaultStrategy implements TurnStrategy {
     public int turn(Player player, Worker worker, Board board, Game game, int extraEffect, VirtualView vview){
         /*Calcolo l'extra effect di questo turno*/

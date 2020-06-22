@@ -189,9 +189,6 @@ public class DefaultStrategy implements TurnStrategy {
      * @return true if the player has won
      */
     public boolean checkWinCondition(Coordinates starting_position,Coordinates final_position, Board board){
-        if (board.getBoardGame()[starting_position.getX()][starting_position.getY()].getHeight()==2 && board.getBoardGame()[final_position.getX()][final_position.getY()].getHeight()==3){
-            return true;
-        }
-        return false;
+        return board.getBoardGame()[starting_position.getX()][starting_position.getY()].getHeight() == 2 && board.getBoardGame()[final_position.getX()][final_position.getY()].getHeight() == 3;
     }
 }

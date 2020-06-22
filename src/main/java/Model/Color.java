@@ -30,7 +30,7 @@ public enum Color {
     }
 
     /***
-     * Override toStricg() methods
+     * Override toString() methods
      * @return String representation of the current object
      */
     @Override
