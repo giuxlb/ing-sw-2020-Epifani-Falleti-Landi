@@ -29,7 +29,7 @@ public class ApolloStrategyTest {
         strategy = new DefaultStrategy();
         context = new DivinityContext();
         context.selectStrategy("APOLLO");
-        player_1 = new Player("Adri",new Data(30, 7,1998));
+        player_1 = new Player("Adrii",new Data(30, 7,1998));
         game.addPlayer(player_1);
         game.chooseInitialPosition(player_1,0,1,0);
     }
