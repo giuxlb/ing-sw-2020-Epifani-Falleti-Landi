@@ -1,0 +1,217 @@
+
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html id="htmlId">
+<head>
+  <title>Coverage Report :: Board</title>
+  <style type="text/css">
+    @import "../../.css/coverage.css";
+  </style>
+</head>
+
+<body>
+<div class="header"></div>
+
+<div class="content">
+<div class="breadCrumbs">
+    [ <a href="../../index.html">all classes</a> ]
+    [ <a href="../index.html">Model</a> ]
+</div>
+
+<h1>Coverage Summary for Class: Board (Model)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Class, %
+</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">Board</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (1/ 1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    72,7%
+  </span>
+  <span class="absValue">
+    (8/ 11)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    57,1%
+  </span>
+  <span class="absValue">
+    (20/ 35)
+  </span>
+</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<div class="sourceCode"><i>1</i>&nbsp;package Model;
+<i>2</i>&nbsp;
+<i>3</i>&nbsp;import java.io.IOException;
+<i>4</i>&nbsp;import java.io.ObjectInputStream;
+<i>5</i>&nbsp;import java.io.ObjectOutputStream;
+<i>6</i>&nbsp;import java.io.Serializable;
+<i>7</i>&nbsp;import java.util.ArrayList;
+<i>8</i>&nbsp;
+<i>9</i>&nbsp;public class Board implements Serializable {
+<i>10</i>&nbsp;    public final static int DIM=5;
+<i>11</i>&nbsp;    private static final long serialVersionUID = 1216730102358212421L;
+<i>12</i>&nbsp;    private BoardCell[][] boardGame;
+<i>13</i>&nbsp;
+<i>14</i>&nbsp;
+<i>15</i>&nbsp;    /***
+<i>16</i>&nbsp;     * Constructor for this class
+<i>17</i>&nbsp;     */
+<b class="fc"><i>18</i>&nbsp;    public Board(){</b>
+<b class="fc"><i>19</i>&nbsp;        this.boardGame= new BoardCell[DIM][DIM];</b>
+<i>20</i>&nbsp;
+<b class="fc"><i>21</i>&nbsp;        for(int i=0;i&lt;DIM;i++){</b>
+<b class="fc"><i>22</i>&nbsp;            for(int j=0;j&lt;DIM;j++){</b>
+<b class="fc"><i>23</i>&nbsp;                this.boardGame[i][j]= new BoardCell();</b>
+<i>24</i>&nbsp;            }
+<i>25</i>&nbsp;        }
+<b class="fc"><i>26</i>&nbsp;    }</b>
+<i>27</i>&nbsp;
+<i>28</i>&nbsp;    /***
+<i>29</i>&nbsp;     * Reset boardGame to initial conditions
+<i>30</i>&nbsp;     */
+<i>31</i>&nbsp;    public void reset(){
+<b class="fc"><i>32</i>&nbsp;        for(int i=0;i&lt;DIM;i++){</b>
+<b class="fc"><i>33</i>&nbsp;            for(int j=0;j&lt;DIM;j++){</b>
+<b class="fc"><i>34</i>&nbsp;                this.boardGame[i][j].setBoardCellHeight(0);</b>
+<b class="fc"><i>35</i>&nbsp;                this.boardGame[i][j].setBoardCellWorker(null);</b>
+<i>36</i>&nbsp;            }
+<i>37</i>&nbsp;        }
+<b class="fc"><i>38</i>&nbsp;    }</b>
+<i>39</i>&nbsp;
+<i>40</i>&nbsp;    /***
+<i>41</i>&nbsp;     * Call setBoardCellHeight to modify the cell&#39;s height in (i,j) on board
+<i>42</i>&nbsp;     * @param i i-position of needed boardCell
+<i>43</i>&nbsp;     * @param j j-position of needed boardCell
+<i>44</i>&nbsp;     * @param height new height value of boardCell height
+<i>45</i>&nbsp;     */
+<i>46</i>&nbsp;    public void setBoardHeight(int i, int j, int height){
+<b class="fc"><i>47</i>&nbsp;        this.boardGame[i][j].setBoardCellHeight(height);</b>
+<b class="fc"><i>48</i>&nbsp;    }</b>
+<i>49</i>&nbsp;
+<i>50</i>&nbsp;    /***
+<i>51</i>&nbsp;     * Build a new level on boardCell (i,j)
+<i>52</i>&nbsp;     * @param i i-position of needed boardCell
+<i>53</i>&nbsp;     * @param j j-position of needed boardCell
+<i>54</i>&nbsp;     */
+<i>55</i>&nbsp;    public void buildOnBoard(int i, int j){
+<b class="fc"><i>56</i>&nbsp;        boardGame[i][j].buildOnBoarCell();</b>
+<b class="fc"><i>57</i>&nbsp;    }</b>
+<i>58</i>&nbsp;
+<i>59</i>&nbsp;    /***
+<i>60</i>&nbsp;     * Put a worker on boardCell (i,j)
+<i>61</i>&nbsp;     * @param i i-position of needed boardCell
+<i>62</i>&nbsp;     * @param j j-position of needed boardCell
+<i>63</i>&nbsp;     * @param w worker reference for needed worker
+<i>64</i>&nbsp;     */
+<i>65</i>&nbsp;    public void setBoardWorker(int i, int j, Worker w){
+<b class="fc"><i>66</i>&nbsp;        this.boardGame[i][j].setBoardCellWorker(w);</b>
+<b class="fc"><i>67</i>&nbsp;    }</b>
+<i>68</i>&nbsp;
+<i>69</i>&nbsp;    /***
+<i>70</i>&nbsp;     * Get reference of boardGame
+<i>71</i>&nbsp;     * @return reference of boardGame
+<i>72</i>&nbsp;     */
+<i>73</i>&nbsp;    public BoardCell[][] getBoardGame() {
+<b class="fc"><i>74</i>&nbsp;        return boardGame;</b>
+<i>75</i>&nbsp;    }
+<i>76</i>&nbsp;
+<i>77</i>&nbsp;    /***
+<i>78</i>&nbsp;     * Get height from boardCell (i,j)
+<i>79</i>&nbsp;     * @param i i-position of needed boardCell
+<i>80</i>&nbsp;     * @param j j-position of needed boardCell
+<i>81</i>&nbsp;     * @return height of boardCell(i,j)
+<i>82</i>&nbsp;     */
+<i>83</i>&nbsp;    public int getBoardHeight(int i, int j) {
+<b class="fc"><i>84</i>&nbsp;        return this.boardGame[i][j].getHeight();</b>
+<i>85</i>&nbsp;    }
+<i>86</i>&nbsp;
+<i>87</i>&nbsp;    /***
+<i>88</i>&nbsp;     * Get worker from boardCell (i,j)
+<i>89</i>&nbsp;     * @param i i-position of needed boardCell
+<i>90</i>&nbsp;     * @param j j-position of needed boardCell
+<i>91</i>&nbsp;     * @return pointer to needed worker
+<i>92</i>&nbsp;     */
+<i>93</i>&nbsp;    public Worker getBoardWorker(int i, int j){
+<b class="fc"><i>94</i>&nbsp;        return this.boardGame[i][j].getWorkerBuilder();</b>
+<i>95</i>&nbsp;    }
+<i>96</i>&nbsp;
+<i>97</i>&nbsp;    /***
+<i>98</i>&nbsp;     * Creates a exact copy of board b
+<i>99</i>&nbsp;     * @param b the board to copy
+<i>100</i>&nbsp;     */
+<i>101</i>&nbsp;    public void deepCopy(Board b)
+<i>102</i>&nbsp;    {
+<b class="nc"><i>103</i>&nbsp;        int counter = 0;</b>
+<b class="nc"><i>104</i>&nbsp;        for (int i = 0; i &lt;5 ; i++) {</b>
+<b class="nc"><i>105</i>&nbsp;            for (int j = 0; j &lt; 5; j++) {</b>
+<b class="nc"><i>106</i>&nbsp;                this.boardGame[i][j].setBoardCellHeight(0);</b>
+<b class="nc"><i>107</i>&nbsp;                this.boardGame[i][j].setBoardCellHeight(b.getBoardGame()[i][j].getHeight());</b>
+<b class="nc"><i>108</i>&nbsp;                this.boardGame[i][j].setBoardCellWorker(null);</b>
+<b class="nc"><i>109</i>&nbsp;                if (b.getBoardGame()[i][j].getWorkerBuilder() != null) {</b>
+<i>110</i>&nbsp;
+<b class="nc"><i>111</i>&nbsp;                    this.boardGame[i][j].setBoardCellWorker(new Worker(i,j,b.getBoardGame()[i][j].getWorkerBuilder().getColor()));</b>
+<i>112</i>&nbsp;                }
+<i>113</i>&nbsp;                else {
+<b class="nc"><i>114</i>&nbsp;                    this.boardGame[i][j].setBoardCellWorker(null);</b>
+<i>115</i>&nbsp;                }
+<b class="nc"><i>116</i>&nbsp;                counter++;</b>
+<i>117</i>&nbsp;            }
+<i>118</i>&nbsp;        }
+<b class="nc"><i>119</i>&nbsp;    }</b>
+<i>120</i>&nbsp;
+<i>121</i>&nbsp;    public void readObject(ObjectInputStream stream) throws IOException,ClassNotFoundException
+<i>122</i>&nbsp;    {
+<b class="nc"><i>123</i>&nbsp;        stream.defaultReadObject();</b>
+<b class="nc"><i>124</i>&nbsp;    }</b>
+<i>125</i>&nbsp;
+<i>126</i>&nbsp;    public void writeObject(ObjectOutputStream stream) throws IOException
+<i>127</i>&nbsp;    {
+<b class="nc"><i>128</i>&nbsp;        stream.defaultWriteObject();</b>
+<b class="nc"><i>129</i>&nbsp;    }</b>
+<i>130</i>&nbsp;
+<i>131</i>&nbsp;
+<i>132</i>&nbsp;
+<i>133</i>&nbsp;
+<i>134</i>&nbsp;}
+</div>
+</div>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2020-06-22 19:05</div>
+</div>
+</body>
+</html>

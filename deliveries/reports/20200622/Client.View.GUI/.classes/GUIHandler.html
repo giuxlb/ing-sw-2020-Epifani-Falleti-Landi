@@ -1,0 +1,430 @@
+
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html id="htmlId">
+<head>
+  <title>Coverage Report :: GUIHandler</title>
+  <style type="text/css">
+    @import "../../.css/coverage.css";
+  </style>
+</head>
+
+<body>
+<div class="header"></div>
+
+<div class="content">
+<div class="breadCrumbs">
+    [ <a href="../../index.html">all classes</a> ]
+    [ <a href="../index.html">Client.View.GUI</a> ]
+</div>
+
+<h1>Coverage Summary for Class: GUIHandler (Client.View.GUI)</h1>
+
+<table class="coverageStats">
+
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">GUIHandler</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/ 9)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/ 95)
+  </span>
+</td>
+</tr>
+  <tr>
+    <td class="name">GUIHandler$1</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/ 1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/ 1)
+  </span>
+</td>
+  </tr>
+<tr>
+  <td class="name"><strong>total</strong></td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/ 10)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/ 96)
+  </span>
+</td>
+</tr>
+</table>
+
+<br/>
+<br/>
+
+
+<div class="sourceCode"><i>1</i>&nbsp;package Client.View.GUI;
+<i>2</i>&nbsp;import javax.swing.*;
+<i>3</i>&nbsp;
+<i>4</i>&nbsp;import Client.View.ClientNetworkHandler;
+<i>5</i>&nbsp;import Client.View.Data;
+<i>6</i>&nbsp;import Controller.Coordinates;
+<i>7</i>&nbsp;import Controller.Network.VCEvent;
+<i>8</i>&nbsp;import Model.Board;
+<i>9</i>&nbsp;import Model.SocketBoardCell;
+<i>10</i>&nbsp;import Model.Worker;
+<i>11</i>&nbsp;
+<i>12</i>&nbsp;import java.awt.*;
+<i>13</i>&nbsp;import java.io.IOException;
+<i>14</i>&nbsp;import java.io.ObjectInputStream;
+<i>15</i>&nbsp;import java.util.ArrayList;
+<i>16</i>&nbsp;
+<i>17</i>&nbsp;
+<i>18</i>&nbsp;public class GUIHandler {
+<i>19</i>&nbsp;    //GUI elements to handle
+<i>20</i>&nbsp;    private GUI GUI;
+<i>21</i>&nbsp;
+<i>22</i>&nbsp;    //To connect
+<i>23</i>&nbsp;    private ClientNetworkHandler cnh;
+<i>24</i>&nbsp;    private Thread game;
+<i>25</i>&nbsp;    private boolean updateView;
+<i>26</i>&nbsp;
+<i>27</i>&nbsp;    //Support elements
+<i>28</i>&nbsp;    private Board b;
+<i>29</i>&nbsp;    //ATTENZIONE: potrebbe non servire
+<i>30</i>&nbsp;    private int playersNumber;
+<i>31</i>&nbsp;    private String myGod;
+<i>32</i>&nbsp;
+<b class="nc"><i>33</i>&nbsp;    public GUIHandler(GUI GUI){</b>
+<b class="nc"><i>34</i>&nbsp;        this.GUI = GUI;</b>
+<i>35</i>&nbsp;
+<b class="nc"><i>36</i>&nbsp;    }</b>
+<i>37</i>&nbsp;
+<i>38</i>&nbsp;    public void launchConnection(){
+<i>39</i>&nbsp;        //Creazione della socket del client
+<b class="nc"><i>40</i>&nbsp;        cnh = new ClientNetworkHandler(this);</b>
+<i>41</i>&nbsp;
+<i>42</i>&nbsp;        //Thread per l&#39;esecuzione principale della CLI
+<b class="nc"><i>43</i>&nbsp;        game = new Thread(cnh);</b>
+<b class="nc"><i>44</i>&nbsp;        game.start();</b>
+<i>45</i>&nbsp;
+<i>46</i>&nbsp;        //Ciclo di gioco
+<b class="nc"><i>47</i>&nbsp;        checkEvent(cnh);</b>
+<i>48</i>&nbsp;
+<b class="nc"><i>49</i>&nbsp;        cnh.setFinish(true);</b>
+<b class="nc"><i>50</i>&nbsp;    }</b>
+<i>51</i>&nbsp;
+<i>52</i>&nbsp;    public synchronized void updateGo()
+<i>53</i>&nbsp;    {
+<b class="nc"><i>54</i>&nbsp;        updateView = true;</b>
+<b class="nc"><i>55</i>&nbsp;        notifyAll();</b>
+<b class="nc"><i>56</i>&nbsp;    }</b>
+<i>57</i>&nbsp;    public void update()
+<i>58</i>&nbsp;    {
+<b class="nc"><i>59</i>&nbsp;        synchronized (this)</b>
+<i>60</i>&nbsp;        {
+<b class="nc"><i>61</i>&nbsp;            while(updateView == false)</b>
+<i>62</i>&nbsp;            {
+<i>63</i>&nbsp;                try{
+<b class="nc"><i>64</i>&nbsp;                    wait();</b>
+<i>65</i>&nbsp;                }
+<b class="nc"><i>66</i>&nbsp;                catch(InterruptedException e){}</b>
+<i>67</i>&nbsp;            }
+<b class="nc"><i>68</i>&nbsp;        }</b>
+<b class="nc"><i>69</i>&nbsp;        updateView = false;</b>
+<i>70</i>&nbsp;
+<b class="nc"><i>71</i>&nbsp;    }</b>
+<i>72</i>&nbsp;
+<i>73</i>&nbsp;
+<i>74</i>&nbsp;   private void checkEvent(ClientNetworkHandler cnh)  {
+<b class="nc"><i>75</i>&nbsp;       boolean endGame = false;</b>
+<i>76</i>&nbsp;        // Board copy = new Board();
+<i>77</i>&nbsp;        // int firstTimeHeMoves = 1;
+<b class="nc"><i>78</i>&nbsp;        while(endGame==false){</b>
+<b class="nc"><i>79</i>&nbsp;            update();</b>
+<b class="nc"><i>80</i>&nbsp;            VCEvent evento = cnh.getFromServer();</b>
+<b class="nc"><i>81</i>&nbsp;            cnh.readByView();</b>
+<b class="nc"><i>82</i>&nbsp;            switch (evento.getCommand()){</b>
+<i>83</i>&nbsp;                /*case send_color:
+<i>84</i>&nbsp;                    Object objcectColorName = evento.getBox();
+<i>85</i>&nbsp;                    if(objcectColorName instanceof String){
+<i>86</i>&nbsp;                        this.myColor = (String) objcectColorName;
+<i>87</i>&nbsp;                        System.out.println(&quot;I tuoi worker saranno di colore &quot; + myColor);
+<i>88</i>&nbsp;                    }else{
+<i>89</i>&nbsp;                        System.out.println(&quot;Errore! La stringa che dovrebbe rappresentare in nome del mio colore è arrivata corrotta&quot;);
+<i>90</i>&nbsp;                    }
+<i>91</i>&nbsp;                    break;*/
+<i>92</i>&nbsp;                case setup_request:
+<i>93</i>&nbsp;                    //Da cambiare
+<b class="nc"><i>94</i>&nbsp;                    GUI.getMessageArea().setText(&quot;Sto chiedendo la data&quot;);</b>
+<b class="nc"><i>95</i>&nbsp;                    Object options[] = {&quot;2&quot;,&quot;3&quot;};</b>
+<b class="nc"><i>96</i>&nbsp;                    int n = JOptionPane.showOptionDialog(GUI.getMainFrame(),</b>
+<i>97</i>&nbsp;                            &quot;How may players are going to connect?&quot;,
+<i>98</i>&nbsp;                            &quot;Select number of players&quot;,
+<i>99</i>&nbsp;                            JOptionPane.YES_NO_OPTION,
+<i>100</i>&nbsp;                            JOptionPane.QUESTION_MESSAGE,
+<i>101</i>&nbsp;                            null, //Qua va inserita l&#39;icona del gioco
+<i>102</i>&nbsp;                            options,
+<i>103</i>&nbsp;                            options[0]);//In realtà se chiude il gioco deve terminare
+<i>104</i>&nbsp;
+<b class="nc"><i>105</i>&nbsp;                    System.out.println(n);</b>
+<b class="nc"><i>106</i>&nbsp;                    n=n+2;</b>
+<b class="nc"><i>107</i>&nbsp;                    this.playersNumber=n;</b>
+<b class="nc"><i>108</i>&nbsp;                    buildEvent(cnh, n, VCEvent.Event.setup_request);</b>
+<i>109</i>&nbsp;                    //Togli dopo aver debuggato questa parte di codice
+<b class="nc"><i>110</i>&nbsp;                    endGame=true;</b>
+<b class="nc"><i>111</i>&nbsp;                    break;</b>
+<i>112</i>&nbsp;                /*case username_request :
+<i>113</i>&nbsp;                    System.out.println(&quot;Inserisci il tuo nome utente&quot;);
+<i>114</i>&nbsp;                    String username=s.nextLine();
+<i>115</i>&nbsp;                    buildEvent(cnh, username, VCEvent.Event.username_request);
+<i>116</i>&nbsp;                    break;
+<i>117</i>&nbsp;                case wrong_username:
+<i>118</i>&nbsp;                    Object objectWrongUsername = evento.getBox();
+<i>119</i>&nbsp;                    System.out.println(&quot;Errore! Hai inserito uno username già scelto da un altro giocatore\nReinserire username&quot;);
+<i>120</i>&nbsp;                    String newUsermane= s.nextLine();
+<i>121</i>&nbsp;                    buildEvent(cnh,newUsermane, VCEvent.Event.wrong_username);
+<i>122</i>&nbsp;                    break;
+<i>123</i>&nbsp;                case date_request:
+<i>124</i>&nbsp;                    insertDate();
+<i>125</i>&nbsp;                    dateOfBirth = new Data(giorno,mese,anno);
+<i>126</i>&nbsp;                    s.nextLine();
+<i>127</i>&nbsp;                    while(c.controllaData(dateOfBirth)==false){
+<i>128</i>&nbsp;                        System.out.println(&quot;Data non valida, per favore inserire nuovamente&quot;);
+<i>129</i>&nbsp;                        insertDate();
+<i>130</i>&nbsp;                        s.nextLine();
+<i>131</i>&nbsp;                        this.dateOfBirth = new Data(giorno,mese,anno);
+<i>132</i>&nbsp;                    }
+<i>133</i>&nbsp;                    buildEvent(cnh,dateOfBirth, VCEvent.Event.date_request);
+<i>134</i>&nbsp;                    break;*/
+<i>135</i>&nbsp;                case not_your_turn:
+<b class="nc"><i>136</i>&nbsp;                    Object objectCurrentPlayerInformation = evento.getBox();</b>
+<b class="nc"><i>137</i>&nbsp;                    ArrayList&lt;String&gt; currentPlayerInformation= (ArrayList&lt;String&gt;) objectCurrentPlayerInformation;</b>
+<b class="nc"><i>138</i>&nbsp;                    GUI.getMessageArea().setText(currentPlayerInformation.get(0) + &quot; is playing with god &quot; + currentPlayerInformation.get(1));</b>
+<b class="nc"><i>139</i>&nbsp;                    break;</b>
+<i>140</i>&nbsp;                case update:
+<b class="nc"><i>141</i>&nbsp;                    Object objectBoardCell = evento.getBox();</b>
+<b class="nc"><i>142</i>&nbsp;                    ArrayList&lt;SocketBoardCell&gt; socketBoardCell = (ArrayList&lt;SocketBoardCell&gt;) objectBoardCell;</b>
+<b class="nc"><i>143</i>&nbsp;                    recreateBoardfromSocketBoardCell(socketBoardCell);</b>
+<b class="nc"><i>144</i>&nbsp;                    turnModelBoardintoGUIBoard(b);</b>
+<b class="nc"><i>145</i>&nbsp;                    break;/*</b>
+<i>146</i>&nbsp;                case ask_for_worker:
+<i>147</i>&nbsp;                    //ATTENZIONE: Una parte di ask_for_worker contiene del codice duplicato con sendCells(). CORREGGERE!!!
+<i>148</i>&nbsp;                    Object objectChoices = evento.getBox();
+<i>149</i>&nbsp;                    ArrayList&lt;Coordinates&gt; positionWorkers = (ArrayList&lt;Coordinates&gt;) objectChoices;
+<i>150</i>&nbsp;                    System.out.println(&quot;Puoi muovere i seguenti worker: &quot;);
+<i>151</i>&nbsp;                    for (Coordinates c: positionWorkers) {
+<i>152</i>&nbsp;                        System.out.println(&quot;Worker in posizione &quot;+ c.toString());
+<i>153</i>&nbsp;                    }
+<i>154</i>&nbsp;                    System.out.println(&quot;Quale worker vuoi muovere?&quot;);
+<i>155</i>&nbsp;                    int x=chooseCoordinate(xPosition);
+<i>156</i>&nbsp;                    s.nextLine();
+<i>157</i>&nbsp;                    int y=chooseCoordinate(yPosition);
+<i>158</i>&nbsp;                    s.nextLine();
+<i>159</i>&nbsp;                    buildEvent(cnh,findIndex(positionWorkers,chosenCoordinates), VCEvent.Event.ask_for_worker);
+<i>160</i>&nbsp;                    break;
+<i>161</i>&nbsp;                case send_cells_move:
+<i>162</i>&nbsp;                    sendCells(movingPhase, cnh, VCEvent.Event.send_cells_move,evento);
+<i>163</i>&nbsp;                    break;
+<i>164</i>&nbsp;                case send_cells_build:
+<i>165</i>&nbsp;                    sendCells(buildingPhase, cnh, VCEvent.Event.send_cells_build,evento);
+<i>166</i>&nbsp;                    break;
+<i>167</i>&nbsp;                case send_cells_remove:
+<i>168</i>&nbsp;                    sendCells(removePhase,cnh, VCEvent.Event.send_cells_remove,evento);
+<i>169</i>&nbsp;                    break;
+<i>170</i>&nbsp;                case undo_request:
+<i>171</i>&nbsp;                    GUI.getMessageArea().setText(&quot;You can undo your move only in about 5 seconds. If you want to confirm press the button aside, please&quot;);
+<i>172</i>&nbsp;                    long start = System.currentTimeMillis();
+<i>173</i>&nbsp;                    while (true){
+<i>174</i>&nbsp;                        try {
+<i>175</i>&nbsp;                            if (!(((System.currentTimeMillis()-start) &lt; 5000) &amp;&amp; !reader.ready())) break;
+<i>176</i>&nbsp;                        } catch (IOException ex) { }
+<i>177</i>&nbsp;                    }
+<i>178</i>&nbsp;                    try {
+<i>179</i>&nbsp;                        if (reader.ready())
+<i>180</i>&nbsp;                            choose = Integer.parseInt(reader.readLine());
+<i>181</i>&nbsp;                    } catch (IOException ex) {
+<i>182</i>&nbsp;                        ex.printStackTrace();
+<i>183</i>&nbsp;                    }
+<i>184</i>&nbsp;
+<i>185</i>&nbsp;
+<i>186</i>&nbsp;                    if (choose == 1) {
+<i>187</i>&nbsp;                        firstTimeHeMoves = 1;
+<i>188</i>&nbsp;                        this.b.deepCopy(copy);
+<i>189</i>&nbsp;                    }
+<i>190</i>&nbsp;
+<i>191</i>&nbsp;
+<i>192</i>&nbsp;
+<i>193</i>&nbsp;
+<i>194</i>&nbsp;                    buildEvent(cnh,choose, VCEvent.Event.undo_request);
+<i>195</i>&nbsp;                    break;*/
+<i>196</i>&nbsp;                case you_lost:
+<b class="nc"><i>197</i>&nbsp;                    Object objectWinner = evento.getBox();</b>
+<b class="nc"><i>198</i>&nbsp;                    String winner = (String) objectWinner;</b>
+<b class="nc"><i>199</i>&nbsp;                    GUI.getMessageArea().setText(&quot;Partita conclusa il vincitore è &quot; + winner);</b>
+<b class="nc"><i>200</i>&nbsp;                    buildEvent(cnh,&quot;ho perso&quot;, VCEvent.Event.you_lost);</b>
+<b class="nc"><i>201</i>&nbsp;                    endGame=true;</b>
+<b class="nc"><i>202</i>&nbsp;                    break;</b>
+<i>203</i>&nbsp;                case you_won:
+<b class="nc"><i>204</i>&nbsp;                    GUI.getMessageArea().setText(&quot;Congratulazioni, sei il vincitore!&quot;);</b>
+<b class="nc"><i>205</i>&nbsp;                    buildEvent(cnh,&quot;ho vinto&quot;, VCEvent.Event.you_won);</b>
+<b class="nc"><i>206</i>&nbsp;                    endGame=true;</b>
+<b class="nc"><i>207</i>&nbsp;                    break;</b>
+<i>208</i>&nbsp;                case game_ended_foryou:
+<b class="nc"><i>209</i>&nbsp;                    GUI.getMessageArea().setText(&quot;Mi spiace, non puoi più muoverti con nessuno dei tuoi worker&quot;);</b>
+<b class="nc"><i>210</i>&nbsp;                    break;</b>
+<i>211</i>&nbsp;                case number_of_players:
+<b class="nc"><i>212</i>&nbsp;                    playersNumber = (Integer)evento.getBox();</b>
+<b class="nc"><i>213</i>&nbsp;                    break;</b>
+<i>214</i>&nbsp;                case ask_for_divinity_activation:
+<b class="nc"><i>215</i>&nbsp;                    Object[] choices = {&quot;Yes&quot;, &quot;No&quot;};</b>
+<b class="nc"><i>216</i>&nbsp;                    int choice = JOptionPane.showOptionDialog(GUI.getMainFrame(),</b>
+<i>217</i>&nbsp;                                    &quot;Do you want to use &quot; + myGod + &quot;&#39;s power ?&quot;,
+<i>218</i>&nbsp;                                    &quot;Card activation&quot;,
+<i>219</i>&nbsp;                                    JOptionPane.YES_NO_OPTION,
+<i>220</i>&nbsp;                                    JOptionPane.QUESTION_MESSAGE,
+<i>221</i>&nbsp;                                    null, //Ricordati di mettere l&#39;icona
+<i>222</i>&nbsp;                                    choices,
+<i>223</i>&nbsp;                                    choices[1]);
+<i>224</i>&nbsp;
+<b class="nc"><i>225</i>&nbsp;                    buildEvent(cnh, turnChoiceIntoCorrectOutput(choice), VCEvent.Event.ask_for_divinity_activation);</b>
+<i>226</i>&nbsp;                /*case send_all_cards:
+<i>227</i>&nbsp;                    System.out.println(&quot;Hai a disposizione le seguenti divinità:&quot;);
+<i>228</i>&nbsp;                    Object objectGods = evento.getBox();
+<i>229</i>&nbsp;                    ArrayList&lt;String&gt; gods= (ArrayList&lt;String&gt;)  objectGods;
+<i>230</i>&nbsp;
+<i>231</i>&nbsp;                    break;
+<i>232</i>&nbsp;                case send_chosen_cards:
+<i>233</i>&nbsp;                    System.out.println(&quot;Puoi scegliere tra le seguenti divinità:&quot;);
+<i>234</i>&nbsp;                    Object objectSentGods = evento.getBox();
+<i>235</i>&nbsp;                    //Non possiamo controllare se l&#39;ArrayList di Stringhe sia corrotto o meno
+<i>236</i>&nbsp;                    ArrayList&lt;String&gt; sentGods= (ArrayList&lt;String&gt;)  objectSentGods;
+<i>237</i>&nbsp;                    if(sentGods.size()==1){
+<i>238</i>&nbsp;                        System.out.println(&quot;La tua carta divinità sarà &quot; + sentGods.get(0));
+<i>239</i>&nbsp;                        this.myCard=sentGods.get(0);
+<i>240</i>&nbsp;                        //In realtà non ci sarebbe bisogno dello statement successivo
+<i>241</i>&nbsp;                        buildEvent(cnh, sentGods.get(0), VCEvent.Event.send_chosen_cards);
+<i>242</i>&nbsp;                    }else{
+<i>243</i>&nbsp;                        for(String god:sentGods){
+<i>244</i>&nbsp;                            System.out.print(god + &quot; &quot;);
+<i>245</i>&nbsp;                        }
+<i>246</i>&nbsp;                        System.out.println();
+<i>247</i>&nbsp;                        System.out.print(&quot;Digita il nome della divinità che preferisci -&gt;&quot;);
+<i>248</i>&nbsp;                        //Il controller deve controllare che effettivamente la divinità scelta sia un elemento delle divinità ricevute
+<i>249</i>&nbsp;                        String chosenGod= s.nextLine();
+<i>250</i>&nbsp;                        //chosenGod=validCard(chosenGod,sentGods);
+<i>251</i>&nbsp;                        this.myCard=chosenGod;
+<i>252</i>&nbsp;                        System.out.println();
+<i>253</i>&nbsp;                        buildEvent(cnh, chosenGod, VCEvent.Event.send_chosen_cards);
+<i>254</i>&nbsp;                    }
+<i>255</i>&nbsp;                    break;*/
+<i>256</i>&nbsp;                case player_disconnected_game_ended:
+<b class="nc"><i>257</i>&nbsp;                    Object objectPlayerDisconnected= evento.getBox();</b>
+<b class="nc"><i>258</i>&nbsp;                    String playerDisconnected = (String) objectPlayerDisconnected;</b>
+<i>259</i>&nbsp;                    //o sarebbe meglio una finestra di dialogo? Da vedere quando testerò la GUI
+<b class="nc"><i>260</i>&nbsp;                    GUI.getMessageArea().setText(&quot;Ops! Il giocatore &quot; + playerDisconnected + &quot; si è disconnesso, purtroppo la partita terminerà ora&quot;);</b>
+<b class="nc"><i>261</i>&nbsp;                    buildEvent(cnh, &quot;ho ricevuto la disconnessione di un client&quot;, VCEvent.Event.player_disconnected_game_ended);</b>
+<b class="nc"><i>262</i>&nbsp;                    endGame=true;</b>
+<b class="nc"><i>263</i>&nbsp;                    break;</b>
+<i>264</i>&nbsp;                default:
+<b class="nc"><i>265</i>&nbsp;                    System.out.println(&quot;Errore nel protocollo&quot;);</b>
+<i>266</i>&nbsp;                    break;
+<i>267</i>&nbsp;            }
+<i>268</i>&nbsp;
+<b class="nc"><i>269</i>&nbsp;        }</b>
+<b class="nc"><i>270</i>&nbsp;    }</b>
+<i>271</i>&nbsp;
+<i>272</i>&nbsp;
+<i>273</i>&nbsp;    private void recreateBoardfromSocketBoardCell(ArrayList&lt;SocketBoardCell&gt; socketBoardCell) {
+<b class="nc"><i>274</i>&nbsp;        this.b = new Board();</b>
+<i>275</i>&nbsp;
+<b class="nc"><i>276</i>&nbsp;        int counter = 0;</b>
+<b class="nc"><i>277</i>&nbsp;        for (int i = 0; i &lt; Board.DIM; i++) {</b>
+<b class="nc"><i>278</i>&nbsp;            for (int j = 0; j &lt; Board.DIM; j++) {</b>
+<b class="nc"><i>279</i>&nbsp;                b.setBoardHeight(i, j, socketBoardCell.get(counter).getHeight());</b>
+<b class="nc"><i>280</i>&nbsp;                if (socketBoardCell.get(counter).getWorkerColor() != null) {</b>
+<b class="nc"><i>281</i>&nbsp;                    b.setBoardWorker(i, j, new Worker(i, j, socketBoardCell.get(counter).getWorkerColor()));</b>
+<i>282</i>&nbsp;                } else {
+<b class="nc"><i>283</i>&nbsp;                    b.setBoardWorker(i, j, null);</b>
+<i>284</i>&nbsp;                }
+<b class="nc"><i>285</i>&nbsp;                counter++;</b>
+<i>286</i>&nbsp;            }
+<i>287</i>&nbsp;
+<i>288</i>&nbsp;        }
+<b class="nc"><i>289</i>&nbsp;    }</b>
+<i>290</i>&nbsp;
+<i>291</i>&nbsp;    //Da aggiornare una volta completate le risorse grafiche
+<i>292</i>&nbsp;    private void turnModelBoardintoGUIBoard(Board b){
+<b class="nc"><i>293</i>&nbsp;        for(int i=0;i&lt;Board.DIM;i++){</b>
+<b class="nc"><i>294</i>&nbsp;            for(int j=0;j&lt;Board.DIM;j++){</b>
+<b class="nc"><i>295</i>&nbsp;                if (b.getBoardWorker(i,j)==null){</b>
+<b class="nc"><i>296</i>&nbsp;                    GUI.getBoard()[i][j].setText(&quot;Worker: null\n&quot; + &quot;Height: &quot; + b.getBoardHeight(i,j));</b>
+<i>297</i>&nbsp;                }else{
+<b class="nc"><i>298</i>&nbsp;                    GUI.getBoard()[i][j].setText(b.getBoardWorker(i,j).getColor() + &quot;Worker: w\n&quot; + &quot;Height: &quot; + b.getBoardHeight(i,j));</b>
+<i>299</i>&nbsp;                }
+<i>300</i>&nbsp;            }
+<i>301</i>&nbsp;        }
+<b class="nc"><i>302</i>&nbsp;    }</b>
+<i>303</i>&nbsp;
+<i>304</i>&nbsp;    private void buildEvent(ClientNetworkHandler cnh, Object o, VCEvent.Event command){
+<b class="nc"><i>305</i>&nbsp;        VCEvent currentEvent= new VCEvent(o, command);</b>
+<b class="nc"><i>306</i>&nbsp;        cnh.sendVCEvent(currentEvent);</b>
+<b class="nc"><i>307</i>&nbsp;    }</b>
+<i>308</i>&nbsp;
+<i>309</i>&nbsp;    private int turnChoiceIntoCorrectOutput(int choice){
+<b class="nc"><i>310</i>&nbsp;        if(choice==0){</b>
+<b class="nc"><i>311</i>&nbsp;            return 1;</b>
+<b class="nc"><i>312</i>&nbsp;        }else if(choice==1){</b>
+<b class="nc"><i>313</i>&nbsp;            return 0;</b>
+<b class="nc"><i>314</i>&nbsp;        }else if(choice==-1){</b>
+<b class="nc"><i>315</i>&nbsp;            return 0;</b>
+<i>316</i>&nbsp;        }else{
+<b class="nc"><i>317</i>&nbsp;            return -1;</b>
+<i>318</i>&nbsp;        }
+<i>319</i>&nbsp;    }
+<i>320</i>&nbsp;
+<i>321</i>&nbsp;}
+</div>
+</div>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2020-06-22 19:05</div>
+</div>
+</body>
+</html>

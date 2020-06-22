@@ -23,7 +23,6 @@ public class MinotaurStrategy extends DefaultStrategy implements TurnStrategy {
                             /*L'altezza della casella non è superiore di 1 rispetto a quella del worker*/ boardCopy[pos_x][pos_y].getHeight() >= boardCopy[i][j].getHeight()-1 &&
                             /*nella casella non  c'è una cupola*/ boardCopy[i][j].getHeight()<4){
                         if(boardCopy[i][j].getWorkerBuilder()!=null){
-                            System.out.println("QUA CI ENTRO");
                             int dest_x;
                             int dest_y;
                             if(pos_x==i){
@@ -41,10 +40,8 @@ public class MinotaurStrategy extends DefaultStrategy implements TurnStrategy {
                             }else{
                                 dest_y=j-1;
                             }
-                            System.out.println("dest_x="+dest_x+"dest_y"+dest_y);
                             if (dest_x>=0 && dest_x<=4 && dest_y>=0 && dest_y<=4){
                                 if(boardCopy[i][j].getHeight() >= boardCopy[dest_x][dest_y].getHeight()-1 && boardCopy[dest_x][dest_y].getHeight()<4 && boardCopy[dest_x][dest_y].getWorkerBuilder()==null){
-                                    System.out.println("ECCOMI");
                                     if(athenaeffect){
                                         if(boardCopy[pos_x][pos_y].getHeight() >= boardCopy[i][j].getHeight()){
                                             valid_positions.add(new Coordinates(i,j));

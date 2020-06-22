@@ -20,6 +20,7 @@ public class AthenaStrategyTest {
         game = new Game();
         virtualView = new VirtualViewTesting();
         player = new Player("Giux",new Data(30,11,1998));
+        player.chooseCard("ATHENA");
         game.addPlayer(player);
         game.chooseInitialPosition(player,0,0,0);
         strategy = new DefaultStrategy();

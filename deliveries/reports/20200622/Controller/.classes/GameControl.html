@@ -1,0 +1,429 @@
+
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html id="htmlId">
+<head>
+  <title>Coverage Report :: GameControl</title>
+  <style type="text/css">
+    @import "../../.css/coverage.css";
+  </style>
+</head>
+
+<body>
+<div class="header"></div>
+
+<div class="content">
+<div class="breadCrumbs">
+    [ <a href="../../index.html">all classes</a> ]
+    [ <a href="../index.html">Controller</a> ]
+</div>
+
+<h1>Coverage Summary for Class: GameControl (Controller)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Class, %
+</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">GameControl</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/ 1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/ 9)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/ 134)
+  </span>
+</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<div class="sourceCode"><i>1</i>&nbsp;package Controller;
+<i>2</i>&nbsp;
+<i>3</i>&nbsp;import Client.View.Data;
+<i>4</i>&nbsp;import Model.*;
+<i>5</i>&nbsp;
+<i>6</i>&nbsp;import java.net.Socket;
+<i>7</i>&nbsp;import java.util.*;
+<i>8</i>&nbsp;import java.util.concurrent.TimeUnit;
+<i>9</i>&nbsp;
+<i>10</i>&nbsp;/***
+<i>11</i>&nbsp; * @author Giuseppe Epifani
+<i>12</i>&nbsp; */
+<i>13</i>&nbsp;
+<i>14</i>&nbsp;public class GameControl {
+<i>15</i>&nbsp;    private Game game;
+<i>16</i>&nbsp;    private ArrayList&lt;Player&gt; players;
+<i>17</i>&nbsp;    private VirtualView virtualView;
+<i>18</i>&nbsp;    public Thread thread;
+<i>19</i>&nbsp;    private boolean exit;
+<i>20</i>&nbsp;
+<i>21</i>&nbsp;
+<i>22</i>&nbsp;
+<i>23</i>&nbsp;    /***
+<i>24</i>&nbsp;     * Costructor of GameControl, it creates a new Game and a new VirtualView,
+<i>25</i>&nbsp;     * and get the number of player from the first client.
+<i>26</i>&nbsp;     */
+<b class="nc"><i>27</i>&nbsp;    public GameControl() {</b>
+<b class="nc"><i>28</i>&nbsp;         this.game = new Game();</b>
+<b class="nc"><i>29</i>&nbsp;         this.virtualView = new VirtualView();</b>
+<i>30</i>&nbsp;        // this.virtualView.setUndoOn(true);
+<b class="nc"><i>31</i>&nbsp;        exit=false;</b>
+<i>32</i>&nbsp;
+<b class="nc"><i>33</i>&nbsp;        players = new ArrayList&lt;Player&gt;();</b>
+<i>34</i>&nbsp;
+<i>35</i>&nbsp;        //waitForOk();
+<i>36</i>&nbsp;
+<b class="nc"><i>37</i>&nbsp;        int x = virtualView.playerNumber();</b>
+<i>38</i>&nbsp;        //aspetto che SetupItReady sia true
+<b class="nc"><i>39</i>&nbsp;        while (x &lt;= 1) {</b>
+<b class="nc"><i>40</i>&nbsp;                x = virtualView.playerNumber();</b>
+<i>41</i>&nbsp;        }
+<b class="nc"><i>42</i>&nbsp;        while(!virtualView.isSetUpisReady()){</b>
+<b class="nc"><i>43</i>&nbsp;            System.out.println(&quot;Qui&quot;);</b>
+<i>44</i>&nbsp;            try{
+<b class="nc"><i>45</i>&nbsp;                TimeUnit.MILLISECONDS.sleep(10);}</b>
+<b class="nc"><i>46</i>&nbsp;            catch (InterruptedException e){System.out.println(&quot;Interrupted exception&quot;);}</b>
+<i>47</i>&nbsp;        }
+<i>48</i>&nbsp;
+<i>49</i>&nbsp;        //prendo nome, data, e numero giocatori dal client 0
+<b class="nc"><i>50</i>&nbsp;        int player_number = virtualView.getNumberOfPlayers();</b>
+<i>51</i>&nbsp;
+<b class="nc"><i>52</i>&nbsp;    }</b>
+<i>53</i>&nbsp;
+<i>54</i>&nbsp;    /***
+<i>55</i>&nbsp;     * Sends requests to the clients in order to receive the usernames and the dates.
+<i>56</i>&nbsp;     * Ensures the uniqueness of the username.
+<i>57</i>&nbsp;     * After adding all the player, send the unsorted array of players to the virtualview and
+<i>58</i>&nbsp;     * then sorts the array in gamecontrol.
+<i>59</i>&nbsp;     */
+<i>60</i>&nbsp;    private void acceptPlayers(){
+<b class="nc"><i>61</i>&nbsp;        int playerNumber = virtualView.getNumberOfPlayers();</b>
+<i>62</i>&nbsp;        String received_player_name;
+<b class="nc"><i>63</i>&nbsp;        String color_to_send = null;</b>
+<i>64</i>&nbsp;        Data received_player_date;
+<i>65</i>&nbsp;        boolean isWrong;
+<i>66</i>&nbsp;
+<b class="nc"><i>67</i>&nbsp;        for(int i = 0; i &lt; playerNumber; i++){</b>
+<b class="nc"><i>68</i>&nbsp;            isWrong = false;</b>
+<i>69</i>&nbsp;            do {
+<b class="nc"><i>70</i>&nbsp;                received_player_name = virtualView.askForUsername(i, isWrong);</b>
+<b class="nc"><i>71</i>&nbsp;                if (received_player_name == null) {</b>
+<b class="nc"><i>72</i>&nbsp;                    exit = true;</b>
+<b class="nc"><i>73</i>&nbsp;                    return;</b>
+<i>74</i>&nbsp;                }
+<b class="nc"><i>75</i>&nbsp;                for (int j = 0; j &lt; i; j++) {</b>
+<b class="nc"><i>76</i>&nbsp;                    int count = 0;</b>
+<b class="nc"><i>77</i>&nbsp;                    if (received_player_name.equals(this.players.get(j).getUsername())) {</b>
+<b class="nc"><i>78</i>&nbsp;                        isWrong = true;</b>
+<b class="nc"><i>79</i>&nbsp;                        count++;</b>
+<b class="nc"><i>80</i>&nbsp;                        break;</b>
+<i>81</i>&nbsp;                    }
+<b class="nc"><i>82</i>&nbsp;                    if(count==0) isWrong = false;</b>
+<i>83</i>&nbsp;                }
+<b class="nc"><i>84</i>&nbsp;            } while (isWrong);</b>
+<b class="nc"><i>85</i>&nbsp;            received_player_date = virtualView.askForDate(i);</b>
+<b class="nc"><i>86</i>&nbsp;            if(received_player_date == null){exit = true; return;}</b>
+<b class="nc"><i>87</i>&nbsp;            this.addPlayer(new Player(received_player_name,received_player_date));</b>
+<i>88</i>&nbsp;
+<b class="nc"><i>89</i>&nbsp;            switch (i){</b>
+<b class="nc"><i>90</i>&nbsp;                case(0): color_to_send = &quot;yellow&quot;;</b>
+<b class="nc"><i>91</i>&nbsp;                break;</b>
+<b class="nc"><i>92</i>&nbsp;                case(1): color_to_send = &quot;white&quot;;</b>
+<b class="nc"><i>93</i>&nbsp;                break;</b>
+<b class="nc"><i>94</i>&nbsp;                case(2): color_to_send = &quot;purple&quot;;</b>
+<i>95</i>&nbsp;                break;
+<i>96</i>&nbsp;            }
+<b class="nc"><i>97</i>&nbsp;            virtualView.sendColor(color_to_send,i);</b>
+<i>98</i>&nbsp;        }
+<i>99</i>&nbsp;
+<b class="nc"><i>100</i>&nbsp;        virtualView.setPlayers(players);</b>
+<b class="nc"><i>101</i>&nbsp;        this.sortPlayersByAge();</b>
+<b class="nc"><i>102</i>&nbsp;        virtualView.sendNumberOfPlayer();</b>
+<i>103</i>&nbsp;
+<b class="nc"><i>104</i>&nbsp;    }</b>
+<i>105</i>&nbsp;
+<i>106</i>&nbsp;
+<i>107</i>&nbsp;    /**
+<i>108</i>&nbsp;     * the standard loop of the game
+<i>109</i>&nbsp;     */
+<i>110</i>&nbsp;    private void startGame(){
+<i>111</i>&nbsp;
+<b class="nc"><i>112</i>&nbsp;        if(this.exit) return;</b>
+<i>113</i>&nbsp;
+<b class="nc"><i>114</i>&nbsp;        while(!exit) {</b>
+<b class="nc"><i>115</i>&nbsp;            game.startGame();</b>
+<b class="nc"><i>116</i>&nbsp;            virtualView.upload(game.getBoardGame());</b>
+<i>117</i>&nbsp;
+<i>118</i>&nbsp;            //scelta delle carte del primo player
+<b class="nc"><i>119</i>&nbsp;            System.out.println(players.get(game.getTurnNumber()).getBirthDate().toString());</b>
+<b class="nc"><i>120</i>&nbsp;            ArrayList&lt;String&gt; allCards = game.getAvailableCards();</b>
+<i>121</i>&nbsp;            //rimuovo le carte non censentite nelle partite con 3 giocatori
+<b class="nc"><i>122</i>&nbsp;            if(players.size()==3){</b>
+<b class="nc"><i>123</i>&nbsp;                allCards.remove(&quot;CHRONUS&quot;);</b>
+<i>124</i>&nbsp;            }
+<b class="nc"><i>125</i>&nbsp;            ArrayList&lt;String&gt; chosenCards = virtualView.sendAllCards(players.get(game.getTurnNumber()), allCards);</b>
+<b class="nc"><i>126</i>&nbsp;            if(chosenCards==null) return;</b>
+<b class="nc"><i>127</i>&nbsp;            game.setChosenCards(chosenCards);</b>
+<b class="nc"><i>128</i>&nbsp;            game.nextTurnNumber();</b>
+<i>129</i>&nbsp;
+<i>130</i>&nbsp;
+<i>131</i>&nbsp;            String cardChoice;
+<i>132</i>&nbsp;
+<i>133</i>&nbsp;            //mando array delle carte scelte dal primo player al secondo player
+<b class="nc"><i>134</i>&nbsp;            while (game.getTurnNumber() != 0) {</b>
+<b class="nc"><i>135</i>&nbsp;                cardChoice = virtualView.sendChosenCards(players.get(game.getTurnNumber()), chosenCards);</b>
+<b class="nc"><i>136</i>&nbsp;                if (cardChoice==null) return;</b>
+<b class="nc"><i>137</i>&nbsp;                players.get(game.getTurnNumber()).chooseCard(cardChoice);</b>
+<b class="nc"><i>138</i>&nbsp;                chosenCards.remove(cardChoice);</b>
+<b class="nc"><i>139</i>&nbsp;                game.nextTurnNumber();</b>
+<i>140</i>&nbsp;            }
+<i>141</i>&nbsp;
+<b class="nc"><i>142</i>&nbsp;            cardChoice = virtualView.sendChosenCards(players.get(game.getTurnNumber()), chosenCards);</b>
+<b class="nc"><i>143</i>&nbsp;            if(cardChoice==null) return;</b>
+<i>144</i>&nbsp;
+<i>145</i>&nbsp;            //setto l&#39;ultima carta rimasta al primo player
+<b class="nc"><i>146</i>&nbsp;            players.get(game.getTurnNumber()).chooseCard(cardChoice);</b>
+<i>147</i>&nbsp;
+<i>148</i>&nbsp;            //creo e riempio una lista con tutte le posizioni valide
+<b class="nc"><i>149</i>&nbsp;            ArrayList&lt;Coordinates&gt; initial_valid_pos = new ArrayList&lt;&gt;();</b>
+<b class="nc"><i>150</i>&nbsp;            for (int i = 0; i &lt; 5; i++) {</b>
+<b class="nc"><i>151</i>&nbsp;                for (int j = 0; j &lt; 5; j++) {</b>
+<b class="nc"><i>152</i>&nbsp;                    initial_valid_pos.add(new Coordinates(i, j));</b>
+<i>153</i>&nbsp;                }
+<i>154</i>&nbsp;            }
+<i>155</i>&nbsp;            int index;
+<i>156</i>&nbsp;            //chiedo a tutti i player le posizioni iniziali
+<i>157</i>&nbsp;            boolean reDoTurn;
+<i>158</i>&nbsp;            do {
+<b class="nc"><i>159</i>&nbsp;                reDoTurn = false;</b>
+<b class="nc"><i>160</i>&nbsp;                Board copy = new Board();</b>
+<b class="nc"><i>161</i>&nbsp;                copy.deepCopy(game.getBoardGame());</b>
+<b class="nc"><i>162</i>&nbsp;                ArrayList&lt;Coordinates&gt; copyCoordinates = new ArrayList&lt;&gt;();</b>
+<b class="nc"><i>163</i>&nbsp;                for (int i = 0; i &lt; initial_valid_pos.size(); i++) {</b>
+<b class="nc"><i>164</i>&nbsp;                    copyCoordinates.add(initial_valid_pos.get(i));</b>
+<i>165</i>&nbsp;                }
+<b class="nc"><i>166</i>&nbsp;                for (int worker_index = 0; worker_index &lt; 2; worker_index++) {</b>
+<i>167</i>&nbsp;
+<i>168</i>&nbsp;                    //mando al current player la lista delle posizioni valide e ricevo l&#39;indice della posizione scelta
+<b class="nc"><i>169</i>&nbsp;                    index = virtualView.sendAvailableMove(players.get(game.getTurnNumber()), initial_valid_pos);</b>
+<b class="nc"><i>170</i>&nbsp;                    if(index==-1) return;</b>
+<i>171</i>&nbsp;
+<i>172</i>&nbsp;                    //inserisco il worker nella la posizione scelta
+<i>173</i>&nbsp;
+<b class="nc"><i>174</i>&nbsp;                    insertInitialPosition(game.getTurnNumber(), initial_valid_pos.get(index).getX(), initial_valid_pos.get(index).getY(), worker_index);</b>
+<i>175</i>&nbsp;
+<i>176</i>&nbsp;
+<b class="nc"><i>177</i>&nbsp;                    virtualView.upload(game.getBoardGame());</b>
+<i>178</i>&nbsp;
+<i>179</i>&nbsp;                    //rimuovo la posizione scelta dall&#39;array
+<b class="nc"><i>180</i>&nbsp;                    initial_valid_pos.remove(index);</b>
+<i>181</i>&nbsp;
+<i>182</i>&nbsp;
+<i>183</i>&nbsp;                }
+<i>184</i>&nbsp;                //chiedo di fare l&#39;undo e se è true devo saltare la game.nextTurnNumber, chiamare deepCopy sulla board del game
+<i>185</i>&nbsp;                //devo riportare l&#39;array delle initial_valid_pos alla situazione precedente
+<i>186</i>&nbsp;                /*
+<i>187</i>&nbsp;                if (this.virtualView.isUndoOn())
+<i>188</i>&nbsp;                {
+<i>189</i>&nbsp;                    int response = virtualView.sendUndoRequest(players.get(game.getTurnNumber()));
+<i>190</i>&nbsp;                    if (response == 1)
+<i>191</i>&nbsp;                    {
+<i>192</i>&nbsp;                        reDoTurn = true;
+<i>193</i>&nbsp;
+<i>194</i>&nbsp;                        game.setBoardGame(copy); //ripristino la board del game alla situazione precedente al turno
+<i>195</i>&nbsp;                        for (int i = 0; i &lt;initial_valid_pos.size() ; i++) {
+<i>196</i>&nbsp;                            initial_valid_pos.remove(i); //tolgo tutte le posizione valide
+<i>197</i>&nbsp;                        }
+<i>198</i>&nbsp;                        for (int i = 0; i &lt;copyCoordinates.size() ; i++) { //inserisco tutte le posizioni valide prima del turno
+<i>199</i>&nbsp;                            initial_valid_pos.add(copyCoordinates.get(i));
+<i>200</i>&nbsp;                        }
+<i>201</i>&nbsp;
+<i>202</i>&nbsp;                        System.out.println(&quot;Sto per andare a rifare il turno&quot;);
+<i>203</i>&nbsp;                    }
+<i>204</i>&nbsp;                    else if (response == 0)
+<i>205</i>&nbsp;                    {
+<i>206</i>&nbsp;                        game.nextTurnNumber();
+<i>207</i>&nbsp;                        virtualView.upload(game.getBoardGame());
+<i>208</i>&nbsp;                    }
+<i>209</i>&nbsp;                    else{ // se response è -1
+<i>210</i>&nbsp;                        System.out.println(&quot;Finisco la partita&quot;);
+<i>211</i>&nbsp;                        return;
+<i>212</i>&nbsp;                    }
+<i>213</i>&nbsp;                }
+<i>214</i>&nbsp;                else {
+<i>215</i>&nbsp;
+<i>216</i>&nbsp;                 */
+<b class="nc"><i>217</i>&nbsp;                    game.nextTurnNumber();</b>
+<i>218</i>&nbsp;                    //System.out.println(&quot;Non rifaccio il turno&quot;);
+<i>219</i>&nbsp;
+<i>220</i>&nbsp;              //  System.out.println(&quot;Rifaccio il turno...&quot;);
+<b class="nc"><i>221</i>&nbsp;            } while (game.getTurnNumber() != 0 || reDoTurn) ;</b>
+<i>222</i>&nbsp;
+<i>223</i>&nbsp;
+<i>224</i>&nbsp;            //loop della partita:
+<i>225</i>&nbsp;            //next_turn_effect è il valore di ritorno di startNextTurn, e sta ad indicare che nel ciclo di turno successivo ci sarà un effetto extra (tipo Athena)
+<i>226</i>&nbsp;            //extra_turn_effect è il parametro passato a startNextTurn, che indica se e quali effetti extra ci saranno in  questo turno
+<i>227</i>&nbsp;            //effect_duration indica per quanti turni l&#39;effetto si applica, viene settato al numero di giocatori-1 quando next_turn_effect indica che c&#39;è un effetto
+<b class="nc"><i>228</i>&nbsp;            int next_turn_effect = 0;</b>
+<b class="nc"><i>229</i>&nbsp;            int extra_turn_effect = 0;</b>
+<b class="nc"><i>230</i>&nbsp;            int effect_duration = 0;</b>
+<b class="nc"><i>231</i>&nbsp;            while (!game.isGameStopped()) {</b>
+<b class="nc"><i>232</i>&nbsp;                if (effect_duration &gt; 0) {</b>
+<b class="nc"><i>233</i>&nbsp;                    next_turn_effect = startNextTurn(extra_turn_effect);</b>
+<b class="nc"><i>234</i>&nbsp;                    effect_duration--;</b>
+<i>235</i>&nbsp;                } else {
+<b class="nc"><i>236</i>&nbsp;                    next_turn_effect = startNextTurn(0);</b>
+<i>237</i>&nbsp;                }
+<b class="nc"><i>238</i>&nbsp;                if(next_turn_effect == -1){</b>
+<b class="nc"><i>239</i>&nbsp;                    return;</b>
+<i>240</i>&nbsp;                }
+<i>241</i>&nbsp;
+<b class="nc"><i>242</i>&nbsp;                if (game.getLastLostPlayer() == null) {</b>
+<b class="nc"><i>243</i>&nbsp;                    game.nextTurnNumber();</b>
+<i>244</i>&nbsp;                } else {
+<b class="nc"><i>245</i>&nbsp;                    players.remove(game.getLastLostPlayer());</b>
+<b class="nc"><i>246</i>&nbsp;                    virtualView.youLost(game.getLastLostPlayer(), true, null);</b>
+<b class="nc"><i>247</i>&nbsp;                    game.clearLastLostPlayer();</b>
+<i>248</i>&nbsp;                }
+<i>249</i>&nbsp;
+<b class="nc"><i>250</i>&nbsp;                if (next_turn_effect != 0) {</b>
+<b class="nc"><i>251</i>&nbsp;                    extra_turn_effect = next_turn_effect;</b>
+<b class="nc"><i>252</i>&nbsp;                    effect_duration = players.size() - 1;</b>
+<i>253</i>&nbsp;                }
+<i>254</i>&nbsp;            }
+<i>255</i>&nbsp;
+<b class="nc"><i>256</i>&nbsp;            Player winner = game.getWinner();</b>
+<i>257</i>&nbsp;
+<b class="nc"><i>258</i>&nbsp;            if (winner != null) {</b>
+<i>259</i>&nbsp;                //manda il messaggio ai giocatori con scritto il vincitore
+<b class="nc"><i>260</i>&nbsp;                virtualView.youWon(winner);</b>
+<b class="nc"><i>261</i>&nbsp;                exit = true;</b>
+<i>262</i>&nbsp;                //manda a tutti i giocatori non winner il messaggio di perdita
+<b class="nc"><i>263</i>&nbsp;                for (Player p : players) {</b>
+<b class="nc"><i>264</i>&nbsp;                    if (!p.getUsername().equals(winner.getUsername())) {</b>
+<b class="nc"><i>265</i>&nbsp;                        virtualView.youLost(p, false, winner);</b>
+<i>266</i>&nbsp;                    }
+<b class="nc"><i>267</i>&nbsp;                }</b>
+<i>268</i>&nbsp;            }
+<b class="nc"><i>269</i>&nbsp;        }</b>
+<b class="nc"><i>270</i>&nbsp;        System.out.println(&quot;Server Stopped&quot;);</b>
+<b class="nc"><i>271</i>&nbsp;    }</b>
+<i>272</i>&nbsp;
+<i>273</i>&nbsp;    /***
+<i>274</i>&nbsp;     * Method that starts the currentPlayer&#39;s turn, this
+<i>275</i>&nbsp;     * method will be inserted in a loop in startGame
+<i>276</i>&nbsp;     */
+<i>277</i>&nbsp;    private int startNextTurn(int extra_turn_effect){
+<b class="nc"><i>278</i>&nbsp;        TurnControl turn = new TurnControl(players.get(game.getTurnNumber()),extra_turn_effect,game.getBoardGame(),game,virtualView);</b>
+<b class="nc"><i>279</i>&nbsp;        return turn.start();</b>
+<i>280</i>&nbsp;    }
+<i>281</i>&nbsp;
+<i>282</i>&nbsp;    /***
+<i>283</i>&nbsp;     * Calls chooseInitialPosition from this.game.
+<i>284</i>&nbsp;     * @param currentPlayer player that is inserting the worker
+<i>285</i>&nbsp;     * @param x pos x
+<i>286</i>&nbsp;     * @param y pos y
+<i>287</i>&nbsp;     * @param index index of the worker
+<i>288</i>&nbsp;     */
+<i>289</i>&nbsp;    private void insertInitialPosition(int currentPlayer, int x, int y, int index){
+<b class="nc"><i>290</i>&nbsp;        game.chooseInitialPosition(players.get(currentPlayer),x,y,index);</b>
+<b class="nc"><i>291</i>&nbsp;    }</b>
+<i>292</i>&nbsp;
+<i>293</i>&nbsp;    /***
+<i>294</i>&nbsp;     * Adds a player in both the model and the controller
+<i>295</i>&nbsp;     * @param player the player to be added
+<i>296</i>&nbsp;     */
+<i>297</i>&nbsp;    public void addPlayer(Player player){
+<b class="nc"><i>298</i>&nbsp;        this.players.add(player);</b>
+<b class="nc"><i>299</i>&nbsp;        this.game.addPlayer(player);</b>
+<b class="nc"><i>300</i>&nbsp;    }</b>
+<i>301</i>&nbsp;
+<i>302</i>&nbsp;
+<i>303</i>&nbsp;    /***
+<i>304</i>&nbsp;     * Sorts the Arraylist of players in the Controller by age, the younger first
+<i>305</i>&nbsp;     */
+<i>306</i>&nbsp;    private void sortPlayersByAge(){
+<b class="nc"><i>307</i>&nbsp;        if(this.players.size()==3){</b>
+<b class="nc"><i>308</i>&nbsp;            if(!this.players.get(0).getBirthDate().isGreaterthan(this.players.get(1).getBirthDate())){</b>
+<b class="nc"><i>309</i>&nbsp;                Collections.swap(players,0,1);</b>
+<i>310</i>&nbsp;            }
+<b class="nc"><i>311</i>&nbsp;            if (!this.players.get(1).getBirthDate().isGreaterthan(this.players.get(2).getBirthDate())){</b>
+<b class="nc"><i>312</i>&nbsp;                Collections.swap(players,1,2);</b>
+<i>313</i>&nbsp;            }
+<b class="nc"><i>314</i>&nbsp;            if (!this.players.get(0).getBirthDate().isGreaterthan(this.players.get(1).getBirthDate())){</b>
+<b class="nc"><i>315</i>&nbsp;                Collections.swap(players,0,1);</b>
+<i>316</i>&nbsp;            }
+<i>317</i>&nbsp;        }
+<i>318</i>&nbsp;        else {
+<b class="nc"><i>319</i>&nbsp;            if (!this.players.get(0).getBirthDate().isGreaterthan(this.players.get(1).getBirthDate())) {</b>
+<b class="nc"><i>320</i>&nbsp;                Collections.swap(players,0,1);</b>
+<i>321</i>&nbsp;            }
+<i>322</i>&nbsp;        }
+<b class="nc"><i>323</i>&nbsp;    }</b>
+<i>324</i>&nbsp;
+<i>325</i>&nbsp;    public static void main(String[] args){
+<i>326</i>&nbsp;        GameControl partita;
+<i>327</i>&nbsp;
+<i>328</i>&nbsp;        while (true) {
+<i>329</i>&nbsp;
+<b class="nc"><i>330</i>&nbsp;            partita = new GameControl();</b>
+<b class="nc"><i>331</i>&nbsp;            partita.acceptPlayers();</b>
+<b class="nc"><i>332</i>&nbsp;            partita.startGame();</b>
+<b class="nc"><i>333</i>&nbsp;            while (!partita.checkNewGame()){</b>
+<i>334</i>&nbsp;                //System.out.println(&quot;IN ATTESA&quot;);
+<i>335</i>&nbsp;            }
+<i>336</i>&nbsp;        }
+<i>337</i>&nbsp;    }
+<i>338</i>&nbsp;
+<i>339</i>&nbsp;
+<i>340</i>&nbsp;    private boolean checkNewGame(){
+<b class="nc"><i>341</i>&nbsp;       return this.virtualView.isStartNewGame();</b>
+<i>342</i>&nbsp;    }
+<i>343</i>&nbsp;
+<i>344</i>&nbsp;}
+<i>345</i>&nbsp;
+<i>346</i>&nbsp;
+</div>
+</div>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2020-06-22 19:05</div>
+</div>
+</body>
+</html>

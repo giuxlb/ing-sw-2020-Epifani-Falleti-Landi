@@ -1,0 +1,64 @@
+
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html id="htmlId">
+<head>
+  <title>Coverage Report :: TurnStrategy</title>
+  <style type="text/css">
+    @import "../../.css/coverage.css";
+  </style>
+</head>
+
+<body>
+<div class="header"></div>
+
+<div class="content">
+<div class="breadCrumbs">
+    [ <a href="../../index.html">all classes</a> ]
+    [ <a href="../index.html">Controller</a> ]
+</div>
+
+<h1>Coverage Summary for Class: TurnStrategy (Controller)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+</tr>
+<tr>
+  <td class="name">TurnStrategy</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<div class="sourceCode"><i>1</i>&nbsp;package Controller;
+<i>2</i>&nbsp;
+<i>3</i>&nbsp;import Model.Board;
+<i>4</i>&nbsp;import Model.Game;
+<i>5</i>&nbsp;import Model.Player;
+<i>6</i>&nbsp;import Model.Worker;
+<i>7</i>&nbsp;
+<i>8</i>&nbsp;import java.util.ArrayList;
+<i>9</i>&nbsp;
+<i>10</i>&nbsp;public interface TurnStrategy {
+<i>11</i>&nbsp;    int turn(Player player, Worker worker, Board board, Game game, int extraEffect, VirtualView virtualView);
+<i>12</i>&nbsp;    void move(Worker worker, ArrayList&lt;Coordinates&gt; valid_positions, int index, Game game, Board board);
+<i>13</i>&nbsp;    void build(Worker worker, ArrayList&lt;Coordinates&gt; valid_positions, int index, Game game, Board board);
+<i>14</i>&nbsp;    ArrayList&lt;Coordinates&gt; checkAvailableMoveSpots(Player player, Worker worker, Board board, boolean athenaeffect);
+<i>15</i>&nbsp;    ArrayList&lt;Coordinates&gt; checkAvailableBuildSpots(Player player, Worker worker, Board board);
+<i>16</i>&nbsp;    boolean checkWinCondition(Coordinates starting_position, Coordinates final_position, Board board);
+<i>17</i>&nbsp;}
+</div>
+</div>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2020-06-22 19:05</div>
+</div>
+</body>
+</html>

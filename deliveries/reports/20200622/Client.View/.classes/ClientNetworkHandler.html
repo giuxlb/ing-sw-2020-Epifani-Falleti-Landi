@@ -1,0 +1,364 @@
+
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html id="htmlId">
+<head>
+  <title>Coverage Report :: ClientNetworkHandler</title>
+  <style type="text/css">
+    @import "../../.css/coverage.css";
+  </style>
+</head>
+
+<body>
+<div class="header"></div>
+
+<div class="content">
+<div class="breadCrumbs">
+    [ <a href="../../index.html">all classes</a> ]
+    [ <a href="../index.html">Client.View</a> ]
+</div>
+
+<h1>Coverage Summary for Class: ClientNetworkHandler (Client.View)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Class, %
+</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">ClientNetworkHandler</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/ 1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/ 18)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/ 108)
+  </span>
+</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<div class="sourceCode"><i>1</i>&nbsp;package Client.View;
+<i>2</i>&nbsp;
+<i>3</i>&nbsp;import Client.View.GUI.GUIHandler;
+<i>4</i>&nbsp;import Controller.Coordinates;
+<i>5</i>&nbsp;import Controller.Network.VCEvent;
+<i>6</i>&nbsp;
+<i>7</i>&nbsp;
+<i>8</i>&nbsp;import java.io.ObjectInputStream;
+<i>9</i>&nbsp;import java.io.ObjectOutputStream;
+<i>10</i>&nbsp;import java.net.*;
+<i>11</i>&nbsp;import java.io.IOException;
+<i>12</i>&nbsp;import java.util.ArrayList;
+<i>13</i>&nbsp;
+<i>14</i>&nbsp;/**
+<i>15</i>&nbsp; * @author Adriano Falleti
+<i>16</i>&nbsp; */
+<i>17</i>&nbsp;public class ClientNetworkHandler implements Runnable, ServerObserver {
+<i>18</i>&nbsp;
+<i>19</i>&nbsp;
+<i>20</i>&nbsp;    private VCEvent fromServer;
+<i>21</i>&nbsp;    private ServerAdapter adapter;
+<i>22</i>&nbsp;    private Socket server;
+<i>23</i>&nbsp;    private ObjectOutputStream output;
+<i>24</i>&nbsp;    private ObjectInputStream input;
+<i>25</i>&nbsp;    private boolean endGame;
+<i>26</i>&nbsp;    private String winner;
+<i>27</i>&nbsp;    private boolean updateView;
+<i>28</i>&nbsp;    private Integer ping; // can be 1,2 or 3
+<i>29</i>&nbsp;    private boolean canWrite;
+<i>30</i>&nbsp;    private boolean serverIsDied;
+<i>31</i>&nbsp;    private int PlayerID;//can be 0,1 or 2
+<i>32</i>&nbsp;    private boolean isRead;
+<i>33</i>&nbsp;    private CLI cli;
+<i>34</i>&nbsp;    private boolean finish;
+<i>35</i>&nbsp;    private boolean finishPing;
+<i>36</i>&nbsp;    private GUIHandler gh;
+<i>37</i>&nbsp;
+<i>38</i>&nbsp;
+<i>39</i>&nbsp;    private boolean idArrived;
+<i>40</i>&nbsp;
+<b class="nc"><i>41</i>&nbsp;    public ClientNetworkHandler(CLI cli){this.cli = cli;}</b>
+<i>42</i>&nbsp;
+<b class="nc"><i>43</i>&nbsp;    public ClientNetworkHandler(GUIHandler gh){</b>
+<b class="nc"><i>44</i>&nbsp;        this.gh=gh;</b>
+<b class="nc"><i>45</i>&nbsp;    }</b>
+<i>46</i>&nbsp;
+<i>47</i>&nbsp;    public boolean isUpdateView() {
+<b class="nc"><i>48</i>&nbsp;        return updateView;</b>
+<i>49</i>&nbsp;    }
+<i>50</i>&nbsp;    public boolean isIdArrived() {
+<b class="nc"><i>51</i>&nbsp;        return idArrived;</b>
+<i>52</i>&nbsp;    }
+<i>53</i>&nbsp;    /**
+<i>54</i>&nbsp;     * It sets up the connection with the server and prepare the client to receive ping and events from the server and to answer those
+<i>55</i>&nbsp;     *
+<i>56</i>&nbsp;     */
+<i>57</i>&nbsp;
+<i>58</i>&nbsp;    public void run() {
+<i>59</i>&nbsp;
+<i>60</i>&nbsp;        try {
+<b class="nc"><i>61</i>&nbsp;            server = new Socket(&quot;127.0.0.1&quot;,65000);</b>
+<b class="nc"><i>62</i>&nbsp;            output = new ObjectOutputStream(server.getOutputStream());</b>
+<b class="nc"><i>63</i>&nbsp;            input = new ObjectInputStream((server.getInputStream()));</b>
+<b class="nc"><i>64</i>&nbsp;        } catch (IOException e) {</b>
+<b class="nc"><i>65</i>&nbsp;            System.out.println(&quot;Server unreachable, because first client left the game before setting up the number of players!&quot;);</b>
+<b class="nc"><i>66</i>&nbsp;            return;</b>
+<b class="nc"><i>67</i>&nbsp;        }</b>
+<b class="nc"><i>68</i>&nbsp;        System.out.println(&quot;Connected&quot;);</b>
+<i>69</i>&nbsp;        /*qua creo un&#39;istanza della View chiamando il suo costruttore e passandogli questo network handler
+<i>70</i>&nbsp;        in modo tale da poi permetterci di chiamare i metodi della View sotto che dovranno gestire l&#39;input e l&#39;output
+<i>71</i>&nbsp;        */
+<i>72</i>&nbsp;        //22 07 1997
+<b class="nc"><i>73</i>&nbsp;        finish = false;</b>
+<b class="nc"><i>74</i>&nbsp;        finishPing = false;</b>
+<b class="nc"><i>75</i>&nbsp;        Runnable runPing = ()-&gt;{</b>
+<b class="nc"><i>76</i>&nbsp;            while(!finishPing)</b>
+<i>77</i>&nbsp;            {
+<b class="nc"><i>78</i>&nbsp;                synchronized (this) {</b>
+<b class="nc"><i>79</i>&nbsp;                    ping = 0;</b>
+<b class="nc"><i>80</i>&nbsp;                    while (ping == 0 &amp;&amp; !finish) {</b>
+<i>81</i>&nbsp;                        try {
+<b class="nc"><i>82</i>&nbsp;                            wait(10000);</b>
+<b class="nc"><i>83</i>&nbsp;                        } catch (InterruptedException e) {</b>
+<b class="nc"><i>84</i>&nbsp;                        }</b>
+<i>85</i>&nbsp;                    }
+<b class="nc"><i>86</i>&nbsp;                    if (ping == 0) {</b>
+<i>87</i>&nbsp;
+<i>88</i>&nbsp;                    }
+<b class="nc"><i>89</i>&nbsp;                }</b>
+<b class="nc"><i>90</i>&nbsp;                if (!finishPing)</b>
+<b class="nc"><i>91</i>&nbsp;                    sendPing();//appena riceve manda indietro il ping per fargli sapere che è ancora attivo</b>
+<i>92</i>&nbsp;
+<i>93</i>&nbsp;
+<i>94</i>&nbsp;            }
+<b class="nc"><i>95</i>&nbsp;        };</b>
+<b class="nc"><i>96</i>&nbsp;        adapter = new ServerAdapter(server);</b>
+<b class="nc"><i>97</i>&nbsp;        adapter.addObserver(this);</b>
+<b class="nc"><i>98</i>&nbsp;        adapter.setInput(input);</b>
+<b class="nc"><i>99</i>&nbsp;        adapter.setOutput(output);</b>
+<b class="nc"><i>100</i>&nbsp;        adapter.start();</b>
+<b class="nc"><i>101</i>&nbsp;        Thread threadPing = new Thread(runPing);</b>
+<b class="nc"><i>102</i>&nbsp;        threadPing.start();</b>
+<b class="nc"><i>103</i>&nbsp;        canWrite = true;</b>
+<i>104</i>&nbsp;
+<b class="nc"><i>105</i>&nbsp;        while (!finish)</b>
+<i>106</i>&nbsp;        {
+<b class="nc"><i>107</i>&nbsp;            isRead = false;</b>
+<b class="nc"><i>108</i>&nbsp;            synchronized (this) {</b>
+<i>109</i>&nbsp;
+<b class="nc"><i>110</i>&nbsp;                while (fromServer == null &amp;&amp; finish == false) {</b>
+<i>111</i>&nbsp;                    try {
+<b class="nc"><i>112</i>&nbsp;                        wait();</b>
+<b class="nc"><i>113</i>&nbsp;                    } catch (InterruptedException e) { }</b>
+<i>114</i>&nbsp;
+<i>115</i>&nbsp;                }
+<b class="nc"><i>116</i>&nbsp;            }</b>
+<b class="nc"><i>117</i>&nbsp;            if (!finish){</b>
+<b class="nc"><i>118</i>&nbsp;                if(this.cli!=null){</b>
+<i>119</i>&nbsp;
+<b class="nc"><i>120</i>&nbsp;                    cli.updateGo();</b>
+<b class="nc"><i>121</i>&nbsp;                }else if(this.gh!=null){</b>
+<b class="nc"><i>122</i>&nbsp;                    System.out.println(&quot;Ho chiamato la update go di GH&quot;);</b>
+<b class="nc"><i>123</i>&nbsp;                    this.gh.updateGo();</b>
+<b class="nc"><i>124</i>&nbsp;                    System.out.println(&quot;Ho chiamato la update go di GH&quot;);</b>
+<i>125</i>&nbsp;                }else{
+<b class="nc"><i>126</i>&nbsp;                    System.out.println(&quot;Errore nella costruzione delle interfacce&quot;);</b>
+<i>127</i>&nbsp;                }
+<i>128</i>&nbsp;            }
+<i>129</i>&nbsp;
+<i>130</i>&nbsp;            //System.out.println(&quot;è arrivato il comando&quot;+ fromServer.getCommand());
+<b class="nc"><i>131</i>&nbsp;            synchronized (this){</b>
+<b class="nc"><i>132</i>&nbsp;                while(isRead == false &amp;&amp; finish == false)</b>
+<i>133</i>&nbsp;                {
+<i>134</i>&nbsp;                    try {
+<b class="nc"><i>135</i>&nbsp;                        wait();</b>
+<b class="nc"><i>136</i>&nbsp;                    } catch (InterruptedException e) { }</b>
+<i>137</i>&nbsp;                }
+<b class="nc"><i>138</i>&nbsp;            }</b>
+<i>139</i>&nbsp;            //System.out.println(&quot;é arrivato alla view l&#39;evento&quot;+ fromServer.getCommand());
+<b class="nc"><i>140</i>&nbsp;            fromServer = null;</b>
+<b class="nc"><i>141</i>&nbsp;            if (!finish)</b>
+<b class="nc"><i>142</i>&nbsp;                adapter.continueToRead();</b>
+<i>143</i>&nbsp;
+<i>144</i>&nbsp;
+<i>145</i>&nbsp;        }
+<b class="nc"><i>146</i>&nbsp;        finishPing = true;</b>
+<b class="nc"><i>147</i>&nbsp;        adapter.setFinishAdapter(true);</b>
+<b class="nc"><i>148</i>&nbsp;        adapter.continueToRead();//let the adapter continue to read, so that it will go to the condition of the while loop and since the finishAdapter is true, it will end the handleServerConnection method</b>
+<i>149</i>&nbsp;
+<b class="nc"><i>150</i>&nbsp;    }</b>
+<i>151</i>&nbsp;
+<i>152</i>&nbsp;    /**
+<i>153</i>&nbsp;     * It notifies the Client Network Handler that an event has arrived from the server
+<i>154</i>&nbsp;     * @param eventFromServer is the event
+<i>155</i>&nbsp;     */
+<i>156</i>&nbsp;    public synchronized void didReceiveVCEvent(VCEvent eventFromServer) {
+<b class="nc"><i>157</i>&nbsp;        fromServer = eventFromServer;</b>
+<b class="nc"><i>158</i>&nbsp;        notifyAll();</b>
+<b class="nc"><i>159</i>&nbsp;    }</b>
+<i>160</i>&nbsp;
+<i>161</i>&nbsp;    /**
+<i>162</i>&nbsp;     * It notifies the Client Network Handler that a ping has arrived from the server
+<i>163</i>&nbsp;     * @param n is the integer exchanged between the client and the server
+<i>164</i>&nbsp;     */
+<i>165</i>&nbsp;    public synchronized void didReceivePing(Integer n)
+<i>166</i>&nbsp;    {
+<b class="nc"><i>167</i>&nbsp;        ping = n;</b>
+<b class="nc"><i>168</i>&nbsp;        notifyAll();</b>
+<b class="nc"><i>169</i>&nbsp;    }</b>
+<i>170</i>&nbsp;
+<i>171</i>&nbsp;    /**
+<i>172</i>&nbsp;     * It sets the attribute serverDied to true, which will be observed by the view in order to alert the client
+<i>173</i>&nbsp;     */
+<i>174</i>&nbsp;    @Override
+<i>175</i>&nbsp;    public void serverDied() {
+<b class="nc"><i>176</i>&nbsp;        serverIsDied = true;</b>
+<b class="nc"><i>177</i>&nbsp;    }</b>
+<i>178</i>&nbsp;
+<i>179</i>&nbsp;    /**
+<i>180</i>&nbsp;     * It send a VCEvent to the server
+<i>181</i>&nbsp;     * @param eventToServer is the event sent to the server
+<i>182</i>&nbsp;     */
+<i>183</i>&nbsp;    public synchronized void sendVCEvent(VCEvent eventToServer)
+<i>184</i>&nbsp;    {
+<b class="nc"><i>185</i>&nbsp;        synchronized (this)</b>
+<i>186</i>&nbsp;        {
+<b class="nc"><i>187</i>&nbsp;            while (canWrite == false)</b>
+<i>188</i>&nbsp;            {
+<i>189</i>&nbsp;                try {
+<b class="nc"><i>190</i>&nbsp;                    wait();</b>
+<b class="nc"><i>191</i>&nbsp;                }catch(InterruptedException e){}</b>
+<i>192</i>&nbsp;            }
+<b class="nc"><i>193</i>&nbsp;        }</b>
+<i>194</i>&nbsp;        // qui avrò che la canWrite sarà true, quindi lo pongo a false
+<b class="nc"><i>195</i>&nbsp;        canWrite = false;</b>
+<i>196</i>&nbsp;        //System.out.println(&quot;Mando l&#39;evento &quot;+ eventToServer.getBox());
+<i>197</i>&nbsp;        try {
+<b class="nc"><i>198</i>&nbsp;            output.writeObject(eventToServer);</b>
+<b class="nc"><i>199</i>&nbsp;        } catch (IOException e) {</b>
+<i>200</i>&nbsp;
+<b class="nc"><i>201</i>&nbsp;        }</b>
+<b class="nc"><i>202</i>&nbsp;        canWrite = true;</b>
+<b class="nc"><i>203</i>&nbsp;        notifyAll();</b>
+<b class="nc"><i>204</i>&nbsp;    }</b>
+<i>205</i>&nbsp;
+<i>206</i>&nbsp;    public synchronized void readByView()
+<i>207</i>&nbsp;    {
+<b class="nc"><i>208</i>&nbsp;        isRead = true;</b>
+<b class="nc"><i>209</i>&nbsp;        notifyAll();</b>
+<b class="nc"><i>210</i>&nbsp;    }</b>
+<i>211</i>&nbsp;    /**
+<i>212</i>&nbsp;     * It answers to the ping sent by the server
+<i>213</i>&nbsp;     */
+<i>214</i>&nbsp;    public synchronized void sendPing()
+<i>215</i>&nbsp;    {
+<b class="nc"><i>216</i>&nbsp;        synchronized (this)</b>
+<i>217</i>&nbsp;        {
+<b class="nc"><i>218</i>&nbsp;            while (canWrite == false)</b>
+<i>219</i>&nbsp;            {
+<i>220</i>&nbsp;                try {
+<b class="nc"><i>221</i>&nbsp;                    wait();</b>
+<b class="nc"><i>222</i>&nbsp;                }catch(InterruptedException e){}</b>
+<i>223</i>&nbsp;            }
+<b class="nc"><i>224</i>&nbsp;        }</b>
+<i>225</i>&nbsp;        // qui avrò che la canWrite sarà true, quindi lo pongo a false
+<b class="nc"><i>226</i>&nbsp;        canWrite = false;</b>
+<i>227</i>&nbsp;
+<b class="nc"><i>228</i>&nbsp;        VCEvent pingEventResponse = new VCEvent(ping, VCEvent.Event.ping);</b>
+<i>229</i>&nbsp;        try {
+<b class="nc"><i>230</i>&nbsp;            output.writeObject(pingEventResponse);</b>
+<b class="nc"><i>231</i>&nbsp;        } catch (IOException e) {</b>
+<i>232</i>&nbsp;
+<b class="nc"><i>233</i>&nbsp;        }</b>
+<i>234</i>&nbsp;
+<b class="nc"><i>235</i>&nbsp;        canWrite = true;</b>
+<b class="nc"><i>236</i>&nbsp;        notifyAll();</b>
+<i>237</i>&nbsp;
+<i>238</i>&nbsp;
+<b class="nc"><i>239</i>&nbsp;    }</b>
+<i>240</i>&nbsp;
+<i>241</i>&nbsp;    /**
+<i>242</i>&nbsp;     * Getter for the event from Server
+<i>243</i>&nbsp;     * @return
+<i>244</i>&nbsp;     */
+<i>245</i>&nbsp;    public VCEvent getFromServer() {
+<b class="nc"><i>246</i>&nbsp;        return fromServer;</b>
+<i>247</i>&nbsp;    }
+<i>248</i>&nbsp;
+<i>249</i>&nbsp;    /**
+<i>250</i>&nbsp;     * Getter for the attribute endGame
+<i>251</i>&nbsp;     * @return
+<i>252</i>&nbsp;     */
+<i>253</i>&nbsp;    public boolean isEndGame() {
+<b class="nc"><i>254</i>&nbsp;        return endGame;</b>
+<i>255</i>&nbsp;    }
+<i>256</i>&nbsp;
+<i>257</i>&nbsp;    /**
+<i>258</i>&nbsp;     * Getter for the attribute serverIsDied
+<i>259</i>&nbsp;     * @return
+<i>260</i>&nbsp;     */
+<i>261</i>&nbsp;    public boolean isServerIsDied() {
+<b class="nc"><i>262</i>&nbsp;        return serverIsDied;</b>
+<i>263</i>&nbsp;    }
+<i>264</i>&nbsp;
+<i>265</i>&nbsp;    /**
+<i>266</i>&nbsp;     * Getter for the attribute winner
+<i>267</i>&nbsp;     * @return
+<i>268</i>&nbsp;     */
+<i>269</i>&nbsp;    public String getWinner() {
+<b class="nc"><i>270</i>&nbsp;        return winner;</b>
+<i>271</i>&nbsp;    }
+<i>272</i>&nbsp;
+<i>273</i>&nbsp;    public int getPlayerID() {
+<b class="nc"><i>274</i>&nbsp;        return PlayerID;</b>
+<i>275</i>&nbsp;    }
+<i>276</i>&nbsp;
+<i>277</i>&nbsp;    public synchronized void setFinish(boolean finish) {
+<b class="nc"><i>278</i>&nbsp;        this.finish = finish;</b>
+<b class="nc"><i>279</i>&nbsp;        notifyAll(); // if the clientNetworkHandler is waiting for an event from server, this will wake up  that wait at line 107</b>
+<b class="nc"><i>280</i>&nbsp;    }</b>
+<i>281</i>&nbsp;}
+</div>
+</div>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2020-06-22 19:05</div>
+</div>
+</body>
+</html>

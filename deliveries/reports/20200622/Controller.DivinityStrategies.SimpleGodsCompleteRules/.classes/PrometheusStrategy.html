@@ -1,0 +1,203 @@
+
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html id="htmlId">
+<head>
+  <title>Coverage Report :: PrometheusStrategy</title>
+  <style type="text/css">
+    @import "../../.css/coverage.css";
+  </style>
+</head>
+
+<body>
+<div class="header"></div>
+
+<div class="content">
+<div class="breadCrumbs">
+    [ <a href="../../index.html">all classes</a> ]
+    [ <a href="../index.html">Controller.DivinityStrategies.SimpleGodsCompleteRules</a> ]
+</div>
+
+<h1>Coverage Summary for Class: PrometheusStrategy (Controller.DivinityStrategies.SimpleGodsCompleteRules)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Class, %
+</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">PrometheusStrategy</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (1/ 1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (2/ 2)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    75,7%
+  </span>
+  <span class="absValue">
+    (28/ 37)
+  </span>
+</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<div class="sourceCode"><i>1</i>&nbsp;package Controller.DivinityStrategies.SimpleGodsCompleteRules;
+<i>2</i>&nbsp;
+<i>3</i>&nbsp;import Controller.Coordinates;
+<i>4</i>&nbsp;import Controller.DivinityStrategies.DefaultStrategy;
+<i>5</i>&nbsp;import Controller.TurnStrategy;
+<i>6</i>&nbsp;import Controller.VirtualView;
+<i>7</i>&nbsp;import Model.Board;
+<i>8</i>&nbsp;import Model.Game;
+<i>9</i>&nbsp;import Model.Player;
+<i>10</i>&nbsp;import Model.Worker;
+<i>11</i>&nbsp;
+<i>12</i>&nbsp;import java.util.ArrayList;
+<i>13</i>&nbsp;
+<i>14</i>&nbsp;/*Tuo turno: se il tuo worker non sale di livello, può costruire sia prima sia dopo il movimento.*/
+<i>15</i>&nbsp;
+<b class="fc"><i>16</i>&nbsp;public class PrometheusStrategy extends DefaultStrategy implements TurnStrategy {</b>
+<i>17</i>&nbsp;    /***
+<i>18</i>&nbsp;     * The standard flow of the turn:
+<i>19</i>&nbsp;     * -Calculate the valid positions for the movement
+<i>20</i>&nbsp;     * -Checks if the array is empty, if so the player has lost, if not it sends the array to the view
+<i>21</i>&nbsp;     * -Receive the index of the chosen position and modifies the model with the movement
+<i>22</i>&nbsp;     * -Checks if this was a winning move, if not it goes on and calculate the valid positions for the build
+<i>23</i>&nbsp;     * -Sends the array to the view, and receive the index of the chosen build spot
+<i>24</i>&nbsp;     * -Modify the model with del buildUp method
+<i>25</i>&nbsp;     * @param player the player that is playing this turn
+<i>26</i>&nbsp;     * @param worker the chosen worker
+<i>27</i>&nbsp;     * @param board the board
+<i>28</i>&nbsp;     * @param game the game
+<i>29</i>&nbsp;     * @param extraEffect applied on this turn
+<i>30</i>&nbsp;     */
+<i>31</i>&nbsp;    public int turn(Player player, Worker worker, Board board, Game game, int extraEffect, VirtualView vview){
+<i>32</i>&nbsp;        /*Calcolo l&#39;extra effect di questo turno*/
+<b class="fc"><i>33</i>&nbsp;        boolean athenaeffect = false;</b>
+<b class="fc"><i>34</i>&nbsp;        if(extraEffect==1){</b>
+<b class="nc"><i>35</i>&nbsp;            athenaeffect = true;</b>
+<i>36</i>&nbsp;        }
+<i>37</i>&nbsp;
+<i>38</i>&nbsp;
+<i>39</i>&nbsp;        int index;
+<i>40</i>&nbsp;
+<b class="fc"><i>41</i>&nbsp;        int ask_divinity = vview.askDivinityActivation(player,player.getGameCard());</b>
+<b class="fc"><i>42</i>&nbsp;        if(ask_divinity==-1){</b>
+<b class="nc"><i>43</i>&nbsp;            return -1;</b>
+<i>44</i>&nbsp;        }
+<i>45</i>&nbsp;
+<b class="fc"><i>46</i>&nbsp;        if(ask_divinity==1){</b>
+<i>47</i>&nbsp;            /*Calcolo le caselle disponibili per la costruzione*/
+<b class="fc"><i>48</i>&nbsp;            ArrayList&lt;Coordinates&gt; build_spots = checkAvailableBuildSpots(player,worker,board);</b>
+<i>49</i>&nbsp;
+<i>50</i>&nbsp;            /*Mando le caselle al client, ricevo indice della costruzione*/
+<b class="fc"><i>51</i>&nbsp;            index = vview.sendAvailableBuild(player,build_spots);</b>
+<i>52</i>&nbsp;
+<b class="fc"><i>53</i>&nbsp;            if(index==-1){</b>
+<b class="nc"><i>54</i>&nbsp;                return -1;</b>
+<i>55</i>&nbsp;            }
+<i>56</i>&nbsp;
+<i>57</i>&nbsp;            /*Costruisco*/
+<b class="fc"><i>58</i>&nbsp;            build(worker,build_spots,index,game,board);</b>
+<i>59</i>&nbsp;
+<b class="fc"><i>60</i>&nbsp;            vview.upload(board);</b>
+<i>61</i>&nbsp;            // vview.upload(game.getBoardGame());
+<i>62</i>&nbsp;
+<i>63</i>&nbsp;
+<b class="fc"><i>64</i>&nbsp;            athenaeffect=true;</b>
+<i>65</i>&nbsp;        }
+<i>66</i>&nbsp;
+<i>67</i>&nbsp;        /*Salvo la posizione iniziale*/
+<b class="fc"><i>68</i>&nbsp;        Coordinates starting_position = new Coordinates(worker.getPositionX(),worker.getPositionY());</b>
+<i>69</i>&nbsp;
+<i>70</i>&nbsp;        /*Calcolo le caselle disponibili per lo spostamento*/
+<b class="fc"><i>71</i>&nbsp;        ArrayList&lt;Coordinates&gt; move_spots = checkAvailableMoveSpots(player,worker,board,athenaeffect);</b>
+<i>72</i>&nbsp;
+<i>73</i>&nbsp;        /*Se l&#39;array è vuoto, il worker non puo spostarsi, quindi il player ha perso*/
+<b class="fc"><i>74</i>&nbsp;        if (move_spots.size()==0) {</b>
+<b class="nc"><i>75</i>&nbsp;            game.playerLose(player);</b>
+<b class="nc"><i>76</i>&nbsp;            return 0;</b>
+<i>77</i>&nbsp;        }
+<i>78</i>&nbsp;        /*Mando le caselle al client, ricevo l&#39;indice dello spostamento*/
+<b class="fc"><i>79</i>&nbsp;        index = vview.sendAvailableMove(player,move_spots);</b>
+<i>80</i>&nbsp;
+<b class="fc"><i>81</i>&nbsp;        if(index==-1){</b>
+<b class="nc"><i>82</i>&nbsp;            return -1;</b>
+<i>83</i>&nbsp;        }
+<i>84</i>&nbsp;
+<i>85</i>&nbsp;
+<i>86</i>&nbsp;        /*Muovo il worker*/
+<b class="fc"><i>87</i>&nbsp;        move(worker,move_spots,index,game,board);</b>
+<i>88</i>&nbsp;
+<b class="fc"><i>89</i>&nbsp;        vview.upload(board);</b>
+<i>90</i>&nbsp;        // vview.upload(game.getBoardGame());
+<i>91</i>&nbsp;
+<i>92</i>&nbsp;        /*Salvo la posizione dopo lo spostamento*/
+<b class="fc"><i>93</i>&nbsp;        Coordinates final_position = new Coordinates(worker.getPositionX(),worker.getPositionY());</b>
+<i>94</i>&nbsp;
+<i>95</i>&nbsp;        /*Controllo se il giocatore ha vinto*/
+<b class="fc"><i>96</i>&nbsp;        boolean win = checkWinCondition(starting_position,final_position,board);</b>
+<b class="fc"><i>97</i>&nbsp;        if (win) {</b>
+<b class="nc"><i>98</i>&nbsp;            game.stopGame(player);</b>
+<b class="nc"><i>99</i>&nbsp;            return 0;</b>
+<i>100</i>&nbsp;        }
+<i>101</i>&nbsp;
+<i>102</i>&nbsp;        /*Calcolo le caselle disponibili per la costruzione*/
+<b class="fc"><i>103</i>&nbsp;        ArrayList&lt;Coordinates&gt; build_spots = checkAvailableBuildSpots(player,worker,board);</b>
+<i>104</i>&nbsp;
+<i>105</i>&nbsp;        /*Mando le caselle al client, ricevo indice della costruzione*/
+<b class="fc"><i>106</i>&nbsp;        index = vview.sendAvailableBuild(player,build_spots);</b>
+<i>107</i>&nbsp;
+<b class="fc"><i>108</i>&nbsp;        if(index==-1){</b>
+<b class="nc"><i>109</i>&nbsp;            return -1;</b>
+<i>110</i>&nbsp;        }
+<i>111</i>&nbsp;
+<i>112</i>&nbsp;        /*Costruisco*/
+<b class="fc"><i>113</i>&nbsp;        build(worker,build_spots,index,game,board);</b>
+<i>114</i>&nbsp;
+<b class="fc"><i>115</i>&nbsp;        vview.upload(board);</b>
+<i>116</i>&nbsp;        // vview.upload(game.getBoardGame());
+<i>117</i>&nbsp;
+<b class="fc"><i>118</i>&nbsp;        return 0;</b>
+<i>119</i>&nbsp;    }
+<i>120</i>&nbsp;}
+</div>
+</div>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2020-06-22 19:05</div>
+</div>
+</body>
+</html>

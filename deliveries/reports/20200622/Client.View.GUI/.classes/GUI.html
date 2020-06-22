@@ -1,0 +1,284 @@
+
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html id="htmlId">
+<head>
+  <title>Coverage Report :: GUI</title>
+  <style type="text/css">
+    @import "../../.css/coverage.css";
+  </style>
+</head>
+
+<body>
+<div class="header"></div>
+
+<div class="content">
+<div class="breadCrumbs">
+    [ <a href="../../index.html">all classes</a> ]
+    [ <a href="../index.html">Client.View.GUI</a> ]
+</div>
+
+<h1>Coverage Summary for Class: GUI (Client.View.GUI)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Class, %
+</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">GUI</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/ 1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/ 12)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/ 60)
+  </span>
+</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<div class="sourceCode"><i>1</i>&nbsp;package Client.View.GUI;
+<i>2</i>&nbsp;
+<i>3</i>&nbsp;import Model.Board;
+<i>4</i>&nbsp;
+<i>5</i>&nbsp;import javax.swing.*;
+<i>6</i>&nbsp;import java.awt.*;
+<i>7</i>&nbsp;import java.util.ArrayList;
+<i>8</i>&nbsp;
+<i>9</i>&nbsp;public class GUI {
+<i>10</i>&nbsp;
+<i>11</i>&nbsp;    //mainFrame elements
+<i>12</i>&nbsp;    private JFrame mainFrame;
+<i>13</i>&nbsp;    private JPanel boardPanel;
+<i>14</i>&nbsp;    private JLabel boardLabel;
+<i>15</i>&nbsp;    private JButton[][] board;
+<i>16</i>&nbsp;    private JPanel godPanel;
+<i>17</i>&nbsp;    private JLabel godImage;
+<i>18</i>&nbsp;    private JLabel godPower;
+<i>19</i>&nbsp;    private JLabel backgroud;
+<i>20</i>&nbsp;
+<i>21</i>&nbsp;    //messageAndUndoBar
+<i>22</i>&nbsp;    private JPanel messageAndUndoPanel;
+<i>23</i>&nbsp;    private JTextArea messageArea;
+<i>24</i>&nbsp;    private JButton undo;
+<i>25</i>&nbsp;
+<i>26</i>&nbsp;    //
+<i>27</i>&nbsp;    private JTextArea informationArea;
+<i>28</i>&nbsp;
+<i>29</i>&nbsp;
+<i>30</i>&nbsp;
+<b class="nc"><i>31</i>&nbsp;    public GUI(){</b>
+<b class="nc"><i>32</i>&nbsp;        buildMainFrame();</b>
+<b class="nc"><i>33</i>&nbsp;    }</b>
+<i>34</i>&nbsp;
+<i>35</i>&nbsp;    private void buildBoard(){
+<b class="nc"><i>36</i>&nbsp;        board=new JButton[Board.DIM][Board.DIM];</b>
+<i>37</i>&nbsp;        //boardPanel = new JPanel();
+<i>38</i>&nbsp;        //boardPanel.setLayout(new GridLayout(5,5));
+<i>39</i>&nbsp;        //SetBackgound
+<b class="nc"><i>40</i>&nbsp;        ImageIcon currentImg= new ImageIcon(&quot;./resources/SantoriniBoard.png&quot;);</b>
+<b class="nc"><i>41</i>&nbsp;        Image img = currentImg.getImage();</b>
+<b class="nc"><i>42</i>&nbsp;        Image newImg = img.getScaledInstance(1920,1080, Image.SCALE_SMOOTH);</b>
+<b class="nc"><i>43</i>&nbsp;        ImageIcon finalImg = new ImageIcon(newImg);</b>
+<i>44</i>&nbsp;        //backgroud = new JLabel(finalImg);
+<i>45</i>&nbsp;        //backgroud.setHorizontalTextPosition(SwingConstants.CENTER);
+<i>46</i>&nbsp;        //backgroud.setHorizontalTextPosition(SwingConstants.CENTER);
+<i>47</i>&nbsp;        //mainFrame.add(backgroud);
+<i>48</i>&nbsp;
+<b class="nc"><i>49</i>&nbsp;        boardLabel = new JLabel(finalImg);</b>
+<b class="nc"><i>50</i>&nbsp;        boardLabel.setHorizontalTextPosition(SwingConstants.CENTER);</b>
+<b class="nc"><i>51</i>&nbsp;        boardLabel.setHorizontalTextPosition(SwingConstants.CENTER);</b>
+<b class="nc"><i>52</i>&nbsp;        boardLabel.setLayout(new GridLayout(5,5));</b>
+<b class="nc"><i>53</i>&nbsp;        boardLabel.setOpaque(false);</b>
+<i>54</i>&nbsp;
+<b class="nc"><i>55</i>&nbsp;        for(int i=0;i&lt;Board.DIM;i++){</b>
+<b class="nc"><i>56</i>&nbsp;            for(int j=0;j&lt;Board.DIM;j++){</b>
+<b class="nc"><i>57</i>&nbsp;                board[i][j] = new JButton();</b>
+<b class="nc"><i>58</i>&nbsp;                board[i][j].setContentAreaFilled(false);</b>
+<b class="nc"><i>59</i>&nbsp;                board[i][j].setBorderPainted(true);</b>
+<i>60</i>&nbsp;                //board[i][j].setOpaque(false);
+<i>61</i>&nbsp;                //boardPanel.add(board[i][j]);
+<b class="nc"><i>62</i>&nbsp;                boardLabel.add(board[i][j]);</b>
+<i>63</i>&nbsp;            }
+<i>64</i>&nbsp;        }
+<b class="nc"><i>65</i>&nbsp;    }</b>
+<i>66</i>&nbsp;
+<i>67</i>&nbsp;    private void buildGodBar(){
+<b class="nc"><i>68</i>&nbsp;        godImage = new JLabel();</b>
+<b class="nc"><i>69</i>&nbsp;        godPower = new JLabel();</b>
+<b class="nc"><i>70</i>&nbsp;        godPanel = new JPanel();</b>
+<b class="nc"><i>71</i>&nbsp;        godPanel.setLayout(new BorderLayout());</b>
+<b class="nc"><i>72</i>&nbsp;        godPanel.add(godImage, BorderLayout.CENTER);</b>
+<b class="nc"><i>73</i>&nbsp;        godPanel.add(godPower, BorderLayout.SOUTH);</b>
+<b class="nc"><i>74</i>&nbsp;    }</b>
+<i>75</i>&nbsp;
+<i>76</i>&nbsp;    private void buildMainFrame(){
+<i>77</i>&nbsp;        //Bisogna implementare anche la finestra di inserimento dell&#39;indirizzo IP
+<b class="nc"><i>78</i>&nbsp;        mainFrame = new JFrame(&quot;Santorini -  Epifani Falleti Landi&quot;);</b>
+<i>79</i>&nbsp;        //Ricordati di impostare l&#39;immagine
+<i>80</i>&nbsp;        //mainFrame.setIconImage();
+<i>81</i>&nbsp;        //Ricordati di aggiungere WindowClosingListener
+<b class="nc"><i>82</i>&nbsp;        mainFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);</b>
+<i>83</i>&nbsp;
+<b class="nc"><i>84</i>&nbsp;        buildMessageAndUndoBar();</b>
+<b class="nc"><i>85</i>&nbsp;        buildBoard();</b>
+<b class="nc"><i>86</i>&nbsp;        buildGodBar();</b>
+<b class="nc"><i>87</i>&nbsp;        informationArea = new JTextArea(&quot;Move mouse on board to see more detailed information&quot;);</b>
+<i>88</i>&nbsp;
+<i>89</i>&nbsp;
+<i>90</i>&nbsp;
+<i>91</i>&nbsp;
+<b class="nc"><i>92</i>&nbsp;        mainFrame.setLayout(new BorderLayout());</b>
+<b class="nc"><i>93</i>&nbsp;        mainFrame.add(messageAndUndoPanel, BorderLayout.NORTH);</b>
+<b class="nc"><i>94</i>&nbsp;        mainFrame.add(informationArea, BorderLayout.SOUTH);</b>
+<i>95</i>&nbsp;        //mainFrame.add(boardPanel, BorderLayout.CENTER);
+<b class="nc"><i>96</i>&nbsp;        mainFrame.add(boardLabel);</b>
+<b class="nc"><i>97</i>&nbsp;        mainFrame.add(godPanel, BorderLayout.WEST);</b>
+<i>98</i>&nbsp;
+<i>99</i>&nbsp;        //mainFrame.pack();
+<b class="nc"><i>100</i>&nbsp;        mainFrame.setSize(1920, 1080);</b>
+<b class="nc"><i>101</i>&nbsp;        mainFrame.setLocationRelativeTo(null);</b>
+<b class="nc"><i>102</i>&nbsp;        mainFrame.setVisible(true);</b>
+<i>103</i>&nbsp;
+<b class="nc"><i>104</i>&nbsp;    }</b>
+<i>105</i>&nbsp;
+<i>106</i>&nbsp;    /*private void buildGodsFrame(){
+<i>107</i>&nbsp;        //godsFrame elements
+<i>108</i>&nbsp;        JFrame godsFrame;
+<i>109</i>&nbsp;        JPanel[] supportPanel;
+<i>110</i>&nbsp;        JButton[] imgGodsButton;
+<i>111</i>&nbsp;        JLabel[] descriptionGodPower;
+<i>112</i>&nbsp;
+<i>113</i>&nbsp;        int i;
+<i>114</i>&nbsp;        int godsNumber;
+<i>115</i>&nbsp;
+<i>116</i>&nbsp;        godsFrame = new JFrame(&quot;Avaible gods&quot;);
+<i>117</i>&nbsp;
+<i>118</i>&nbsp;        godsNumber=gods.size();
+<i>119</i>&nbsp;        supportPanel= new JPanel[godsNumber];
+<i>120</i>&nbsp;        imgGodsButton = new JButton[godsNumber];
+<i>121</i>&nbsp;        descriptionGodPower = new JLabel[godsNumber];
+<i>122</i>&nbsp;
+<i>123</i>&nbsp;        for(i=0;i&lt;godsNumber;i++){
+<i>124</i>&nbsp;            ImageIcon currentImg= new ImageIcon(&quot;./resources/gods/&quot;+gods.get(i)+&quot;.png&quot;);
+<i>125</i>&nbsp;            Image img = currentImg.getImage();
+<i>126</i>&nbsp;            Image newImg = img.getScaledInstance(120,200, Image.SCALE_SMOOTH);
+<i>127</i>&nbsp;            ImageIcon finalImg = new ImageIcon(newImg);
+<i>128</i>&nbsp;            imgGodsButton[i]=new JButton(&quot;&quot;,finalImg);
+<i>129</i>&nbsp;        }
+<i>130</i>&nbsp;
+<i>131</i>&nbsp;        for(i=0;i&lt;godsNumber;i++){
+<i>132</i>&nbsp;            descriptionGodPower[i]=new JLabel();
+<i>133</i>&nbsp;            //Ricordati di settare questa label al potere del dio caricato da file
+<i>134</i>&nbsp;            descriptionGodPower[i].setText(&quot;Description of power of this god&quot;);
+<i>135</i>&nbsp;        }
+<i>136</i>&nbsp;
+<i>137</i>&nbsp;
+<i>138</i>&nbsp;
+<i>139</i>&nbsp;        for(i=0;i&lt;godsNumber;i++){
+<i>140</i>&nbsp;            supportPanel[i]=new JPanel();
+<i>141</i>&nbsp;            supportPanel[i].setLayout(new GridLayout(1,1));
+<i>142</i>&nbsp;            supportPanel[i].add(imgGodsButton[i]);
+<i>143</i>&nbsp;            supportPanel[i].add(descriptionGodPower[i]);
+<i>144</i>&nbsp;        }
+<i>145</i>&nbsp;
+<i>146</i>&nbsp;        godsFrame.setLayout(new FlowLayout());
+<i>147</i>&nbsp;        for(i=0; i&lt;godsNumber;i++){
+<i>148</i>&nbsp;            godsFrame.add(supportPanel[i]);
+<i>149</i>&nbsp;        }
+<i>150</i>&nbsp;
+<i>151</i>&nbsp;
+<i>152</i>&nbsp;        godsFrame.setSize(1920,1080);
+<i>153</i>&nbsp;        godsFrame.setLocationRelativeTo(null);
+<i>154</i>&nbsp;        godsFrame.setVisible(true);
+<i>155</i>&nbsp;    }*/
+<i>156</i>&nbsp;
+<i>157</i>&nbsp;    private void buildMessageAndUndoBar(){
+<b class="nc"><i>158</i>&nbsp;        messageArea = new JTextArea(&quot;Connected&quot;);</b>
+<i>159</i>&nbsp;
+<b class="nc"><i>160</i>&nbsp;        ImageIcon currentIcon= new ImageIcon(&quot;./resources/Undo.png&quot;);</b>
+<b class="nc"><i>161</i>&nbsp;        Image tmp = currentIcon.getImage();</b>
+<i>162</i>&nbsp;        //Il bottone deve essere un po&#39; meno largo e deve stare attacato al margine (mi serve un gridBagLayout)
+<b class="nc"><i>163</i>&nbsp;        Image newIcon = tmp.getScaledInstance(50,50, Image.SCALE_SMOOTH);</b>
+<b class="nc"><i>164</i>&nbsp;        ImageIcon finalIcon = new ImageIcon(newIcon);</b>
+<i>165</i>&nbsp;
+<b class="nc"><i>166</i>&nbsp;        undo = new JButton(&quot;&quot;, finalIcon);</b>
+<i>167</i>&nbsp;
+<b class="nc"><i>168</i>&nbsp;        messageAndUndoPanel = new JPanel();</b>
+<b class="nc"><i>169</i>&nbsp;        messageAndUndoPanel.setLayout(new FlowLayout());</b>
+<b class="nc"><i>170</i>&nbsp;        messageAndUndoPanel.add(messageArea);</b>
+<b class="nc"><i>171</i>&nbsp;        messageAndUndoPanel.add(undo);</b>
+<i>172</i>&nbsp;
+<b class="nc"><i>173</i>&nbsp;    }</b>
+<i>174</i>&nbsp;    public JFrame getMainFrame() {
+<b class="nc"><i>175</i>&nbsp;        return mainFrame;</b>
+<i>176</i>&nbsp;    }
+<i>177</i>&nbsp;
+<i>178</i>&nbsp;    public JPanel getBoardPanel() {
+<b class="nc"><i>179</i>&nbsp;        return boardPanel;</b>
+<i>180</i>&nbsp;    }
+<i>181</i>&nbsp;
+<i>182</i>&nbsp;    public JButton[][] getBoard() {
+<b class="nc"><i>183</i>&nbsp;        return board;</b>
+<i>184</i>&nbsp;    }
+<i>185</i>&nbsp;
+<i>186</i>&nbsp;    public JPanel getGodPanel() {
+<b class="nc"><i>187</i>&nbsp;        return godPanel;</b>
+<i>188</i>&nbsp;    }
+<i>189</i>&nbsp;
+<i>190</i>&nbsp;    public JLabel getGodImage() {
+<b class="nc"><i>191</i>&nbsp;        return godImage;</b>
+<i>192</i>&nbsp;    }
+<i>193</i>&nbsp;
+<i>194</i>&nbsp;    public JLabel getGodPower() {
+<b class="nc"><i>195</i>&nbsp;        return godPower;</b>
+<i>196</i>&nbsp;    }
+<i>197</i>&nbsp;
+<i>198</i>&nbsp;    public JTextArea getMessageArea() {
+<b class="nc"><i>199</i>&nbsp;        return messageArea;</b>
+<i>200</i>&nbsp;    }
+<i>201</i>&nbsp;}
+</div>
+</div>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2020-06-22 19:05</div>
+</div>
+</body>
+</html>

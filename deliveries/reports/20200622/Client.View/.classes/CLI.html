@@ -1,0 +1,732 @@
+
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html id="htmlId">
+<head>
+  <title>Coverage Report :: CLI</title>
+  <style type="text/css">
+    @import "../../.css/coverage.css";
+  </style>
+</head>
+
+<body>
+<div class="header"></div>
+
+<div class="content">
+<div class="breadCrumbs">
+    [ <a href="../../index.html">all classes</a> ]
+    [ <a href="../index.html">Client.View</a> ]
+</div>
+
+<h1>Coverage Summary for Class: CLI (Client.View)</h1>
+
+<table class="coverageStats">
+
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">CLI</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/ 19)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/ 336)
+  </span>
+</td>
+</tr>
+  <tr>
+    <td class="name">CLI$1</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/ 1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/ 2)
+  </span>
+</td>
+  </tr>
+<tr>
+  <td class="name"><strong>total</strong></td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/ 20)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/ 338)
+  </span>
+</td>
+</tr>
+</table>
+
+<br/>
+<br/>
+
+
+<div class="sourceCode"><i>1</i>&nbsp;package Client.View;
+<i>2</i>&nbsp;
+<i>3</i>&nbsp;import Controller.Network.VCEvent;
+<i>4</i>&nbsp;import Model.*;
+<i>5</i>&nbsp;import Client.Controller.Controller;
+<i>6</i>&nbsp;import Controller.Coordinates;
+<i>7</i>&nbsp;
+<i>8</i>&nbsp;import java.io.BufferedReader;
+<i>9</i>&nbsp;import java.io.IOException;
+<i>10</i>&nbsp;import java.io.InputStreamReader;
+<i>11</i>&nbsp;import java.util.ArrayList;
+<i>12</i>&nbsp;import java.util.Scanner;
+<i>13</i>&nbsp;import java.util.concurrent.atomic.AtomicInteger;
+<i>14</i>&nbsp;
+<i>15</i>&nbsp;public class CLI {
+<i>16</i>&nbsp;    public static void main(String[] args){
+<b class="nc"><i>17</i>&nbsp;        System.out.println(&quot;Santorini - Epifani Falleti Landi&quot;);</b>
+<b class="nc"><i>18</i>&nbsp;        if(isAMac()==true){</b>
+<b class="nc"><i>19</i>&nbsp;            CLI CLI = new CLIForMac(&quot;Mac&quot;);</b>
+<b class="nc"><i>20</i>&nbsp;            ClientNetworkHandler cnh = new ClientNetworkHandler(CLI);</b>
+<i>21</i>&nbsp;            //Thread per l&#39;esecuzione principale della CLI
+<b class="nc"><i>22</i>&nbsp;            Thread game = new Thread(cnh);</b>
+<b class="nc"><i>23</i>&nbsp;            game.start();</b>
+<i>24</i>&nbsp;
+<i>25</i>&nbsp;            //Ciclo di gioco
+<b class="nc"><i>26</i>&nbsp;            CLI.checkEvent(cnh);</b>
+<i>27</i>&nbsp;
+<i>28</i>&nbsp;            //Messagio di arriverci
+<b class="nc"><i>29</i>&nbsp;            System.out.println(&quot;Partita terminata, grazie per aver giocato&quot;);</b>
+<b class="nc"><i>30</i>&nbsp;            cnh.setFinish(true);</b>
+<i>31</i>&nbsp;
+<b class="nc"><i>32</i>&nbsp;        }else{</b>
+<b class="nc"><i>33</i>&nbsp;            CLI CLI = new CLI(&quot;Win&quot;);</b>
+<b class="nc"><i>34</i>&nbsp;            ClientNetworkHandler cnh = new ClientNetworkHandler(CLI);</b>
+<i>35</i>&nbsp;            //Thread per l&#39;esecuzione principale della CLI
+<b class="nc"><i>36</i>&nbsp;            Thread game = new Thread(cnh);</b>
+<b class="nc"><i>37</i>&nbsp;            game.start();</b>
+<i>38</i>&nbsp;
+<i>39</i>&nbsp;            //Ciclo di gioco
+<b class="nc"><i>40</i>&nbsp;            CLI.checkEvent(cnh);</b>
+<i>41</i>&nbsp;
+<i>42</i>&nbsp;            //Messagio di arriverci
+<b class="nc"><i>43</i>&nbsp;            System.out.println(&quot;Partita terminata, grazie per aver giocato&quot;);</b>
+<b class="nc"><i>44</i>&nbsp;            cnh.setFinish(true);</b>
+<i>45</i>&nbsp;
+<i>46</i>&nbsp;        }
+<i>47</i>&nbsp;
+<i>48</i>&nbsp;
+<i>49</i>&nbsp;        //Creazione della socket del client
+<i>50</i>&nbsp;
+<i>51</i>&nbsp;
+<i>52</i>&nbsp;
+<b class="nc"><i>53</i>&nbsp;    }</b>
+<i>54</i>&nbsp;
+<i>55</i>&nbsp;    //Attributi grafici e testuali della CLI
+<i>56</i>&nbsp;    private ClientNetworkHandler cnh;
+<i>57</i>&nbsp;    private Controller c;
+<i>58</i>&nbsp;    private Scanner s;
+<i>59</i>&nbsp;    private String myColor;
+<i>60</i>&nbsp;    private Board b;
+<b class="nc"><i>61</i>&nbsp;    private String move=&quot;dove ti vuoi muovere&quot;;</b>
+<b class="nc"><i>62</i>&nbsp;    private String build=&quot;dove vuoi costruire&quot;;</b>
+<b class="nc"><i>63</i>&nbsp;    private String sendCellsMove = &quot;dove puoi muoverti&quot;;</b>
+<b class="nc"><i>64</i>&nbsp;    private String sendCellsBuild = &quot;dove puoi costruire&quot;;</b>
+<i>65</i>&nbsp;    private Elements e;
+<b class="nc"><i>66</i>&nbsp;    private String xPosition =&quot;y&quot;;</b>
+<b class="nc"><i>67</i>&nbsp;    private String yPosition = &quot;x&quot;;</b>
+<b class="nc"><i>68</i>&nbsp;    private String movingPhase = &quot;Fase di movimento&quot;;</b>
+<b class="nc"><i>69</i>&nbsp;    private String buildingPhase = &quot;Fase di costruzione&quot;;</b>
+<b class="nc"><i>70</i>&nbsp;    private String removePhase = &quot;Fase di rimozione&quot;;</b>
+<i>71</i>&nbsp;    private int playersNumber;
+<i>72</i>&nbsp;    private int giorno;
+<i>73</i>&nbsp;    private int mese;
+<i>74</i>&nbsp;    private int anno;
+<i>75</i>&nbsp;    private Data dateOfBirth;
+<b class="nc"><i>76</i>&nbsp;    private ArrayList&lt;String&gt; chosenGods = new ArrayList&lt;String&gt;();</b>
+<i>77</i>&nbsp;    private String myCard;
+<i>78</i>&nbsp;    private boolean updateView;
+<i>79</i>&nbsp;
+<i>80</i>&nbsp;    //Costruttore della CLI
+<i>81</i>&nbsp;    /***
+<i>82</i>&nbsp;     *
+<i>83</i>&nbsp;     */
+<b class="nc"><i>84</i>&nbsp;    public CLI(String OS){</b>
+<i>85</i>&nbsp;        //cnh = new ClientNetworkHandler(CLI);
+<b class="nc"><i>86</i>&nbsp;        s = new Scanner(System.in);</b>
+<b class="nc"><i>87</i>&nbsp;        c = new Controller();</b>
+<b class="nc"><i>88</i>&nbsp;        b = new Board();</b>
+<b class="nc"><i>89</i>&nbsp;        e = new Elements();</b>
+<b class="nc"><i>90</i>&nbsp;    }</b>
+<i>91</i>&nbsp;
+<b class="nc"><i>92</i>&nbsp;    public CLI(){</b>
+<i>93</i>&nbsp;
+<b class="nc"><i>94</i>&nbsp;    }</b>
+<i>95</i>&nbsp;
+<i>96</i>&nbsp;
+<i>97</i>&nbsp;    /***
+<i>98</i>&nbsp;     *
+<i>99</i>&nbsp;     * @param b
+<i>100</i>&nbsp;     */
+<i>101</i>&nbsp;    public void printBoard(Board b){
+<b class="nc"><i>102</i>&nbsp;        for(int i=0;i&lt;5;i++){</b>
+<b class="nc"><i>103</i>&nbsp;            for(int j=0;j&lt;5;j++)  {</b>
+<b class="nc"><i>104</i>&nbsp;                    System.out.print( Color.ANSI_BLUE +&quot;| worker: &quot; + turnWorkerIntoColoredImage(b, i, j) + Color.ANSI_BLUE + &quot; height: &quot; + turnHeightIntoImage(b, i, j) + &quot; | &quot;);</b>
+<i>105</i>&nbsp;                    }
+<b class="nc"><i>106</i>&nbsp;            System.out.println();</b>
+<i>107</i>&nbsp;        }
+<b class="nc"><i>108</i>&nbsp;        System.out.println();</b>
+<b class="nc"><i>109</i>&nbsp;    }</b>
+<i>110</i>&nbsp;
+<i>111</i>&nbsp;    /***
+<i>112</i>&nbsp;     *
+<i>113</i>&nbsp;     * @param b
+<i>114</i>&nbsp;     * @param validPositions
+<i>115</i>&nbsp;     */
+<i>116</i>&nbsp;    public void paintBoardCell(Board b, ArrayList&lt;Coordinates&gt; validPositions) {
+<b class="nc"><i>117</i>&nbsp;        boolean isToPaint= false;</b>
+<i>118</i>&nbsp;
+<b class="nc"><i>119</i>&nbsp;        for (int i = 0; i &lt; 5; i++) {</b>
+<b class="nc"><i>120</i>&nbsp;            for (int j = 0; j &lt; 5; j++) {</b>
+<b class="nc"><i>121</i>&nbsp;                    for (Coordinates c: validPositions){</b>
+<b class="nc"><i>122</i>&nbsp;                        if(c.getX()==i &amp;&amp; c.getY()==j){</b>
+<b class="nc"><i>123</i>&nbsp;                            isToPaint=true;</b>
+<i>124</i>&nbsp;                        }
+<b class="nc"><i>125</i>&nbsp;                    }</b>
+<b class="nc"><i>126</i>&nbsp;                if (isToPaint==true) {</b>
+<b class="nc"><i>127</i>&nbsp;                    System.out.print(Color.ANSI_RED + &quot;| worker: &quot; + turnWorkerIntoColoredImage(b, i, j) + Color.ANSI_RED + &quot; height: &quot; + turnHeightIntoImage(b, i, j) + &quot; | &quot;);</b>
+<b class="nc"><i>128</i>&nbsp;                    isToPaint=false;</b>
+<i>129</i>&nbsp;                } else {
+<b class="nc"><i>130</i>&nbsp;                    System.out.print(Color.ANSI_BLUE + &quot;| worker: &quot; + turnWorkerIntoColoredImage(b, i, j) + Color.ANSI_BLUE + &quot; height: &quot; + turnHeightIntoImage(b, i, j) + &quot; | &quot;);</b>
+<i>131</i>&nbsp;                }
+<i>132</i>&nbsp;            }
+<b class="nc"><i>133</i>&nbsp;            System.out.println();</b>
+<i>134</i>&nbsp;        }
+<b class="nc"><i>135</i>&nbsp;    }</b>
+<i>136</i>&nbsp;
+<i>137</i>&nbsp;    /***
+<i>138</i>&nbsp;     *
+<i>139</i>&nbsp;     * @param cnh
+<i>140</i>&nbsp;     * @param o
+<i>141</i>&nbsp;     * @param command
+<i>142</i>&nbsp;     */
+<i>143</i>&nbsp;    public void buildEvent(ClientNetworkHandler cnh, Object o, VCEvent.Event command){
+<b class="nc"><i>144</i>&nbsp;        VCEvent currentEvent= new VCEvent(o, command);</b>
+<b class="nc"><i>145</i>&nbsp;        cnh.sendVCEvent(currentEvent);</b>
+<b class="nc"><i>146</i>&nbsp;    }</b>
+<i>147</i>&nbsp;
+<i>148</i>&nbsp;    public synchronized void updateGo()
+<i>149</i>&nbsp;    {
+<b class="nc"><i>150</i>&nbsp;        updateView = true;</b>
+<b class="nc"><i>151</i>&nbsp;        notifyAll();</b>
+<b class="nc"><i>152</i>&nbsp;    }</b>
+<i>153</i>&nbsp;    public void update()
+<i>154</i>&nbsp;    {
+<b class="nc"><i>155</i>&nbsp;        synchronized (this)</b>
+<i>156</i>&nbsp;        {
+<b class="nc"><i>157</i>&nbsp;            while(updateView == false)</b>
+<i>158</i>&nbsp;            {
+<i>159</i>&nbsp;                try{
+<b class="nc"><i>160</i>&nbsp;                    wait();</b>
+<i>161</i>&nbsp;                }
+<b class="nc"><i>162</i>&nbsp;                catch(InterruptedException e){}</b>
+<i>163</i>&nbsp;            }
+<b class="nc"><i>164</i>&nbsp;        }</b>
+<b class="nc"><i>165</i>&nbsp;        updateView = false;</b>
+<i>166</i>&nbsp;
+<b class="nc"><i>167</i>&nbsp;    }</b>
+<i>168</i>&nbsp;
+<i>169</i>&nbsp;    /***
+<i>170</i>&nbsp;     *
+<i>171</i>&nbsp;     * @param cnh
+<i>172</i>&nbsp;     */
+<i>173</i>&nbsp;    public void checkEvent(ClientNetworkHandler cnh)  {
+<b class="nc"><i>174</i>&nbsp;        boolean endGame = false;</b>
+<i>175</i>&nbsp;      // Board copy = new Board();
+<i>176</i>&nbsp;      // int firstTimeHeMoves = 1;
+<b class="nc"><i>177</i>&nbsp;        while(endGame==false){</b>
+<b class="nc"><i>178</i>&nbsp;            update();</b>
+<b class="nc"><i>179</i>&nbsp;            VCEvent evento = cnh.getFromServer();</b>
+<b class="nc"><i>180</i>&nbsp;            cnh.readByView();</b>
+<b class="nc"><i>181</i>&nbsp;            switch (evento.getCommand()){</b>
+<i>182</i>&nbsp;                case send_color:
+<b class="nc"><i>183</i>&nbsp;                    Object objcectColorName = evento.getBox();</b>
+<b class="nc"><i>184</i>&nbsp;                    if(objcectColorName instanceof String){</b>
+<b class="nc"><i>185</i>&nbsp;                        this.myColor = (String) objcectColorName;</b>
+<b class="nc"><i>186</i>&nbsp;                        System.out.println(&quot;I tuoi worker saranno di colore &quot; + myColor);</b>
+<i>187</i>&nbsp;                    }else{
+<b class="nc"><i>188</i>&nbsp;                        System.out.println(&quot;Errore! La stringa che dovrebbe rappresentare in nome del mio colore è arrivata corrotta&quot;);</b>
+<i>189</i>&nbsp;                    }
+<b class="nc"><i>190</i>&nbsp;                    break;</b>
+<i>191</i>&nbsp;                case setup_request:
+<b class="nc"><i>192</i>&nbsp;                    System.out.println(&quot;Quanti giocatori giocheranno a questa partita?\nInserire 2 per 2 giocatori, 3 per 3 giocatori&quot;);</b>
+<b class="nc"><i>193</i>&nbsp;                    int n = s.nextInt();</b>
+<b class="nc"><i>194</i>&nbsp;                    s.nextLine();</b>
+<b class="nc"><i>195</i>&nbsp;                    while (c.checkNumberOfPlayers(n) == false) {</b>
+<b class="nc"><i>196</i>&nbsp;                        System.out.println(&quot;Errore, impossibile avviare una partita con questo numero di giocatori, chiedere solo per 2 o 3 giocatori&quot;);</b>
+<b class="nc"><i>197</i>&nbsp;                        n = s.nextInt();</b>
+<b class="nc"><i>198</i>&nbsp;                        s.nextLine();</b>
+<i>199</i>&nbsp;                    }
+<b class="nc"><i>200</i>&nbsp;                    this.playersNumber=n;</b>
+<b class="nc"><i>201</i>&nbsp;                    buildEvent(cnh, n, VCEvent.Event.setup_request);</b>
+<b class="nc"><i>202</i>&nbsp;                    break;</b>
+<i>203</i>&nbsp;                case username_request :
+<b class="nc"><i>204</i>&nbsp;                    System.out.println(&quot;Inserisci il tuo nome utente&quot;);</b>
+<b class="nc"><i>205</i>&nbsp;                    String username=s.nextLine();</b>
+<b class="nc"><i>206</i>&nbsp;                    buildEvent(cnh, username, VCEvent.Event.username_request);</b>
+<b class="nc"><i>207</i>&nbsp;                    break;</b>
+<i>208</i>&nbsp;                case wrong_username:
+<b class="nc"><i>209</i>&nbsp;                    Object objectWrongUsername = evento.getBox();</b>
+<b class="nc"><i>210</i>&nbsp;                    System.out.println(&quot;Errore! Hai inserito uno username già scelto da un altro giocatore\nReinserire username&quot;);</b>
+<b class="nc"><i>211</i>&nbsp;                    String newUsermane= s.nextLine();</b>
+<b class="nc"><i>212</i>&nbsp;                    buildEvent(cnh,newUsermane, VCEvent.Event.wrong_username);</b>
+<b class="nc"><i>213</i>&nbsp;                    break;</b>
+<i>214</i>&nbsp;                case date_request:
+<b class="nc"><i>215</i>&nbsp;                    insertDate();</b>
+<b class="nc"><i>216</i>&nbsp;                    dateOfBirth = new Data(giorno,mese,anno);</b>
+<b class="nc"><i>217</i>&nbsp;                    s.nextLine();</b>
+<b class="nc"><i>218</i>&nbsp;                    while(c.controllaData(dateOfBirth)==false){</b>
+<b class="nc"><i>219</i>&nbsp;                        System.out.println(&quot;Data non valida, per favore inserire nuovamente&quot;);</b>
+<b class="nc"><i>220</i>&nbsp;                        insertDate();</b>
+<b class="nc"><i>221</i>&nbsp;                        s.nextLine();</b>
+<b class="nc"><i>222</i>&nbsp;                        this.dateOfBirth = new Data(giorno,mese,anno);</b>
+<i>223</i>&nbsp;                    }
+<b class="nc"><i>224</i>&nbsp;                    buildEvent(cnh,dateOfBirth, VCEvent.Event.date_request);</b>
+<b class="nc"><i>225</i>&nbsp;                    break;</b>
+<i>226</i>&nbsp;                case not_your_turn:
+<b class="nc"><i>227</i>&nbsp;                    Object objectCurrentPlayerInformation = evento.getBox();</b>
+<b class="nc"><i>228</i>&nbsp;                    ArrayList&lt;String&gt; currentPlayerInformation= (ArrayList&lt;String&gt;) objectCurrentPlayerInformation;</b>
+<b class="nc"><i>229</i>&nbsp;                    System.out.println(&quot;Partita in corso, sta giocando &quot; + currentPlayerInformation.get(0) +</b>
+<b class="nc"><i>230</i>&nbsp;                            &quot; con la carta &quot; + currentPlayerInformation.get(1));</b>
+<b class="nc"><i>231</i>&nbsp;                    break;</b>
+<i>232</i>&nbsp;                case update:
+<b class="nc"><i>233</i>&nbsp;                    Object objectBoardCell = evento.getBox();</b>
+<b class="nc"><i>234</i>&nbsp;                    ArrayList&lt;SocketBoardCell&gt; socketBoardCell = (ArrayList&lt;SocketBoardCell&gt;) objectBoardCell;</b>
+<i>235</i>&nbsp;
+<b class="nc"><i>236</i>&nbsp;                    int counter = 0;</b>
+<b class="nc"><i>237</i>&nbsp;                    for (int i = 0; i &lt;5 ; i++) {</b>
+<b class="nc"><i>238</i>&nbsp;                        for (int j = 0; j &lt; 5; j++) {</b>
+<b class="nc"><i>239</i>&nbsp;                            b.setBoardHeight(i,j,socketBoardCell.get(counter).getHeight());</b>
+<b class="nc"><i>240</i>&nbsp;                           if (socketBoardCell.get(counter).getWorkerColor() != null)</b>
+<i>241</i>&nbsp;                           {
+<b class="nc"><i>242</i>&nbsp;                               b.setBoardWorker(i,j,new Worker(i,j,socketBoardCell.get(counter).getWorkerColor()));</b>
+<i>243</i>&nbsp;                           }else{
+<b class="nc"><i>244</i>&nbsp;                               b.setBoardWorker(i,j,null);</b>
+<i>245</i>&nbsp;                           }
+<b class="nc"><i>246</i>&nbsp;                           counter++;</b>
+<i>247</i>&nbsp;                        }
+<i>248</i>&nbsp;
+<i>249</i>&nbsp;                    }
+<b class="nc"><i>250</i>&nbsp;                    printBoard(b);</b>
+<b class="nc"><i>251</i>&nbsp;                    break;</b>
+<i>252</i>&nbsp;                case ask_for_worker:
+<i>253</i>&nbsp;                    //ATTENZIONE: Una parte di ask_for_worker contiene del codice duplicato con sendCells(). CORREGGERE!!!
+<b class="nc"><i>254</i>&nbsp;                    Object objectChoices = evento.getBox();</b>
+<b class="nc"><i>255</i>&nbsp;                    ArrayList&lt;Coordinates&gt; positionWorkers = (ArrayList&lt;Coordinates&gt;) objectChoices;</b>
+<b class="nc"><i>256</i>&nbsp;                    System.out.println(&quot;Puoi muovere i seguenti worker: &quot;);</b>
+<b class="nc"><i>257</i>&nbsp;                    for (Coordinates c: positionWorkers) {</b>
+<b class="nc"><i>258</i>&nbsp;                        System.out.println(&quot;Worker in posizione &quot;+ c.toString());</b>
+<b class="nc"><i>259</i>&nbsp;                    }</b>
+<b class="nc"><i>260</i>&nbsp;                    System.out.println(&quot;Quale worker vuoi muovere?&quot;);</b>
+<b class="nc"><i>261</i>&nbsp;                    int x=chooseCoordinate(xPosition);</b>
+<b class="nc"><i>262</i>&nbsp;                    s.nextLine();</b>
+<b class="nc"><i>263</i>&nbsp;                    int y=chooseCoordinate(yPosition);</b>
+<b class="nc"><i>264</i>&nbsp;                    s.nextLine();</b>
+<b class="nc"><i>265</i>&nbsp;                    Coordinates chosenCoordinates = new Coordinates(x,y);</b>
+<b class="nc"><i>266</i>&nbsp;                    while(c.checkRequestedPosition(positionWorkers, chosenCoordinates)==false){</b>
+<b class="nc"><i>267</i>&nbsp;                        System.out.println(&quot;Errore! Selezione non valida&quot;);</b>
+<b class="nc"><i>268</i>&nbsp;                        x=chooseCoordinate(xPosition);</b>
+<b class="nc"><i>269</i>&nbsp;                        s.nextLine();</b>
+<b class="nc"><i>270</i>&nbsp;                        y=chooseCoordinate(yPosition);</b>
+<b class="nc"><i>271</i>&nbsp;                        s.nextLine();</b>
+<b class="nc"><i>272</i>&nbsp;                        chosenCoordinates = new Coordinates(x,y);</b>
+<i>273</i>&nbsp;                    }
+<b class="nc"><i>274</i>&nbsp;                    buildEvent(cnh,findIndex(positionWorkers,chosenCoordinates), VCEvent.Event.ask_for_worker);</b>
+<b class="nc"><i>275</i>&nbsp;                    break;</b>
+<i>276</i>&nbsp;                case send_cells_move:
+<b class="nc"><i>277</i>&nbsp;                    sendCells(movingPhase, cnh, VCEvent.Event.send_cells_move,evento);</b>
+<b class="nc"><i>278</i>&nbsp;                    break;</b>
+<i>279</i>&nbsp;                case send_cells_build:
+<b class="nc"><i>280</i>&nbsp;                    sendCells(buildingPhase, cnh, VCEvent.Event.send_cells_build,evento);</b>
+<b class="nc"><i>281</i>&nbsp;                    break;</b>
+<i>282</i>&nbsp;                case send_cells_remove:
+<b class="nc"><i>283</i>&nbsp;                    sendCells(removePhase,cnh, VCEvent.Event.send_cells_remove,evento);</b>
+<b class="nc"><i>284</i>&nbsp;                    break;</b>
+<i>285</i>&nbsp;
+<i>286</i>&nbsp;                case undo_request:
+<b class="nc"><i>287</i>&nbsp;                    System.out.println(&quot;Hai 5 secondi per fare l&#39;undo della mossa appena fatta. Scrivi 1 per fare undo o 0 per non farlo&quot;);</b>
+<b class="nc"><i>288</i>&nbsp;                    BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));</b>
+<b class="nc"><i>289</i>&nbsp;                    long start = System.currentTimeMillis();</b>
+<b class="nc"><i>290</i>&nbsp;                    int choose = 0;</b>
+<i>291</i>&nbsp;                    while (true){
+<i>292</i>&nbsp;                        try {
+<b class="nc"><i>293</i>&nbsp;                            if (!(((System.currentTimeMillis()-start) &lt; 5000) &amp;&amp; !reader.ready())) break;</b>
+<b class="nc"><i>294</i>&nbsp;                        } catch (IOException ex) { }</b>
+<i>295</i>&nbsp;                    }
+<i>296</i>&nbsp;                    try {
+<b class="nc"><i>297</i>&nbsp;                        if (reader.ready())</b>
+<b class="nc"><i>298</i>&nbsp;                            choose = Integer.parseInt(reader.readLine());</b>
+<b class="nc"><i>299</i>&nbsp;                    } catch (IOException ex) {</b>
+<b class="nc"><i>300</i>&nbsp;                        ex.printStackTrace();</b>
+<b class="nc"><i>301</i>&nbsp;                    }</b>
+<i>302</i>&nbsp;
+<i>303</i>&nbsp;/*
+<i>304</i>&nbsp;                    if (choose == 1) {
+<i>305</i>&nbsp;                        firstTimeHeMoves = 1;
+<i>306</i>&nbsp;                        this.b.deepCopy(copy);
+<i>307</i>&nbsp;                    }
+<i>308</i>&nbsp;
+<i>309</i>&nbsp;
+<i>310</i>&nbsp; */
+<i>311</i>&nbsp;
+<i>312</i>&nbsp;
+<i>313</i>&nbsp;
+<b class="nc"><i>314</i>&nbsp;                    buildEvent(cnh,choose, VCEvent.Event.undo_request);</b>
+<b class="nc"><i>315</i>&nbsp;                    break;</b>
+<i>316</i>&nbsp;
+<i>317</i>&nbsp;                case you_lost:
+<b class="nc"><i>318</i>&nbsp;                    Object objectWinner = evento.getBox();</b>
+<b class="nc"><i>319</i>&nbsp;                    if(objectWinner instanceof String){</b>
+<b class="nc"><i>320</i>&nbsp;                        String winner = (String) objectWinner;</b>
+<b class="nc"><i>321</i>&nbsp;                        System.out.println(&quot;Partita conclusa! Il vincitore è: &quot; + winner);</b>
+<b class="nc"><i>322</i>&nbsp;                    }else{</b>
+<b class="nc"><i>323</i>&nbsp;                        System.out.println(&quot;Errore! La stringa del vincitore è corrotta&quot;);</b>
+<i>324</i>&nbsp;                    }
+<b class="nc"><i>325</i>&nbsp;                    System.out.println();</b>
+<b class="nc"><i>326</i>&nbsp;                    buildEvent(cnh,&quot;ho perso&quot;, VCEvent.Event.you_lost);</b>
+<b class="nc"><i>327</i>&nbsp;                    endGame=true;</b>
+<b class="nc"><i>328</i>&nbsp;                    break;</b>
+<i>329</i>&nbsp;                case you_won:
+<b class="nc"><i>330</i>&nbsp;                    System.out.println(&quot;Congratulazioni, sei il vincitore!&quot;);</b>
+<b class="nc"><i>331</i>&nbsp;                    buildEvent(cnh,&quot;ho vinto&quot;, VCEvent.Event.you_won);</b>
+<b class="nc"><i>332</i>&nbsp;                    endGame=true;</b>
+<b class="nc"><i>333</i>&nbsp;                    break;</b>
+<i>334</i>&nbsp;                case game_ended_foryou:
+<b class="nc"><i>335</i>&nbsp;                    System.out.println(&quot;Mi spiace, non puoi più muoverti con nessuno dei tuoi worker&quot;);</b>
+<b class="nc"><i>336</i>&nbsp;                    break;</b>
+<i>337</i>&nbsp;                case number_of_players:
+<b class="nc"><i>338</i>&nbsp;                    playersNumber = (Integer)evento.getBox();</b>
+<b class="nc"><i>339</i>&nbsp;                    break;</b>
+<i>340</i>&nbsp;                case ask_for_divinity_activation:
+<b class="nc"><i>341</i>&nbsp;                    Object objectGod = evento.getBox();</b>
+<b class="nc"><i>342</i>&nbsp;                    String god_name = (String) objectGod;</b>
+<b class="nc"><i>343</i>&nbsp;                    switch (god_name.toUpperCase()){</b>
+<i>344</i>&nbsp;                        case &quot;ARTEMIS&quot;:
+<b class="nc"><i>345</i>&nbsp;                            System.out.println(&quot;Vuoi attivare l&#39;effetto di Artemis e fare un secondo movimento?&quot;);</b>
+<b class="nc"><i>346</i>&nbsp;                            break;</b>
+<i>347</i>&nbsp;                        case &quot;ATLAS&quot;:
+<b class="nc"><i>348</i>&nbsp;                            System.out.println(&quot;Vuoi attivare l&#39;effetto di Atlas e costruire una cupola?&quot;);</b>
+<b class="nc"><i>349</i>&nbsp;                            break;</b>
+<i>350</i>&nbsp;                        case &quot;DEMETER&quot;:
+<b class="nc"><i>351</i>&nbsp;                            System.out.println(&quot;Vuoi attivare l&#39;effetto di Demeter e fare una seconda costruzione?&quot;);</b>
+<b class="nc"><i>352</i>&nbsp;                            break;</b>
+<i>353</i>&nbsp;                        case &quot;HEPHAESTUS&quot;:
+<b class="nc"><i>354</i>&nbsp;                            System.out.println(&quot;Vuoi attivare l&#39;effetto di Hephaestus e costruire una seconda volta sullo stesso blocco?&quot;);</b>
+<b class="nc"><i>355</i>&nbsp;                            break;</b>
+<i>356</i>&nbsp;                        case &quot;PROMETHEUS&quot;:
+<b class="nc"><i>357</i>&nbsp;                            System.out.println(&quot;Vuoi attivare l&#39;effetto di Prometheus? (Costruisci prima e dopo il movimento però non puoi salire di livello)&quot;);</b>
+<b class="nc"><i>358</i>&nbsp;                            break;</b>
+<i>359</i>&nbsp;                        case &quot;HESTIA&quot;:
+<b class="nc"><i>360</i>&nbsp;                            System.out.println(&quot;Vuoi attivare l&#39;effetto di Hestia e fare una seconda costruzione, ma non in una casella perimetrale?&quot;);</b>
+<b class="nc"><i>361</i>&nbsp;                            break;</b>
+<i>362</i>&nbsp;                        case &quot;TRITON&quot;:
+<b class="nc"><i>363</i>&nbsp;                            System.out.println(&quot;Vuoi attivare l&#39;effetto di Triton e fare una altro movimento?&quot;);</b>
+<b class="nc"><i>364</i>&nbsp;                            break;</b>
+<i>365</i>&nbsp;                        case &quot;ARES&quot;:
+<b class="nc"><i>366</i>&nbsp;                            System.out.println(&quot;Vuoi attivare l&#39;effetto di Ares e rimuovere un blocco libero (non una cupola) con il worker che non hai mosso?&quot;);</b>
+<i>367</i>&nbsp;                            break;
+<i>368</i>&nbsp;                    }
+<b class="nc"><i>369</i>&nbsp;                    boolean temp = false;</b>
+<i>370</i>&nbsp;                    //Se ne deve occupare il clientSideController
+<b class="nc"><i>371</i>&nbsp;                    while(temp == false) {</b>
+<b class="nc"><i>372</i>&nbsp;                        System.out.println(&quot;(Y) per attivare, (N) per non attivare:&quot;);</b>
+<b class="nc"><i>373</i>&nbsp;                        String response = s.nextLine();</b>
+<b class="nc"><i>374</i>&nbsp;                        switch (response.toUpperCase()) {</b>
+<i>375</i>&nbsp;                            case &quot;Y&quot;:
+<b class="nc"><i>376</i>&nbsp;                                temp = true;</b>
+<b class="nc"><i>377</i>&nbsp;                                buildEvent(cnh, 1, VCEvent.Event.ask_for_divinity_activation);</b>
+<b class="nc"><i>378</i>&nbsp;                                break;</b>
+<i>379</i>&nbsp;                            case &quot;N&quot;:
+<b class="nc"><i>380</i>&nbsp;                                temp = true;</b>
+<b class="nc"><i>381</i>&nbsp;                                buildEvent(cnh, 0, VCEvent.Event.ask_for_divinity_activation);</b>
+<b class="nc"><i>382</i>&nbsp;                                break;</b>
+<i>383</i>&nbsp;                            default:
+<b class="nc"><i>384</i>&nbsp;                                System.out.println(&quot;Input non valido, riprova.&quot;);</b>
+<i>385</i>&nbsp;                                break;
+<i>386</i>&nbsp;                        }
+<b class="nc"><i>387</i>&nbsp;                    }</b>
+<i>388</i>&nbsp;                    break;
+<i>389</i>&nbsp;                case send_all_cards:
+<b class="nc"><i>390</i>&nbsp;                    System.out.println(&quot;Hai a disposizione le seguenti divinità:&quot;);</b>
+<b class="nc"><i>391</i>&nbsp;                    Object objectGods = evento.getBox();</b>
+<b class="nc"><i>392</i>&nbsp;                    ArrayList&lt;String&gt; gods= (ArrayList&lt;String&gt;)  objectGods;</b>
+<b class="nc"><i>393</i>&nbsp;                    for(String god:gods){</b>
+<b class="nc"><i>394</i>&nbsp;                        System.out.print(god + &quot; &quot;);</b>
+<b class="nc"><i>395</i>&nbsp;                    }</b>
+<b class="nc"><i>396</i>&nbsp;                    System.out.println(&quot;&quot;);</b>
+<b class="nc"><i>397</i>&nbsp;                    System.out.println(&quot;Scegli &quot; + playersNumber + &quot; carte&quot;);</b>
+<i>398</i>&nbsp;
+<b class="nc"><i>399</i>&nbsp;                    for(int i=0;i&lt;playersNumber;i++){</b>
+<b class="nc"><i>400</i>&nbsp;                        System.out.print(&quot;Scegli la &quot; + (i+1) + &quot;° carta -&gt; &quot;);</b>
+<b class="nc"><i>401</i>&nbsp;                        String card = s.nextLine();</b>
+<i>402</i>&nbsp;                        //card=validCard(card,gods);
+<i>403</i>&nbsp;                        //card=isAlreadyChosen(i, card, chosenGods);
+<b class="nc"><i>404</i>&nbsp;                        chosenGods.add(card);</b>
+<i>405</i>&nbsp;                    }
+<b class="nc"><i>406</i>&nbsp;                    System.out.println();</b>
+<b class="nc"><i>407</i>&nbsp;                    buildEvent(cnh,chosenGods, VCEvent.Event.send_all_cards);</b>
+<b class="nc"><i>408</i>&nbsp;                    break;</b>
+<i>409</i>&nbsp;                case send_chosen_cards:
+<b class="nc"><i>410</i>&nbsp;                    System.out.println(&quot;Puoi scegliere tra le seguenti divinità:&quot;);</b>
+<b class="nc"><i>411</i>&nbsp;                    Object objectSentGods = evento.getBox();</b>
+<i>412</i>&nbsp;                    //Non possiamo controllare se l&#39;ArrayList di Stringhe sia corrotto o meno
+<b class="nc"><i>413</i>&nbsp;                    ArrayList&lt;String&gt; sentGods= (ArrayList&lt;String&gt;)  objectSentGods;</b>
+<b class="nc"><i>414</i>&nbsp;                    if(sentGods.size()==1){</b>
+<b class="nc"><i>415</i>&nbsp;                        System.out.println(&quot;La tua carta divinità sarà &quot; + sentGods.get(0)); //Operazione sulla GUI</b>
+<b class="nc"><i>416</i>&nbsp;                        this.myCard=sentGods.get(0);</b>
+<i>417</i>&nbsp;                        //In realtà non ci sarebbe bisogno dello statement successivo
+<b class="nc"><i>418</i>&nbsp;                        buildEvent(cnh, sentGods.get(0), VCEvent.Event.send_chosen_cards);</b>
+<i>419</i>&nbsp;                    }else{
+<b class="nc"><i>420</i>&nbsp;                        for(String god:sentGods){</b>
+<b class="nc"><i>421</i>&nbsp;                            System.out.print(god + &quot; &quot;);</b>
+<b class="nc"><i>422</i>&nbsp;                        }</b>
+<b class="nc"><i>423</i>&nbsp;                        System.out.println();</b>
+<b class="nc"><i>424</i>&nbsp;                        System.out.print(&quot;Digita il nome della divinità che preferisci -&gt;&quot;);</b>
+<i>425</i>&nbsp;                        //Il controller deve controllare che effettivamente la divinità scelta sia un elemento delle divinità ricevute
+<b class="nc"><i>426</i>&nbsp;                        String chosenGod= s.nextLine(); //Operazione GUI</b>
+<i>427</i>&nbsp;                        //chosenGod=validCard(chosenGod,sentGods);
+<b class="nc"><i>428</i>&nbsp;                        this.myCard=chosenGod;</b>
+<b class="nc"><i>429</i>&nbsp;                        System.out.println();</b>
+<b class="nc"><i>430</i>&nbsp;                        buildEvent(cnh, chosenGod, VCEvent.Event.send_chosen_cards);</b>
+<i>431</i>&nbsp;                    }
+<b class="nc"><i>432</i>&nbsp;                    break;</b>
+<i>433</i>&nbsp;                case player_disconnected_game_ended:
+<b class="nc"><i>434</i>&nbsp;                    Object objectPlayerDisconnected= evento.getBox();</b>
+<b class="nc"><i>435</i>&nbsp;                    if(objectPlayerDisconnected instanceof String){</b>
+<b class="nc"><i>436</i>&nbsp;                        String playerDisconnected = (String) objectPlayerDisconnected;</b>
+<b class="nc"><i>437</i>&nbsp;                        System.out.println(&quot;Ops! Il giocatore &quot; + playerDisconnected + &quot; si è disconnesso, purtroppo la partita terminerà ora&quot;);</b>
+<b class="nc"><i>438</i>&nbsp;                    }else{</b>
+<b class="nc"><i>439</i>&nbsp;                        System.out.println(&quot;Errore! La stringa del nome del giocatore che è disconnesso è corrotta&quot;);</b>
+<i>440</i>&nbsp;                    }
+<b class="nc"><i>441</i>&nbsp;                    buildEvent(cnh, &quot;ho ricevuto la disconnessione di un client&quot;, VCEvent.Event.player_disconnected_game_ended);</b>
+<b class="nc"><i>442</i>&nbsp;                    endGame=true;</b>
+<b class="nc"><i>443</i>&nbsp;                    break;</b>
+<i>444</i>&nbsp;                default:
+<b class="nc"><i>445</i>&nbsp;                    System.out.println(&quot;Errore nel protocollo&quot;);</b>
+<i>446</i>&nbsp;                    break;
+<i>447</i>&nbsp;            }
+<i>448</i>&nbsp;
+<b class="nc"><i>449</i>&nbsp;        }</b>
+<b class="nc"><i>450</i>&nbsp;    }</b>
+<i>451</i>&nbsp;
+<i>452</i>&nbsp;    /***
+<i>453</i>&nbsp;     *
+<i>454</i>&nbsp;     * @param b
+<i>455</i>&nbsp;     * @param i
+<i>456</i>&nbsp;     * @param j
+<i>457</i>&nbsp;     * @return
+<i>458</i>&nbsp;     */
+<i>459</i>&nbsp;    public String turnHeightIntoImage(Board b, int i, int j){
+<b class="nc"><i>460</i>&nbsp;        if(b.getBoardHeight(i,j)==0){</b>
+<b class="nc"><i>461</i>&nbsp;            return e.getBuilding(0);</b>
+<b class="nc"><i>462</i>&nbsp;        }else if(b.getBoardHeight(i,j)==1){</b>
+<b class="nc"><i>463</i>&nbsp;            return &quot; &quot; + e.getBuilding(1) + &quot; &quot;;</b>
+<b class="nc"><i>464</i>&nbsp;        }else if(b.getBoardHeight(i,j)==2){</b>
+<b class="nc"><i>465</i>&nbsp;            return &quot; &quot; + e.getBuilding(2) + &quot; &quot;;</b>
+<b class="nc"><i>466</i>&nbsp;        }else if(b.getBoardHeight(i,j)==3){</b>
+<b class="nc"><i>467</i>&nbsp;            return e.getBuilding(3) + &quot; &quot; + e.getBuilding(1);</b>
+<b class="nc"><i>468</i>&nbsp;        }else if(b.getBoardHeight(i,j)==4){</b>
+<b class="nc"><i>469</i>&nbsp;            return &quot; &quot; + e.getBuilding(4) + &quot; &quot;;</b>
+<i>470</i>&nbsp;        }
+<b class="nc"><i>471</i>&nbsp;        return &quot;Errore nella costuzione dell&#39;altezza&quot;;</b>
+<i>472</i>&nbsp;    }
+<i>473</i>&nbsp;
+<i>474</i>&nbsp;    /***
+<i>475</i>&nbsp;     *
+<i>476</i>&nbsp;     * @param b
+<i>477</i>&nbsp;     * @param i
+<i>478</i>&nbsp;     * @param j
+<i>479</i>&nbsp;     * @return
+<i>480</i>&nbsp;     */
+<i>481</i>&nbsp;    public String turnWorkerIntoColoredImage(Board b, int i, int j){
+<b class="nc"><i>482</i>&nbsp;        if(b.getBoardWorker(i,j)!=null){</b>
+<b class="nc"><i>483</i>&nbsp;            switch (b.getBoardWorker(i,j).getColor()){</b>
+<i>484</i>&nbsp;                case ANSI_YELLOW:
+<b class="nc"><i>485</i>&nbsp;                    return &quot; &quot; + Color.ANSI_YELLOW + e.getWorker() + &quot; &quot;;</b>
+<i>486</i>&nbsp;                case ANSI_WHITE:
+<b class="nc"><i>487</i>&nbsp;                    return &quot; &quot; + Color.ANSI_WHITE + e.getWorker() + &quot; &quot;;</b>
+<i>488</i>&nbsp;                case ANSI_PURPLE:
+<b class="nc"><i>489</i>&nbsp;                    return &quot; &quot; + Color.ANSI_PURPLE + e.getWorker() + &quot; &quot;;</b>
+<i>490</i>&nbsp;            }
+<i>491</i>&nbsp;        }else{
+<b class="nc"><i>492</i>&nbsp;            return &quot;    &quot;;</b>
+<i>493</i>&nbsp;        }
+<i>494</i>&nbsp;
+<b class="nc"><i>495</i>&nbsp;        return &quot;Renderizzazione e colorazione del worker non riuscita&quot;;</b>
+<i>496</i>&nbsp;    }
+<i>497</i>&nbsp;
+<i>498</i>&nbsp;    /***
+<i>499</i>&nbsp;     *
+<i>500</i>&nbsp;     * @param type
+<i>501</i>&nbsp;     * @return
+<i>502</i>&nbsp;     */
+<i>503</i>&nbsp;    public int chooseCoordinate(String type){
+<b class="nc"><i>504</i>&nbsp;        System.out.println(&quot;Inserisci posizione &quot; + type);</b>
+<b class="nc"><i>505</i>&nbsp;        int coordinate = s.nextInt();</b>
+<b class="nc"><i>506</i>&nbsp;        while(c.checkLimits(coordinate)==false){</b>
+<b class="nc"><i>507</i>&nbsp;            System.out.println(&quot;Errore! Puoi scegliere solo valori tra 0 e 4, inserisci nuovamente la posizione &quot; + type);</b>
+<b class="nc"><i>508</i>&nbsp;            coordinate=s.nextInt();</b>
+<i>509</i>&nbsp;        }
+<i>510</i>&nbsp;
+<b class="nc"><i>511</i>&nbsp;        return coordinate;</b>
+<i>512</i>&nbsp;    }
+<i>513</i>&nbsp;
+<i>514</i>&nbsp;    /***
+<i>515</i>&nbsp;     *
+<i>516</i>&nbsp;     * @param validPositions
+<i>517</i>&nbsp;     * @param chosenCoordinates
+<i>518</i>&nbsp;     * @return
+<i>519</i>&nbsp;     */
+<i>520</i>&nbsp;    public Integer findIndex(ArrayList&lt;Coordinates&gt; validPositions, Coordinates chosenCoordinates){
+<b class="nc"><i>521</i>&nbsp;        int index=0;</b>
+<b class="nc"><i>522</i>&nbsp;        for(Coordinates c:validPositions){</b>
+<b class="nc"><i>523</i>&nbsp;            if((c.getX() == chosenCoordinates.getX()) &amp;&amp; (c.getY() == chosenCoordinates.getY())){</b>
+<b class="nc"><i>524</i>&nbsp;                return index;</b>
+<i>525</i>&nbsp;            }
+<b class="nc"><i>526</i>&nbsp;            index++;</b>
+<b class="nc"><i>527</i>&nbsp;        }</b>
+<i>528</i>&nbsp;        //Se qualcosa è andato storto il controller lato server riceverà un -1
+<b class="nc"><i>529</i>&nbsp;        return  -1;</b>
+<i>530</i>&nbsp;    }
+<i>531</i>&nbsp;
+<i>532</i>&nbsp;    /***
+<i>533</i>&nbsp;     *
+<i>534</i>&nbsp;     * @param phase
+<i>535</i>&nbsp;     * @param cnh
+<i>536</i>&nbsp;     * @param command
+<i>537</i>&nbsp;     */
+<i>538</i>&nbsp;    public void sendCells(String phase, ClientNetworkHandler cnh, VCEvent.Event command,VCEvent evento){
+<b class="nc"><i>539</i>&nbsp;        System.out.println(phase);</b>
+<b class="nc"><i>540</i>&nbsp;        System.out.println(&quot;Le celle in rosso ti dicono &quot; /*+ specification*/);</b>
+<b class="nc"><i>541</i>&nbsp;        Object objectValidPositions = evento.getBox();</b>
+<i>542</i>&nbsp;        //Attenzione: qui non possiamo controllare se il dato arrivi corrotto o meno!
+<b class="nc"><i>543</i>&nbsp;        ArrayList&lt;Coordinates&gt; validPositions = (ArrayList&lt;Coordinates&gt;)objectValidPositions;</b>
+<b class="nc"><i>544</i>&nbsp;        paintBoardCell(b, validPositions );</b>
+<b class="nc"><i>545</i>&nbsp;        int x=chooseCoordinate(xPosition);</b>
+<b class="nc"><i>546</i>&nbsp;        s.nextLine();</b>
+<b class="nc"><i>547</i>&nbsp;        int y=chooseCoordinate(yPosition);</b>
+<b class="nc"><i>548</i>&nbsp;        s.nextLine();</b>
+<b class="nc"><i>549</i>&nbsp;        Coordinates chosenCoordinates = new Coordinates(x,y);</b>
+<b class="nc"><i>550</i>&nbsp;        while(c.checkRequestedPosition(validPositions, chosenCoordinates)==false){</b>
+<b class="nc"><i>551</i>&nbsp;            System.out.println(&quot;Errore! Mossa non valida, controlla le caselle in rosso per poter eseguire una mossa valida&quot;);</b>
+<b class="nc"><i>552</i>&nbsp;            x=chooseCoordinate(xPosition);</b>
+<b class="nc"><i>553</i>&nbsp;            s.nextLine();</b>
+<b class="nc"><i>554</i>&nbsp;            y=chooseCoordinate(yPosition);</b>
+<b class="nc"><i>555</i>&nbsp;            s.nextLine();</b>
+<b class="nc"><i>556</i>&nbsp;            chosenCoordinates = new Coordinates(x,y);</b>
+<i>557</i>&nbsp;        }
+<b class="nc"><i>558</i>&nbsp;        buildEvent(cnh,findIndex(validPositions, chosenCoordinates),command);</b>
+<b class="nc"><i>559</i>&nbsp;    }</b>
+<i>560</i>&nbsp;
+<i>561</i>&nbsp;    /***
+<i>562</i>&nbsp;     *
+<i>563</i>&nbsp;     */
+<i>564</i>&nbsp;    public void insertDate(){
+<b class="nc"><i>565</i>&nbsp;        System.out.print(&quot;Inserire il giorno in cui si è nati in formato gg (solo numerico) -&gt;&quot;);</b>
+<b class="nc"><i>566</i>&nbsp;        this.giorno=s.nextInt();</b>
+<b class="nc"><i>567</i>&nbsp;        System.out.print(&quot;Inserire il mese in cui si è nati in formato mm (solo numerico) -&gt;&quot;);</b>
+<b class="nc"><i>568</i>&nbsp;        this.mese=s.nextInt();</b>
+<b class="nc"><i>569</i>&nbsp;        System.out.print(&quot;Inserire l&#39;anno in cui si è nati in formato aaaa (solo numerico) -&gt;&quot;);</b>
+<b class="nc"><i>570</i>&nbsp;        this.anno=s.nextInt();</b>
+<b class="nc"><i>571</i>&nbsp;        System.out.println();</b>
+<b class="nc"><i>572</i>&nbsp;    }</b>
+<i>573</i>&nbsp;
+<i>574</i>&nbsp;    /***
+<i>575</i>&nbsp;     *
+<i>576</i>&nbsp;     * @param insertion
+<i>577</i>&nbsp;     * @param gods
+<i>578</i>&nbsp;     * @return
+<i>579</i>&nbsp;     */
+<i>580</i>&nbsp;    String validCard(String insertion, ArrayList&lt;String&gt; gods){
+<b class="nc"><i>581</i>&nbsp;        String convertedInsertion= insertion.toUpperCase();</b>
+<b class="nc"><i>582</i>&nbsp;        while(c.isInArrayListOfGods(convertedInsertion,gods)==false){</b>
+<b class="nc"><i>583</i>&nbsp;            System.out.println(&quot;Errore! Nome divinià non valido. Scegli una divinità tra quelle presenti!&quot;);</b>
+<b class="nc"><i>584</i>&nbsp;            System.out.print(&quot;Reinserisci il nome della divinità -&gt; &quot;);</b>
+<b class="nc"><i>585</i>&nbsp;            convertedInsertion=s.nextLine();</b>
+<b class="nc"><i>586</i>&nbsp;            convertedInsertion.toUpperCase();</b>
+<i>587</i>&nbsp;        }
+<i>588</i>&nbsp;
+<b class="nc"><i>589</i>&nbsp;        return insertion;</b>
+<i>590</i>&nbsp;    }
+<i>591</i>&nbsp;
+<i>592</i>&nbsp;    /***
+<i>593</i>&nbsp;     *
+<i>594</i>&nbsp;     * @param index
+<i>595</i>&nbsp;     * @param insertion
+<i>596</i>&nbsp;     * @param gods
+<i>597</i>&nbsp;     * @return
+<i>598</i>&nbsp;     */
+<i>599</i>&nbsp;    String isAlreadyChosen(int index, String insertion, ArrayList&lt;String&gt; gods){
+<b class="nc"><i>600</i>&nbsp;        String convertedInsertion=insertion;</b>
+<b class="nc"><i>601</i>&nbsp;        while(c.isInArrayListOfGods(convertedInsertion, gods)==true){</b>
+<b class="nc"><i>602</i>&nbsp;            System.out.println(&quot;Errore! Non puoi selezionare una divinità due volte, per favore seleziona una nuova divinità&quot;);</b>
+<b class="nc"><i>603</i>&nbsp;            System.out.print(&quot;Scegli la &quot; + (index+1) + &quot;°&quot; + &quot;carta -&gt; &quot;);</b>
+<b class="nc"><i>604</i>&nbsp;            convertedInsertion=s.nextLine();</b>
+<b class="nc"><i>605</i>&nbsp;            convertedInsertion.toUpperCase();</b>
+<i>606</i>&nbsp;        }
+<i>607</i>&nbsp;
+<b class="nc"><i>608</i>&nbsp;        return convertedInsertion;</b>
+<i>609</i>&nbsp;    }
+<i>610</i>&nbsp;
+<i>611</i>&nbsp;    public static boolean isAMac(){
+<b class="nc"><i>612</i>&nbsp;        String OS = System.getProperty(&quot;os.name&quot;).toLowerCase();</b>
+<b class="nc"><i>613</i>&nbsp;        if(OS.indexOf(&quot;mac&quot;)&gt;=0){</b>
+<b class="nc"><i>614</i>&nbsp;            return true;</b>
+<i>615</i>&nbsp;        }
+<b class="nc"><i>616</i>&nbsp;        return false;</b>
+<i>617</i>&nbsp;    }
+<i>618</i>&nbsp;
+<i>619</i>&nbsp;    public Elements getE() {
+<i>620</i>&nbsp;
+<b class="nc"><i>621</i>&nbsp;        return e;</b>
+<i>622</i>&nbsp;    }
+<i>623</i>&nbsp;}
+</div>
+</div>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2020-06-22 19:05</div>
+</div>
+</body>
+</html>

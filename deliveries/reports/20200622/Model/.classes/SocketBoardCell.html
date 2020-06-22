@@ -1,0 +1,122 @@
+
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html id="htmlId">
+<head>
+  <title>Coverage Report :: SocketBoardCell</title>
+  <style type="text/css">
+    @import "../../.css/coverage.css";
+  </style>
+</head>
+
+<body>
+<div class="header"></div>
+
+<div class="content">
+<div class="breadCrumbs">
+    [ <a href="../../index.html">all classes</a> ]
+    [ <a href="../index.html">Model</a> ]
+</div>
+
+<h1>Coverage Summary for Class: SocketBoardCell (Model)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Class, %
+</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">SocketBoardCell</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/ 1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/ 4)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/ 12)
+  </span>
+</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<div class="sourceCode"><i>1</i>&nbsp;package Model;
+<i>2</i>&nbsp;
+<i>3</i>&nbsp;import java.io.IOException;
+<i>4</i>&nbsp;import java.io.ObjectInputStream;
+<i>5</i>&nbsp;import java.io.ObjectOutputStream;
+<i>6</i>&nbsp;import java.io.Serializable;
+<i>7</i>&nbsp;
+<i>8</i>&nbsp;public class SocketBoardCell extends BoardCell implements Serializable {
+<i>9</i>&nbsp;
+<i>10</i>&nbsp;    private static final long serialVersionUID = 2603215813861166183L;
+<i>11</i>&nbsp;    private Color workerColor;
+<i>12</i>&nbsp;
+<i>13</i>&nbsp;    public SocketBoardCell(int height,Worker w)
+<i>14</i>&nbsp;    {
+<b class="nc"><i>15</i>&nbsp;        super();</b>
+<b class="nc"><i>16</i>&nbsp;        setBoardCellHeight(height);</b>
+<b class="nc"><i>17</i>&nbsp;        setBoardCellWorker(w);</b>
+<b class="nc"><i>18</i>&nbsp;        if (w != null)</b>
+<b class="nc"><i>19</i>&nbsp;            this.workerColor = w.getColor();</b>
+<i>20</i>&nbsp;        else{
+<b class="nc"><i>21</i>&nbsp;            this.workerColor = null;</b>
+<i>22</i>&nbsp;        }
+<b class="nc"><i>23</i>&nbsp;    }</b>
+<i>24</i>&nbsp;
+<i>25</i>&nbsp;    public Color getWorkerColor() {
+<b class="nc"><i>26</i>&nbsp;        return workerColor;</b>
+<i>27</i>&nbsp;    }
+<i>28</i>&nbsp;
+<i>29</i>&nbsp;    public void readObject(ObjectInputStream stream) throws IOException,ClassNotFoundException
+<i>30</i>&nbsp;    {
+<b class="nc"><i>31</i>&nbsp;        stream.defaultReadObject();</b>
+<b class="nc"><i>32</i>&nbsp;    }</b>
+<i>33</i>&nbsp;
+<i>34</i>&nbsp;    public void writeObject(ObjectOutputStream stream) throws IOException
+<i>35</i>&nbsp;    {
+<b class="nc"><i>36</i>&nbsp;        stream.defaultWriteObject();</b>
+<b class="nc"><i>37</i>&nbsp;    }</b>
+<i>38</i>&nbsp;
+<i>39</i>&nbsp;}
+</div>
+</div>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2020-06-22 19:05</div>
+</div>
+</body>
+</html>

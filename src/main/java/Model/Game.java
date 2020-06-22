@@ -83,7 +83,6 @@ public class Game {
             winner = p;
         }
         boardGame.reset();
-        chosenCards.clear();
         players[0]=null;
         players[1]=null;
         players[2]=null;
