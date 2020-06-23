@@ -6,13 +6,17 @@ import Client.View.Data;
 import Controller.Coordinates;
 import Controller.Network.VCEvent;
 import Model.Board;
+import Model.Color;
 import Model.SocketBoardCell;
 import Model.Worker;
 
 import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.util.ArrayList;
+import java.util.Scanner;
 
 
 public class GUIHandler {
@@ -25,10 +29,17 @@ public class GUIHandler {
     private boolean updateView;
 
     //Support elements
+    protected static int playersNumber;
+    protected static boolean ready;
+    private String ipAddress;
+    private String myUsername;
+    private Data myDate;
     private Board b;
-    //ATTENZIONE: potrebbe non servire
-    private int playersNumber;
-    private String myGod;
+    private ArrayList<String> sentGods;
+    protected static ArrayList<String> chosenGods;
+    protected static String myGod;
+    protected static Coordinates currentCoordinate;
+    private BoardCellWorker[][] bcw;
 
     public GUIHandler(GUI GUI){
         this.GUI = GUI;
@@ -90,48 +101,49 @@ public class GUIHandler {
                     }
                     break;*/
                 case setup_request:
-                    //Da cambiare
-                    GUI.getMessageArea().setText("Sto chiedendo la data");
-                    Object options[] = {"2","3"};
-                    int n = JOptionPane.showOptionDialog(GUI.getMainFrame(),
-                            "How may players are going to connect?",
-                            "Select number of players",
-                            JOptionPane.YES_NO_OPTION,
-                            JOptionPane.QUESTION_MESSAGE,
-                            null, //Qua va inserita l'icona del gioco
-                            options,
-                            options[0]);//In realtà se chiude il gioco deve terminare
-
-                    System.out.println(n);
-                    n=n+2;
-                    this.playersNumber=n;
-                    buildEvent(cnh, n, VCEvent.Event.setup_request);
-                    //Togli dopo aver debuggato questa parte di codice
-                    endGame=true;
+                    ready=false;
+                    GUI.getMainFrame().add(GUI.getNumberOfPlayersWindowManager());
+                    ButtonTwoCustomActionListener twoListener = new ButtonTwoCustomActionListener();
+                    GUI.getTwo().addActionListener(twoListener);
+                    ButtonThreeCustomActionListener threeListener = new ButtonThreeCustomActionListener();
+                    GUI.getThree().addActionListener(threeListener);
+                    System.out.println("Sto per entrare nel while");
+                    while(GUIHandler.ready==false){
+                        System.out.println("Attendo scelta...");
+                    }
+                    buildEvent(cnh, playersNumber, VCEvent.Event.setup_request);
                     break;
-                /*case username_request :
-                    System.out.println("Inserisci il tuo nome utente");
-                    String username=s.nextLine();
-                    buildEvent(cnh, username, VCEvent.Event.username_request);
+                case username_request :
+                    GUI.getMainFrame().remove(GUI.getNumberOfPlayersWindowManager());
+                    GUI.getMainFrame().add(GUI.getLoginWindowManager());
+                    LoginNextButtonCustomActionListener usernameListener=new LoginNextButtonCustomActionListener();
+                    GUI.getLoginNextButton().addActionListener(usernameListener);
+                    while (usernameListener.getGoForward()==false){
+                    }
+                    buildEvent(cnh, myUsername, VCEvent.Event.username_request);
                     break;
                 case wrong_username:
-                    Object objectWrongUsername = evento.getBox();
-                    System.out.println("Errore! Hai inserito uno username già scelto da un altro giocatore\nReinserire username");
-                    String newUsermane= s.nextLine();
-                    buildEvent(cnh,newUsermane, VCEvent.Event.wrong_username);
+                    GUI.getLoginMessageArea().setText(Color.ANSI_RED + "This username has been already chosen. Insert a new one, please");
+                    LoginNextButtonCustomActionListener wrongUsernameListener=new LoginNextButtonCustomActionListener();
+                    GUI.getLoginNextButton().addActionListener(wrongUsernameListener);
+                    while (wrongUsernameListener.getGoForward()==false){
+                        try{
+                            Thread.sleep(5000);
+                        }catch (InterruptedException e){
+
+                        }
+                    }
+                    buildEvent(cnh, myUsername, VCEvent.Event.wrong_username);
                     break;
                 case date_request:
-                    insertDate();
-                    dateOfBirth = new Data(giorno,mese,anno);
-                    s.nextLine();
-                    while(c.controllaData(dateOfBirth)==false){
-                        System.out.println("Data non valida, per favore inserire nuovamente");
-                        insertDate();
-                        s.nextLine();
-                        this.dateOfBirth = new Data(giorno,mese,anno);
+                    GUI.getMainFrame().remove(GUI.getLoginWindowManager());
+                    GUI.getMainFrame().add(GUI.getDateWindowManager());
+                    DateNextButtonCustomActionListener dateListener=new DateNextButtonCustomActionListener();
+                    GUI.getDateNextButton().addActionListener(dateListener);
+                    while (dateListener.isGoForward()==false){
                     }
-                    buildEvent(cnh,dateOfBirth, VCEvent.Event.date_request);
-                    break;*/
+                    buildEvent(cnh, myDate, VCEvent.Event.date_request);
+                    break;
                 case not_your_turn:
                     Object objectCurrentPlayerInformation = evento.getBox();
                     ArrayList<String> currentPlayerInformation= (ArrayList<String>) objectCurrentPlayerInformation;
@@ -166,8 +178,8 @@ public class GUIHandler {
                     break;
                 case send_cells_remove:
                     sendCells(removePhase,cnh, VCEvent.Event.send_cells_remove,evento);
-                    break;
-                case undo_request:
+                    break;*/
+                /*case undo_request:/*
                     GUI.getMessageArea().setText("You can undo your move only in about 5 seconds. If you want to confirm press the button aside, please");
                     long start = System.currentTimeMillis();
                     while (true){
@@ -223,36 +235,26 @@ public class GUIHandler {
                                     choices[1]);
 
                     buildEvent(cnh, turnChoiceIntoCorrectOutput(choice), VCEvent.Event.ask_for_divinity_activation);
-                /*case send_all_cards:
-                    System.out.println("Hai a disposizione le seguenti divinità:");
+                case send_all_cards:
                     Object objectGods = evento.getBox();
-                    ArrayList<String> gods= (ArrayList<String>)  objectGods;
+                    sentGods= (ArrayList<String>)  objectGods;
+                    GUI.buildGodsWindow(sentGods);
+                    GUI.getMainFrame().remove(GUI.getDateWindowManager());
+                    GUI.getMainFrame().add(GUI.getGodsWindowManager());
 
                     break;
                 case send_chosen_cards:
-                    System.out.println("Puoi scegliere tra le seguenti divinità:");
                     Object objectSentGods = evento.getBox();
-                    //Non possiamo controllare se l'ArrayList di Stringhe sia corrotto o meno
-                    ArrayList<String> sentGods= (ArrayList<String>)  objectSentGods;
+                    sentGods= (ArrayList<String>)  objectSentGods;
                     if(sentGods.size()==1){
-                        System.out.println("La tua carta divinità sarà " + sentGods.get(0));
-                        this.myCard=sentGods.get(0);
-                        //In realtà non ci sarebbe bisogno dello statement successivo
+                        GUIHandler.myGod=sentGods.get(0);
                         buildEvent(cnh, sentGods.get(0), VCEvent.Event.send_chosen_cards);
                     }else{
-                        for(String god:sentGods){
-                            System.out.print(god + " ");
-                        }
-                        System.out.println();
-                        System.out.print("Digita il nome della divinità che preferisci ->");
-                        //Il controller deve controllare che effettivamente la divinità scelta sia un elemento delle divinità ricevute
-                        String chosenGod= s.nextLine();
-                        //chosenGod=validCard(chosenGod,sentGods);
-                        this.myCard=chosenGod;
-                        System.out.println();
-                        buildEvent(cnh, chosenGod, VCEvent.Event.send_chosen_cards);
+                        GUI.buildGodsWindow(sentGods);
+                        GUI.getMainFrame().remove(GUI.getDateWindowManager());
+                        GUI.getMainFrame().add(GUI.getGodsWindowManager());
                     }
-                    break;*/
+                    break;
                 case player_disconnected_game_ended:
                     Object objectPlayerDisconnected= evento.getBox();
                     String playerDisconnected = (String) objectPlayerDisconnected;
@@ -315,6 +317,67 @@ public class GUIHandler {
             return 0;
         }else{
             return -1;
+        }
+    }
+
+    class LoginNextButtonCustomActionListener implements ActionListener{
+        private boolean goForward;
+
+        public LoginNextButtonCustomActionListener(){
+            goForward=false;
+        }
+
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            myUsername=GUI.getUsernameTextField().getText();
+            goForward=true;
+        }
+
+        public boolean getGoForward(){
+            return goForward;
+        }
+    }
+
+
+
+    class ButtonTwoCustomActionListener implements ActionListener{
+
+        public ButtonTwoCustomActionListener(){
+
+        }
+
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            ChooseNumPlayerWorker button2= new ChooseNumPlayerWorker(2);
+        }
+    }
+
+    class ButtonThreeCustomActionListener implements ActionListener{
+
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            ChooseNumPlayerWorker button3= new ChooseNumPlayerWorker(3);
+        }
+    }
+
+    class DateNextButtonCustomActionListener implements ActionListener{
+        private boolean goForward;
+
+        public DateNextButtonCustomActionListener(){
+            goForward=false;
+        }
+
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            int month = Integer.parseInt(GUI.getMonthTextField().getText());
+            int day = Integer.parseInt(GUI.getDayTextField().getText());
+            int year = Integer.parseInt(GUI.getYearTextField().getText());
+            myDate = new Data(day,month,year);
+            goForward=true;
+        }
+
+        public boolean isGoForward() {
+            return goForward;
         }
     }
 
