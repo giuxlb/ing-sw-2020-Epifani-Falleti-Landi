@@ -26,7 +26,7 @@ public class Game {
         //aggiungo tutte le carte implementate ad un array
         availableCards = new ArrayList<String>();
         for(Card carta : Card.values()){
-            availableCards.add(carta.toString());
+            availableCards.add(carta.toString().toUpperCase());
         }
     }
 
