@@ -11,11 +11,11 @@ import Model.SocketBoardCell;
 import Model.Worker;
 
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
+import java.awt.event.*;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.Scanner;
 
 
@@ -34,11 +34,19 @@ public class GUIHandler {
     private String ipAddress;
     private String myUsername;
     private Data myDate;
-    private Board b;
     private ArrayList<String> sentGods;
     protected static ArrayList<String> chosenGods;
     protected static String myGod;
-    protected static Coordinates currentCoordinate;
+    private Board b;
+    private String movingPhase = "go on";
+    private String buildingPhase = "build on";
+    private String removePhase = "remove";
+    protected static Coordinates previousCoordinate=new Coordinates(0,-1);
+    protected static Coordinates currentCoordinate = new Coordinates(-1,0);
+
+    //Occorre vedere se serve davvero
+    private boolean isToPaint;
+
     private BoardCellWorker[][] bcw;
 
     public GUIHandler(GUI GUI){
@@ -91,15 +99,8 @@ public class GUIHandler {
             VCEvent evento = cnh.getFromServer();
             cnh.readByView();
             switch (evento.getCommand()){
-                /*case send_color:
-                    Object objcectColorName = evento.getBox();
-                    if(objcectColorName instanceof String){
-                        this.myColor = (String) objcectColorName;
-                        System.out.println("I tuoi worker saranno di colore " + myColor);
-                    }else{
-                        System.out.println("Errore! La stringa che dovrebbe rappresentare in nome del mio colore è arrivata corrotta");
-                    }
-                    break;*/
+                case send_color:
+                    break;
                 case setup_request:
                     ready=false;
                     GUI.getMainFrame().add(GUI.getNumberOfPlayersWindowManager());
@@ -111,6 +112,7 @@ public class GUIHandler {
                     while(GUIHandler.ready==false){
                         System.out.println("Attendo scelta...");
                     }
+
                     buildEvent(cnh, playersNumber, VCEvent.Event.setup_request);
                     break;
                 case username_request :
@@ -127,11 +129,6 @@ public class GUIHandler {
                     LoginNextButtonCustomActionListener wrongUsernameListener=new LoginNextButtonCustomActionListener();
                     GUI.getLoginNextButton().addActionListener(wrongUsernameListener);
                     while (wrongUsernameListener.getGoForward()==false){
-                        try{
-                            Thread.sleep(5000);
-                        }catch (InterruptedException e){
-
-                        }
                     }
                     buildEvent(cnh, myUsername, VCEvent.Event.wrong_username);
                     break;
@@ -150,35 +147,48 @@ public class GUIHandler {
                     GUI.getMessageArea().setText(currentPlayerInformation.get(0) + " is playing with god " + currentPlayerInformation.get(1));
                     break;
                 case update:
+                    GUI.getGodsWindowManager().remove(GUI.getGodsWindowManager());
+                    removeGodsButtons();
+                    GUI.getMainFrame().add(GUI.getMainWindowManager());
                     Object objectBoardCell = evento.getBox();
                     ArrayList<SocketBoardCell> socketBoardCell = (ArrayList<SocketBoardCell>) objectBoardCell;
                     recreateBoardfromSocketBoardCell(socketBoardCell);
                     turnModelBoardintoGUIBoard(b);
-                    break;/*
+                    break;
                 case ask_for_worker:
-                    //ATTENZIONE: Una parte di ask_for_worker contiene del codice duplicato con sendCells(). CORREGGERE!!!
+                    ready=false;
+                    GUI.getMessageArea().setText("Select a worker");
                     Object objectChoices = evento.getBox();
                     ArrayList<Coordinates> positionWorkers = (ArrayList<Coordinates>) objectChoices;
-                    System.out.println("Puoi muovere i seguenti worker: ");
-                    for (Coordinates c: positionWorkers) {
-                        System.out.println("Worker in posizione "+ c.toString());
+                    paintBoardCell(positionWorkers);
+                    createBoardCellMouseListener(GUI.getBoard(), positionWorkers);
+                    paintBoardCell(positionWorkers);
+                    while(ready==false || (previousCoordinate.getX()==currentCoordinate.getX() && previousCoordinate.getY()==currentCoordinate.getY())){
+                        System.out.println("Attendo che il player scelga dove posizionarsi");
                     }
-                    System.out.println("Quale worker vuoi muovere?");
-                    int x=chooseCoordinate(xPosition);
-                    s.nextLine();
-                    int y=chooseCoordinate(yPosition);
-                    s.nextLine();
-                    buildEvent(cnh,findIndex(positionWorkers,chosenCoordinates), VCEvent.Event.ask_for_worker);
+                    GUIHandler.ready=false;
+                    previousCoordinate=currentCoordinate;
+                    unpaintBoardCell(positionWorkers);
+                    buildEvent(cnh,findIndex(positionWorkers, currentCoordinate), VCEvent.Event.ask_for_worker);
                     break;
                 case send_cells_move:
+                    GUI.getGodsWindowManager().remove(GUI.getGodsWindowManager());
+                    removeGodsButtons();
+                    GUI.getMainFrame().add(GUI.getMainWindowManager());
                     sendCells(movingPhase, cnh, VCEvent.Event.send_cells_move,evento);
                     break;
                 case send_cells_build:
+                    GUI.getGodsWindowManager().remove(GUI.getGodsWindowManager());
+                    removeGodsButtons();
+                    GUI.getMainFrame().add(GUI.getMainWindowManager());
                     sendCells(buildingPhase, cnh, VCEvent.Event.send_cells_build,evento);
                     break;
                 case send_cells_remove:
+                    GUI.getGodsWindowManager().remove(GUI.getGodsWindowManager());
+                    removeGodsButtons();
+                    GUI.getMainFrame().add(GUI.getMainWindowManager());
                     sendCells(removePhase,cnh, VCEvent.Event.send_cells_remove,evento);
-                    break;*/
+                    break;
                 /*case undo_request:/*
                     GUI.getMessageArea().setText("You can undo your move only in about 5 seconds. If you want to confirm press the button aside, please");
                     long start = System.currentTimeMillis();
@@ -241,7 +251,12 @@ public class GUIHandler {
                     GUI.buildGodsWindow(sentGods);
                     GUI.getMainFrame().remove(GUI.getDateWindowManager());
                     GUI.getMainFrame().add(GUI.getGodsWindowManager());
-
+                    chosenGods = new ArrayList<>(2);
+                    createGodsListener(sentGods.size(), sentGods, GUI.getImgGodsButtons());
+                    while(chosenGods.size()!=playersNumber){
+                        System.out.println("Sto aspettando che il primo player scelga le divinità");
+                    }
+                    buildEvent(cnh, chosenGods, VCEvent.Event.send_all_cards);
                     break;
                 case send_chosen_cards:
                     Object objectSentGods = evento.getBox();
@@ -250,9 +265,21 @@ public class GUIHandler {
                         GUIHandler.myGod=sentGods.get(0);
                         buildEvent(cnh, sentGods.get(0), VCEvent.Event.send_chosen_cards);
                     }else{
+                        //CODICE DUPLICATO CON SEND_ALL_CARDS, UNIFICARE TUTTO IN UN UNICA FUNZIONE
                         GUI.buildGodsWindow(sentGods);
                         GUI.getMainFrame().remove(GUI.getDateWindowManager());
                         GUI.getMainFrame().add(GUI.getGodsWindowManager());
+                        ready=false;
+                        createGodListener(sentGods.size(), sentGods, GUI.getImgGodsButtons());
+                        while(ready==false){
+                            System.out.println("Sto aspettando che il client scelga la sua divinità");
+                            try{
+                                Thread.sleep(7000);
+                            }catch (Exception ex){
+
+                            }
+                        }
+                        buildEvent(cnh, myGod, VCEvent.Event.send_chosen_cards);
                     }
                     break;
                 case player_disconnected_game_ended:
@@ -295,9 +322,9 @@ public class GUIHandler {
         for(int i=0;i<Board.DIM;i++){
             for(int j=0;j<Board.DIM;j++){
                 if (b.getBoardWorker(i,j)==null){
-                    GUI.getBoard()[i][j].setText("Worker: null\n" + "Height: " + b.getBoardHeight(i,j));
+                    GUI.getBoard()[i][j].setText("Worker: null   " + "Height: " + b.getBoardHeight(i,j));
                 }else{
-                    GUI.getBoard()[i][j].setText(b.getBoardWorker(i,j).getColor() + "Worker: w\n" + "Height: " + b.getBoardHeight(i,j));
+                    GUI.getBoard()[i][j].setText(b.getBoardWorker(i,j).getColor() + "Worker: w   " + "Height: " + b.getBoardHeight(i,j));
                 }
             }
         }
@@ -378,6 +405,163 @@ public class GUIHandler {
 
         public boolean isGoForward() {
             return goForward;
+        }
+    }
+
+    private void createGodsListener(int size, ArrayList<String> sentGods, JButton[] godsButton){
+        for (int i=0;i<size;i++){
+            System.out.println("Aggiungo al bottone il listener");
+            godsButton[i].addActionListener(new sentGodsActionListener(i, sentGods));
+        }
+    }
+
+    private void createGodListener(int size, ArrayList<String> sentGods, JButton[] godsButton){
+        for (int i=0;i<size;i++){
+            System.out.println("Aggiungo al bottone il listener");
+            godsButton[i].addActionListener(new sentGodActionListener(i, sentGods));
+        }
+    }
+
+
+        class sentGodsActionListener implements ActionListener{
+            private int index;
+            private ArrayList<String> gods;
+
+            public sentGodsActionListener(int index, ArrayList<String> gods) {
+                this.index=index;
+                this.gods=gods;
+            }
+
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                GodsWorker gw = new GodsWorker(gods.get(index));
+            }
+        }
+
+        class sentGodActionListener implements ActionListener{
+            private int index;
+            private ArrayList<String> gods;
+
+            public sentGodActionListener(int index, ArrayList<String> gods) {
+                this.index=index;
+                this.gods=gods;
+            }
+
+            @Override
+            public void actionPerformed(ActionEvent e) {
+               GodWorker gw= new GodWorker(gods.get(index));
+            }
+        }
+
+    public void sendCells(String phase, ClientNetworkHandler cnh, VCEvent.Event command, VCEvent evento){
+        GUIHandler.ready=false;
+        GUI.getMessageArea().setText("Select the red cell where you want to " + phase);
+        Object objectValidPositions = evento.getBox();
+        ArrayList<Coordinates> validPositions = (ArrayList<Coordinates>)objectValidPositions;
+        paintBoardCell(validPositions);
+        createBoardCellMouseListener(GUI.getBoard(), validPositions);
+        while(ready==false || (previousCoordinate.getX()==currentCoordinate.getX() && previousCoordinate.getY()==currentCoordinate.getY())){
+            System.out.println("Attendo che il player scelga dove posizionarsi");
+        }
+        GUIHandler.ready=false;
+        previousCoordinate=currentCoordinate;
+        unpaintBoardCell(validPositions);
+        buildEvent(cnh,findIndex(validPositions,currentCoordinate),command);
+    }
+
+    private void paintBoardCell(ArrayList<Coordinates> validPositions){
+        for (int i = 0; i < 5; i++) {
+            for (int j = 0; j < 5; j++) {
+                for (Coordinates c: validPositions){
+                    if(c.getX()==i && c.getY()==j){
+                        GUI.getBoard()[i][j].setContentAreaFilled(true);
+                        //GUIBoard[i][j].setBorderPainted(false);
+                        GUI.getBoard()[i][j].setBackground(java.awt.Color.red);
+                    }
+                }
+            }
+        }
+    }
+
+    private void unpaintBoardCell(ArrayList<Coordinates> validPositions){
+        for (int i = 0; i < Board.DIM; i++) {
+            for (int j = 0; j < Board.DIM; j++) {
+                for (Coordinates c: validPositions){
+                    if(c.getX()==i && c.getY()==j){
+                        GUI.getBoard()[i][j].setContentAreaFilled(false);
+                        //GUIBoard[i][j].setBorderPainted(false);
+                        GUI.getBoard()[i][j].setBackground(java.awt.Color.red);
+                    }
+                }
+            }
+        }
+    }
+
+    private void createBoardCellMouseListener(JButton[][] GUIBoard, ArrayList<Coordinates> validPositions){
+        for (int i=0;i<Board.DIM;i++){
+            for(int j=0;j<Board.DIM; j++){
+                for (Coordinates c: validPositions){
+                    if(c.getX()==i && c.getY()==j){
+                        GUIBoard[i][j].addMouseListener(new BoardCellMouseListener(GUI.getInformationArea(), i, j));
+                    }
+                }
+            }
+        }
+    }
+
+    class BoardCellMouseListener implements MouseListener {
+        int i, j;
+        JTextArea informationArea;
+
+        public BoardCellMouseListener(JTextArea informationArea, int i, int j){
+            this.informationArea=informationArea;
+            this.i=i;
+            this.j=j;
+        }
+
+        @Override
+        public void mouseClicked(MouseEvent e) {
+            BoardCellWorker bcw = new BoardCellWorker(i, j);
+        }
+
+        @Override
+        public void mousePressed(MouseEvent e) {
+            BoardCellWorker bcw = new BoardCellWorker(i, j);
+        }
+
+        @Override
+        public void mouseReleased(MouseEvent e) {
+
+        }
+
+        @Override
+        public void mouseEntered(MouseEvent e) {
+            informationArea.setText("Coordinate x: " + j + ", coordinate y: "+ i);
+        }
+
+        @Override
+        public void mouseExited(MouseEvent e) {
+            informationArea.setText("");
+        }
+    }
+
+    public Integer findIndex(ArrayList<Coordinates> validPositions, Coordinates chosenCoordinates){
+        int index=0;
+        System.out.println(chosenCoordinates);
+        for(Coordinates c:validPositions){
+            if((c.getX() == chosenCoordinates.getX()) && (c.getY() == chosenCoordinates.getY())){
+                return index;
+            }
+            index++;
+        }
+        //Se qualcosa è andato storto il controller lato server riceverà un -1
+        return  -1;
+    }
+
+    //test
+    private void removeGodsButtons(){
+        for(JButton god: GUI.getImgGodsButtons()){
+            GUI.getGodsWindowManager().remove(god);
         }
     }
 

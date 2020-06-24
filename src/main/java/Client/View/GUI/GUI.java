@@ -6,9 +6,14 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.WindowEvent;
+import java.awt.event.WindowListener;
 import java.util.ArrayList;
 
 public class GUI {
+    //mainFrame
+    private JFrame mainFrame;
+
     //chooseNumberOfPlayersWindowElements
     private JLabel numberOfPlayersWindowManager;
     private JLabel numberOfPlayersInformation;
@@ -40,17 +45,13 @@ public class GUI {
     private JLabel godsWindowManager;
     private JButton[] imgGodsButton;
 
-    //mainFrame elements
-    private JFrame mainFrame;
-    private JPanel boardPanel;
+    //mainWindow elements
+    private JLabel mainWindowManager;
     private JLabel boardLabel;
     private JButton[][] board;
     private JPanel godPanel;
     private JLabel godImage;
     private JLabel godPower;
-    private JLabel backgroud;
-
-
 
     //messageAndUndoBar
     private JPanel messageAndUndoPanel;
@@ -69,6 +70,7 @@ public class GUI {
         buildChooseNumberOfPlayersWindow();
         buildLoginWindow();
         buildDateWindow();
+        createMainWindow();
     }
 
     private void buildBoard(){
@@ -105,39 +107,25 @@ public class GUI {
 
     private void buildMainFrame(){
         //Bisogna implementare anche la finestra di inserimento dell'indirizzo IP
+        ImageIcon currentIcon= new ImageIcon("./resources/MainBackground.jpg");
+        Image tmp = currentIcon.getImage();
+        Image newIcon = tmp.getScaledInstance(1920,1080, Image.SCALE_SMOOTH);
+        ImageIcon finalIcon = new ImageIcon(newIcon);
+
         mainFrame = new JFrame("Santorini -  Epifani Falleti Landi");
+        mainFrame.addWindowListener(new CustomClosing(mainFrame));
+        mainFrame.setSize(1920, 1080);
+
         //Ricordati di impostare l'immagine
         //mainFrame.setIconImage();
-        //Ricordati di aggiungere WindowClosingListener
-        mainFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        //buildMessageAndUndoBar();
-       //buildBoard();
-        //buildGodBar();
-        //informationArea = new JTextArea("Move mouse on board to see more detailed information");
-
-
-
-
-       // mainFrame.setLayout(new BorderLayout());
-       // mainFrame.add(messageAndUndoPanel, BorderLayout.NORTH);
-       // mainFrame.add(informationArea, BorderLayout.SOUTH);
-        //mainFrame.add(boardLabel);
-        //mainFrame.add(godPanel, BorderLayout.WEST);
-
-        //mainFrame.pack();
-        mainFrame.setSize(1920, 1080);
         mainFrame.setLocationRelativeTo(null);
         mainFrame.setVisible(true);
-
     }
 
     protected void buildGodsWindow(ArrayList<String> gods){
-        int i;
-        int godsNumber;
-        godsNumber=gods.size();
-        imgGodsButton = new JButton[godsNumber];
+        imgGodsButton = new JButton[gods.size()];
 
-        for(i=0;i<godsNumber;i++){
+        for(int i=0;i<gods.size();i++){
             ImageIcon currentImg= new ImageIcon("./resources/gods/"+gods.get(i)+".png");
             Image img = currentImg.getImage();
             Image newImg = img.getScaledInstance(120,200, Image.SCALE_SMOOTH);
@@ -147,13 +135,17 @@ public class GUI {
 
         godsWindowManager = new JLabel();
         godsWindowManager.setLayout(new FlowLayout());
-        for(i=0; i<godsNumber;i++){
+        for(int i=0; i<gods.size();i++){
             godsWindowManager.add(imgGodsButton[i]);
         }
     }
 
     public JLabel getGodsWindowManager() {
         return godsWindowManager;
+    }
+
+    public JButton[] getImgGodsButtons() {
+        return imgGodsButton;
     }
 
     protected void buildMessageAndUndoBar(){
@@ -381,6 +373,88 @@ public class GUI {
 
     public JLabel getNumberOfPlayersWindowManager() {
         return numberOfPlayersWindowManager;
+    }
+
+    protected void createMainWindow(){
+        mainWindowManager = new JLabel();
+        buildMessageAndUndoBar();
+        buildBoard();
+        buildGodBar();
+        informationArea = new JTextArea("Move mouse on board to see more detailed information");
+
+        mainWindowManager.setLayout(new BorderLayout());
+        mainWindowManager.add(messageAndUndoPanel, BorderLayout.NORTH);
+        mainWindowManager.add(informationArea, BorderLayout.SOUTH);
+        mainWindowManager.add(boardLabel);
+        mainWindowManager.add(godPanel, BorderLayout.WEST);
+    }
+
+    public JLabel getMainWindowManager() {
+        return mainWindowManager;
+    }
+
+    public JTextArea getInformationArea() {
+        return informationArea;
+    }
+
+    class CustomClosing implements WindowListener{
+        private JFrame mainFrame;
+
+        public CustomClosing(JFrame mainFrame){
+           this.mainFrame=mainFrame;
+        }
+
+        @Override
+        public void windowOpened(WindowEvent e) {
+        }
+
+        @Override
+        public void windowClosing(WindowEvent e) {
+            Object[] choices = {"Yes", "No"};
+
+            ImageIcon currentIcon= new ImageIcon("./resources/WarningSign.png");
+            Image tmp = currentIcon.getImage();
+            Image newIcon = tmp.getScaledInstance(50,50, Image.SCALE_SMOOTH);
+            ImageIcon finalIcon = new ImageIcon(newIcon);
+
+            int choice = JOptionPane.showOptionDialog(mainFrame,
+                    "Are you sure to end the game?",
+                    "Warning",
+                    JOptionPane.YES_NO_OPTION,
+                    JOptionPane.QUESTION_MESSAGE,
+                    finalIcon,
+                    choices,
+                    choices[1]);
+
+            if(choice==0){
+                mainFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+            }
+        }
+
+        @Override
+        public void windowClosed(WindowEvent e) {
+
+        }
+
+        @Override
+        public void windowIconified(WindowEvent e) {
+
+        }
+
+        @Override
+        public void windowDeiconified(WindowEvent e) {
+
+        }
+
+        @Override
+        public void windowActivated(WindowEvent e) {
+
+        }
+
+        @Override
+        public void windowDeactivated(WindowEvent e) {
+
+        }
     }
 
 }

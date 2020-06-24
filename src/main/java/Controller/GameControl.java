@@ -113,7 +113,7 @@ public class GameControl {
 
         while(!exit) {
             game.startGame();
-            virtualView.upload(game.getBoardGame());
+            //virtualView.upload(game.getBoardGame());
 
             //scelta delle carte del primo player
             System.out.println(players.get(game.getTurnNumber()).getBirthDate().toString());
