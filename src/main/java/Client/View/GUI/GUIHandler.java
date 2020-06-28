@@ -12,11 +12,7 @@ import Model.Worker;
 
 import java.awt.*;
 import java.awt.event.*;
-import java.io.IOException;
-import java.io.ObjectInputStream;
 import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.Scanner;
 
 
 public class GUIHandler {
@@ -35,8 +31,10 @@ public class GUIHandler {
     private String myUsername;
     private Data myDate;
     private ArrayList<String> sentGods;
+    private int godsSize;
     protected static ArrayList<String> chosenGods;
     protected static String myGod;
+    private boolean checkSendCells;
     private Board b;
     private String movingPhase = "go on";
     private String buildingPhase = "build on";
@@ -51,6 +49,12 @@ public class GUIHandler {
 
     public GUIHandler(GUI GUI){
         this.GUI = GUI;
+
+        //Initial settings
+        playersNumber=0;
+        checkSendCells=false;
+        previousCoordinate = new Coordinates(0,-1);
+        currentCoordinate = new Coordinates(-1,0);
 
     }
 
@@ -100,15 +104,17 @@ public class GUIHandler {
             cnh.readByView();
             switch (evento.getCommand()){
                 case send_color:
+                    System.out.println("Assegnamento del colore");
                     break;
                 case setup_request:
                     ready=false;
-                    GUI.getMainFrame().add(GUI.getNumberOfPlayersWindowManager());
-                    ButtonTwoCustomActionListener twoListener = new ButtonTwoCustomActionListener();
+                    GUI.destroyWaitingLabel();
+                    GUI.buildNumberOfPlayersWindow();
+                    SwingUtilities.updateComponentTreeUI(GUI.getMainFrame());
+                    CustomNumberOfPlayersListener twoListener = new CustomNumberOfPlayersListener(2);
                     GUI.getTwo().addActionListener(twoListener);
-                    ButtonThreeCustomActionListener threeListener = new ButtonThreeCustomActionListener();
+                    CustomNumberOfPlayersListener threeListener = new CustomNumberOfPlayersListener(3);
                     GUI.getThree().addActionListener(threeListener);
-                    System.out.println("Sto per entrare nel while");
                     while(GUIHandler.ready==false){
                         System.out.println("Attendo scelta...");
                     }
@@ -116,28 +122,39 @@ public class GUIHandler {
                     buildEvent(cnh, playersNumber, VCEvent.Event.setup_request);
                     break;
                 case username_request :
-                    GUI.getMainFrame().remove(GUI.getNumberOfPlayersWindowManager());
-                    GUI.getMainFrame().add(GUI.getLoginWindowManager());
+                    if(playersNumber!=0){
+                        GUI.destroyNumberOfPlayersWindow();
+                    }else{
+                        GUI.destroyWaitingLabel();
+                    }
+                    GUI.buildLoginWindow();
+                    SwingUtilities.updateComponentTreeUI(GUI.getMainFrame());
                     LoginNextButtonCustomActionListener usernameListener=new LoginNextButtonCustomActionListener();
                     GUI.getLoginNextButton().addActionListener(usernameListener);
                     while (usernameListener.getGoForward()==false){
+                        System.out.println("Attendo che il giocatore scelga il suo username");
                     }
                     buildEvent(cnh, myUsername, VCEvent.Event.username_request);
                     break;
                 case wrong_username:
+                    GUI.getLoginMessageArea().setVisible(true);
                     GUI.getLoginMessageArea().setText(Color.ANSI_RED + "This username has been already chosen. Insert a new one, please");
+                    SwingUtilities.updateComponentTreeUI(GUI.getMainFrame());
                     LoginNextButtonCustomActionListener wrongUsernameListener=new LoginNextButtonCustomActionListener();
                     GUI.getLoginNextButton().addActionListener(wrongUsernameListener);
                     while (wrongUsernameListener.getGoForward()==false){
+                        System.out.println("Attendo che il giocatore reinserisca il suo username");
                     }
                     buildEvent(cnh, myUsername, VCEvent.Event.wrong_username);
                     break;
                 case date_request:
-                    GUI.getMainFrame().remove(GUI.getLoginWindowManager());
-                    GUI.getMainFrame().add(GUI.getDateWindowManager());
+                    GUI.destroyLoginWindow();
+                    GUI.buildDateWindow();
+                    SwingUtilities.updateComponentTreeUI(GUI.getMainFrame());
                     DateNextButtonCustomActionListener dateListener=new DateNextButtonCustomActionListener();
                     GUI.getDateNextButton().addActionListener(dateListener);
                     while (dateListener.isGoForward()==false){
+                        System.out.println("Attendo che il giocatore inserisca la sua data di nascita");
                     }
                     buildEvent(cnh, myDate, VCEvent.Event.date_request);
                     break;
@@ -147,9 +164,6 @@ public class GUIHandler {
                     GUI.getMessageArea().setText(currentPlayerInformation.get(0) + " is playing with god " + currentPlayerInformation.get(1));
                     break;
                 case update:
-                    GUI.getGodsWindowManager().remove(GUI.getGodsWindowManager());
-                    removeGodsButtons();
-                    GUI.getMainFrame().add(GUI.getMainWindowManager());
                     Object objectBoardCell = evento.getBox();
                     ArrayList<SocketBoardCell> socketBoardCell = (ArrayList<SocketBoardCell>) objectBoardCell;
                     recreateBoardfromSocketBoardCell(socketBoardCell);
@@ -172,21 +186,18 @@ public class GUIHandler {
                     buildEvent(cnh,findIndex(positionWorkers, currentCoordinate), VCEvent.Event.ask_for_worker);
                     break;
                 case send_cells_move:
-                    GUI.getGodsWindowManager().remove(GUI.getGodsWindowManager());
-                    removeGodsButtons();
-                    GUI.getMainFrame().add(GUI.getMainWindowManager());
+                    if(checkSendCells==false){
+                        GUI.destroyGodsWindow(godsSize);
+                        GUI.buildMainWindow();
+                        SwingUtilities.updateComponentTreeUI(GUI.getMainFrame());
+                        checkSendCells=true;
+                    }
                     sendCells(movingPhase, cnh, VCEvent.Event.send_cells_move,evento);
                     break;
                 case send_cells_build:
-                    GUI.getGodsWindowManager().remove(GUI.getGodsWindowManager());
-                    removeGodsButtons();
-                    GUI.getMainFrame().add(GUI.getMainWindowManager());
                     sendCells(buildingPhase, cnh, VCEvent.Event.send_cells_build,evento);
                     break;
                 case send_cells_remove:
-                    GUI.getGodsWindowManager().remove(GUI.getGodsWindowManager());
-                    removeGodsButtons();
-                    GUI.getMainFrame().add(GUI.getMainWindowManager());
                     sendCells(removePhase,cnh, VCEvent.Event.send_cells_remove,evento);
                     break;
                 /*case undo_request:/*
@@ -248,11 +259,12 @@ public class GUIHandler {
                 case send_all_cards:
                     Object objectGods = evento.getBox();
                     sentGods= (ArrayList<String>)  objectGods;
+                    godsSize = sentGods.size();
+                    GUI.destroyDateWindow();
                     GUI.buildGodsWindow(sentGods);
-                    GUI.getMainFrame().remove(GUI.getDateWindowManager());
-                    GUI.getMainFrame().add(GUI.getGodsWindowManager());
+                    SwingUtilities.updateComponentTreeUI(GUI.getMainFrame());
                     chosenGods = new ArrayList<>(2);
-                    createGodsListener(sentGods.size(), sentGods, GUI.getImgGodsButtons());
+                    createGodsListener(godsSize, sentGods, GUI.getImgGodsButtons());
                     while(chosenGods.size()!=playersNumber){
                         System.out.println("Sto aspettando che il primo player scelga le divinità");
                     }
@@ -261,16 +273,16 @@ public class GUIHandler {
                 case send_chosen_cards:
                     Object objectSentGods = evento.getBox();
                     sentGods= (ArrayList<String>)  objectSentGods;
-                    if(sentGods.size()==1){
+                    godsSize = sentGods.size();
+                    GUI.destroyDateWindow();
+                    GUI.buildGodsWindow(sentGods);
+                    SwingUtilities.updateComponentTreeUI(GUI.getMainFrame());
+                    if(godsSize==1){
                         GUIHandler.myGod=sentGods.get(0);
                         buildEvent(cnh, sentGods.get(0), VCEvent.Event.send_chosen_cards);
                     }else{
-                        //CODICE DUPLICATO CON SEND_ALL_CARDS, UNIFICARE TUTTO IN UN UNICA FUNZIONE
-                        GUI.buildGodsWindow(sentGods);
-                        GUI.getMainFrame().remove(GUI.getDateWindowManager());
-                        GUI.getMainFrame().add(GUI.getGodsWindowManager());
                         ready=false;
-                        createGodListener(sentGods.size(), sentGods, GUI.getImgGodsButtons());
+                        createGodListener(godsSize, sentGods, GUI.getImgGodsButtons());
                         while(ready==false){
                             System.out.println("Sto aspettando che il client scelga la sua divinità");
                             try{
@@ -283,11 +295,23 @@ public class GUIHandler {
                     }
                     break;
                 case player_disconnected_game_ended:
+                    ImageIcon currentIcon= new ImageIcon("./resources/WarningSign.png");
+                    Image tmp = currentIcon.getImage();
+                    Image newIcon = tmp.getScaledInstance(40,40, Image.SCALE_SMOOTH);
+                    ImageIcon finalIcon = new ImageIcon(newIcon);
+
                     Object objectPlayerDisconnected= evento.getBox();
                     String playerDisconnected = (String) objectPlayerDisconnected;
-                    //o sarebbe meglio una finestra di dialogo? Da vedere quando testerò la GUI
-                    GUI.getMessageArea().setText("Ops! Il giocatore " + playerDisconnected + " si è disconnesso, purtroppo la partita terminerà ora");
-                    buildEvent(cnh, "ho ricevuto la disconnessione di un client", VCEvent.Event.player_disconnected_game_ended);
+                    Object[] disconnectionChoices = {"Ok"};
+                    int disconnectionChoice = JOptionPane.showOptionDialog(GUI.getMainFrame(),
+                            "Ops! Player " + playerDisconnected + "is offline. The game will end now!",
+                            "Disconnection detected",
+                            JOptionPane.YES_OPTION,
+                            JOptionPane.QUESTION_MESSAGE,
+                            finalIcon,
+                            disconnectionChoices,
+                            disconnectionChoices);
+
                     endGame=true;
                     break;
                 default:
@@ -367,25 +391,19 @@ public class GUIHandler {
 
 
 
-    class ButtonTwoCustomActionListener implements ActionListener{
+    class CustomNumberOfPlayersListener implements ActionListener{
+        private int chosenNumberOfPlayers;
 
-        public ButtonTwoCustomActionListener(){
-
+        public CustomNumberOfPlayersListener(int chosenNumberOfPlayers){
+            this.chosenNumberOfPlayers=chosenNumberOfPlayers;
         }
 
         @Override
         public void actionPerformed(ActionEvent e) {
-            ChooseNumPlayerWorker button2= new ChooseNumPlayerWorker(2);
+            NumberOfPlayersWorker npw= new NumberOfPlayersWorker(chosenNumberOfPlayers);
         }
     }
 
-    class ButtonThreeCustomActionListener implements ActionListener{
-
-        @Override
-        public void actionPerformed(ActionEvent e) {
-            ChooseNumPlayerWorker button3= new ChooseNumPlayerWorker(3);
-        }
-    }
 
     class DateNextButtonCustomActionListener implements ActionListener{
         private boolean goForward;
@@ -556,13 +574,6 @@ public class GUIHandler {
         }
         //Se qualcosa è andato storto il controller lato server riceverà un -1
         return  -1;
-    }
-
-    //test
-    private void removeGodsButtons(){
-        for(JButton god: GUI.getImgGodsButtons()){
-            GUI.getGodsWindowManager().remove(god);
-        }
     }
 
 }

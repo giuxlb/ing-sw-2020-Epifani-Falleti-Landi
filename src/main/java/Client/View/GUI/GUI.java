@@ -13,6 +13,7 @@ import java.util.ArrayList;
 public class GUI {
     //mainFrame
     private JFrame mainFrame;
+    private JLabel waitingLabel;
 
     //chooseNumberOfPlayersWindowElements
     private JLabel numberOfPlayersWindowManager;
@@ -66,11 +67,37 @@ public class GUI {
 
 
     public GUI(){
-        buildMainFrame();
-        buildChooseNumberOfPlayersWindow();
-        buildLoginWindow();
-        buildDateWindow();
-        createMainWindow();
+        mainFrame = new JFrame("Santorini -  Epifani Falleti Landi");
+        mainFrame.addWindowListener(new CustomClosing(mainFrame));
+        mainFrame.setSize(710, 438);
+
+        waitingLabel = paintScreen(waitingLabel, "MainBackground.jpg", 700, 400);
+        waitingLabel.setText("Wait...");
+        waitingLabel.setHorizontalTextPosition(JLabel.CENTER);
+        waitingLabel.setVerticalTextPosition(JLabel.CENTER);
+        mainFrame.add(waitingLabel);
+
+        //Ricordati di mettere l'icona
+        //mainFrame.setIconImage();
+        mainFrame.setLocationRelativeTo(null);
+        mainFrame.setVisible(true);
+    }
+
+    protected void destroyWaitingLabel(){
+        mainFrame.remove(waitingLabel);
+        waitingLabel=null;
+    }
+
+
+
+    private JLabel paintScreen(JLabel screenLabel, String name, int width, int height){
+        ImageIcon currentIcon= new ImageIcon("./resources/"+name);
+        Image tmp = currentIcon.getImage();
+        Image newIcon = tmp.getScaledInstance(width,height, Image.SCALE_SMOOTH);
+        ImageIcon finalIcon = new ImageIcon(newIcon);
+        screenLabel = new JLabel(finalIcon);
+
+        return screenLabel;
     }
 
     private void buildBoard(){
@@ -96,7 +123,7 @@ public class GUI {
         }
     }
 
-    private void buildGodBar(){
+    protected void buildGodBar(){
         godImage = new JLabel();
         godPower = new JLabel();
         godPanel = new JPanel();
@@ -107,37 +134,63 @@ public class GUI {
 
     private void buildMainFrame(){
         //Bisogna implementare anche la finestra di inserimento dell'indirizzo IP
-        ImageIcon currentIcon= new ImageIcon("./resources/MainBackground.jpg");
-        Image tmp = currentIcon.getImage();
-        Image newIcon = tmp.getScaledInstance(1920,1080, Image.SCALE_SMOOTH);
-        ImageIcon finalIcon = new ImageIcon(newIcon);
 
-        mainFrame = new JFrame("Santorini -  Epifani Falleti Landi");
-        mainFrame.addWindowListener(new CustomClosing(mainFrame));
-        mainFrame.setSize(1920, 1080);
-
-        //Ricordati di impostare l'immagine
-        //mainFrame.setIconImage();
-        mainFrame.setLocationRelativeTo(null);
-        mainFrame.setVisible(true);
     }
 
     protected void buildGodsWindow(ArrayList<String> gods){
+        mainFrame.setSize(1920,1080);
+        mainFrame.setLocationRelativeTo(null);
         imgGodsButton = new JButton[gods.size()];
+        GridBagConstraints[] godBagCostraints= new GridBagConstraints[gods.size()];
 
         for(int i=0;i<gods.size();i++){
             ImageIcon currentImg= new ImageIcon("./resources/gods/"+gods.get(i)+".png");
             Image img = currentImg.getImage();
-            Image newImg = img.getScaledInstance(120,200, Image.SCALE_SMOOTH);
+            Image newImg = img.getScaledInstance(150,210, Image.SCALE_SMOOTH);
             ImageIcon finalImg = new ImageIcon(newImg);
             imgGodsButton[i]=new JButton("",finalImg);
+            imgGodsButton[i].setSize(120,200);
+            imgGodsButton[i].setContentAreaFilled(false);
+            imgGodsButton[i].setBorderPainted(false);
+            godBagCostraints[i] = new GridBagConstraints();
         }
 
-        godsWindowManager = new JLabel();
-        godsWindowManager.setLayout(new FlowLayout());
+        godsWindowManager = paintScreen(godsWindowManager, "GodsScreen.png", 1920, 1080);
+        godsWindowManager.setLayout(new GridBagLayout());
+        int j=0;
         for(int i=0; i<gods.size();i++){
-            godsWindowManager.add(imgGodsButton[i]);
+            if(i<7){
+                godBagCostraints[i].gridy=1;
+                godBagCostraints[i].gridx=j;
+                godBagCostraints[i].insets = new Insets(5,3,5,5);
+                j++;
+            }else if(i==7){
+                j=0;
+                godBagCostraints[i].gridy=2;
+                godBagCostraints[i].gridx=j;
+                godBagCostraints[i].insets = new Insets(5,3,5,5);
+                j++;
+            }else{
+                godBagCostraints[i].gridy=2;
+                godBagCostraints[i].gridx=j;
+                godBagCostraints[i].insets = new Insets(5,3,5,5);
+                j++;
+            }
+            godsWindowManager.add(imgGodsButton[i], godBagCostraints[i]);
         }
+
+        mainFrame.add(godsWindowManager);
+    }
+
+    protected void destroyGodsWindow(int size){
+        for(int i=0;i<size;i++){
+            godsWindowManager.remove(imgGodsButton[i]);
+        }
+        mainFrame.remove(godsWindowManager);
+        for(int i=0;i<size;i++){
+            imgGodsButton[i]=null;
+        }
+        godsWindowManager=null;
     }
 
     public JLabel getGodsWindowManager() {
@@ -166,12 +219,12 @@ public class GUI {
 
     }
 
-    protected void buildChooseNumberOfPlayersWindow() {
+    protected void buildNumberOfPlayersWindow() {
         numberOfPlayersInformation = new JLabel("How many players are going to connect?");
         two = new JButton("2");
         three = new JButton("3");
 
-        numberOfPlayersWindowManager = new JLabel();
+        numberOfPlayersWindowManager = paintScreen(numberOfPlayersWindowManager, "MainBackground.jpg", 700, 400);
         numberOfPlayersWindowManager.setLayout(new GridBagLayout());
         GridBagConstraints gbc1 = new GridBagConstraints();
         gbc1.gridx = 0;
@@ -195,11 +248,22 @@ public class GUI {
         gbc4.ipadx=30;
         gbc4.ipady=10;
         buttonPanel.add(three, gbc4);
+        buttonPanel.setOpaque(true);
 
         GridBagConstraints gbc2 = new GridBagConstraints();
         gbc2.gridx=0;
         gbc2.gridy=2;
         numberOfPlayersWindowManager.add(buttonPanel, gbc2);
+        mainFrame.add(numberOfPlayersWindowManager);
+    }
+
+    protected void destroyNumberOfPlayersWindow(){
+        mainFrame.remove(numberOfPlayersWindowManager);
+        numberOfPlayersInformation=null;
+        two=null;
+        three=null;
+        buttonPanel=null;
+        numberOfPlayersWindowManager=null;
     }
 
     protected JButton getTwo() {
@@ -210,9 +274,9 @@ public class GUI {
         return three;
     }
 
+
     protected void buildLoginWindow(){
-        //Carica immagine di loginWindowManager
-        loginWindowManager=new JLabel();
+        loginWindowManager=paintScreen(loginWindowManager, "MainBackground.jpg", 700, 400);
         ipLabel=new JLabel("IP address: ");
         ipTextField = new JTextField();
         usernameLabel = new JLabel("Username: ");
@@ -256,6 +320,17 @@ public class GUI {
         loginMessageAreaGBC.gridy=1;
         loginMessageAreaGBC.gridheight=GridBagConstraints.LAST_LINE_END;
         loginWindowManager.add(loginMessageArea, loginMessageAreaGBC);
+
+        mainFrame.add(loginWindowManager);
+    }
+
+    protected void destroyLoginWindow(){
+        mainFrame.remove(loginWindowManager);
+        usernameLabel=null;
+        usernameTextField=null;
+        loginMessageArea=null;
+        loginNextButton=null;
+        loginWindowManager=null;
     }
 
     public JLabel getLoginWindowManager() {
@@ -284,7 +359,7 @@ public class GUI {
         dateNextButton = new JButton("Send date");
         dateMessageArea = new JLabel();
 
-        dateWindowManager = new JLabel();
+        dateWindowManager = paintScreen(dateWindowManager, "MainBackground.jpg", 700, 400);
         dateWindowManager.setLayout(new GridBagLayout());
         GridBagConstraints monthLabelGBC= new GridBagConstraints();
         monthLabelGBC.gridy = 0;
@@ -332,6 +407,8 @@ public class GUI {
         dateMessageAreaGBC.gridx=0;
         dateMessageAreaGBC.gridheight=GridBagConstraints.LAST_LINE_END;
         dateWindowManager.add(dateMessageArea, dateMessageAreaGBC);
+
+        mainFrame.add(dateWindowManager);
     }
 
 
@@ -375,7 +452,18 @@ public class GUI {
         return numberOfPlayersWindowManager;
     }
 
-    protected void createMainWindow(){
+    protected void destroyDateWindow(){
+        mainFrame.remove(dateWindowManager);
+        monthLabel=null;
+        monthTextField=null;
+        dayLabel=null;
+        dayTextField=null;
+        yearLabel=null;
+        yearTextField=null;
+        dateNextButton=null;
+    }
+
+    protected void buildMainWindow(){
         mainWindowManager = new JLabel();
         buildMessageAndUndoBar();
         buildBoard();
@@ -387,6 +475,8 @@ public class GUI {
         mainWindowManager.add(informationArea, BorderLayout.SOUTH);
         mainWindowManager.add(boardLabel);
         mainWindowManager.add(godPanel, BorderLayout.WEST);
+
+        mainFrame.add(mainWindowManager);
     }
 
     public JLabel getMainWindowManager() {
@@ -414,7 +504,7 @@ public class GUI {
 
             ImageIcon currentIcon= new ImageIcon("./resources/WarningSign.png");
             Image tmp = currentIcon.getImage();
-            Image newIcon = tmp.getScaledInstance(50,50, Image.SCALE_SMOOTH);
+            Image newIcon = tmp.getScaledInstance(40,40, Image.SCALE_SMOOTH);
             ImageIcon finalIcon = new ImageIcon(newIcon);
 
             int choice = JOptionPane.showOptionDialog(mainFrame,
@@ -426,8 +516,11 @@ public class GUI {
                     choices,
                     choices[1]);
 
+            System.out.println(choice);
             if(choice==0){
                 mainFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+            }else{
+                mainFrame.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
             }
         }
 

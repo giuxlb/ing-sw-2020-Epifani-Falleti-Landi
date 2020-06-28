@@ -2,8 +2,8 @@ package Client.View.GUI;
 
 import javax.swing.*;
 
-public class ChooseNumPlayerWorker extends SwingWorker {
-    public ChooseNumPlayerWorker(int num){
+public class NumberOfPlayersWorker extends SwingWorker {
+    public NumberOfPlayersWorker(int num){
             GUIHandler.playersNumber=num;
             GUIHandler.ready=true;
     }
