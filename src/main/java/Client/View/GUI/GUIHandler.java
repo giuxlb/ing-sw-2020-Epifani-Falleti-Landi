@@ -164,6 +164,11 @@ public class GUIHandler {
                     GUI.getMessageArea().setText(currentPlayerInformation.get(0) + " is playing with god " + currentPlayerInformation.get(1));
                     break;
                 case update:
+                    if(playersNumber==0){
+                        GUI.destroyGodsWindow(godsSize);
+                        GUI.buildMainWindow();
+                        SwingUtilities.updateComponentTreeUI(GUI.getMainFrame());
+                    }
                     Object objectBoardCell = evento.getBox();
                     ArrayList<SocketBoardCell> socketBoardCell = (ArrayList<SocketBoardCell>) objectBoardCell;
                     recreateBoardfromSocketBoardCell(socketBoardCell);
@@ -174,23 +179,25 @@ public class GUIHandler {
                     GUI.getMessageArea().setText("Select a worker");
                     Object objectChoices = evento.getBox();
                     ArrayList<Coordinates> positionWorkers = (ArrayList<Coordinates>) objectChoices;
-                    paintBoardCell(positionWorkers);
+                    //paintBoardCell(positionWorkers);
                     createBoardCellMouseListener(GUI.getBoard(), positionWorkers);
-                    paintBoardCell(positionWorkers);
+                    //paintBoardCell(positionWorkers);
                     while(ready==false || (previousCoordinate.getX()==currentCoordinate.getX() && previousCoordinate.getY()==currentCoordinate.getY())){
                         System.out.println("Attendo che il player scelga dove posizionarsi");
                     }
                     GUIHandler.ready=false;
                     previousCoordinate=currentCoordinate;
-                    unpaintBoardCell(positionWorkers);
+                    //unpaintBoardCell(positionWorkers);
                     buildEvent(cnh,findIndex(positionWorkers, currentCoordinate), VCEvent.Event.ask_for_worker);
                     break;
                 case send_cells_move:
-                    if(checkSendCells==false){
-                        GUI.destroyGodsWindow(godsSize);
-                        GUI.buildMainWindow();
-                        SwingUtilities.updateComponentTreeUI(GUI.getMainFrame());
-                        checkSendCells=true;
+                    if(playersNumber!=0){
+                        if(checkSendCells==false){
+                            GUI.destroyGodsWindow(godsSize);
+                            GUI.buildMainWindow();
+                            SwingUtilities.updateComponentTreeUI(GUI.getMainFrame());
+                            checkSendCells=true;
+                        }
                     }
                     sendCells(movingPhase, cnh, VCEvent.Event.send_cells_move,evento);
                     break;
@@ -242,7 +249,7 @@ public class GUIHandler {
                     GUI.getMessageArea().setText("Mi spiace, non puoi più muoverti con nessuno dei tuoi worker");
                     break;
                 case number_of_players:
-                    playersNumber = (Integer)evento.getBox();
+                    /*playersNumber = (Integer)evento.getBox();*/
                     break;
                 case ask_for_divinity_activation:
                     Object[] choices = {"Yes", "No"};
@@ -304,7 +311,7 @@ public class GUIHandler {
                     String playerDisconnected = (String) objectPlayerDisconnected;
                     Object[] disconnectionChoices = {"Ok"};
                     int disconnectionChoice = JOptionPane.showOptionDialog(GUI.getMainFrame(),
-                            "Ops! Player " + playerDisconnected + "is offline. The game will end now!",
+                            "Ops! Player " + playerDisconnected + " is offline. The game will end now!",
                             "Disconnection detected",
                             JOptionPane.YES_OPTION,
                             JOptionPane.QUESTION_MESSAGE,
@@ -346,6 +353,7 @@ public class GUIHandler {
         for(int i=0;i<Board.DIM;i++){
             for(int j=0;j<Board.DIM;j++){
                 if (b.getBoardWorker(i,j)==null){
+                    System.out.println(GUI.getBoard());
                     GUI.getBoard()[i][j].setText("Worker: null   " + "Height: " + b.getBoardHeight(i,j));
                 }else{
                     GUI.getBoard()[i][j].setText(b.getBoardWorker(i,j).getColor() + "Worker: w   " + "Height: " + b.getBoardHeight(i,j));
@@ -476,14 +484,14 @@ public class GUIHandler {
         GUI.getMessageArea().setText("Select the red cell where you want to " + phase);
         Object objectValidPositions = evento.getBox();
         ArrayList<Coordinates> validPositions = (ArrayList<Coordinates>)objectValidPositions;
-        paintBoardCell(validPositions);
+        //paintBoardCell(validPositions);
         createBoardCellMouseListener(GUI.getBoard(), validPositions);
         while(ready==false || (previousCoordinate.getX()==currentCoordinate.getX() && previousCoordinate.getY()==currentCoordinate.getY())){
             System.out.println("Attendo che il player scelga dove posizionarsi");
         }
         GUIHandler.ready=false;
         previousCoordinate=currentCoordinate;
-        unpaintBoardCell(validPositions);
+        //unpaintBoardCell(validPositions);
         buildEvent(cnh,findIndex(validPositions,currentCoordinate),command);
     }
 
@@ -494,7 +502,7 @@ public class GUIHandler {
                     if(c.getX()==i && c.getY()==j){
                         GUI.getBoard()[i][j].setContentAreaFilled(true);
                         //GUIBoard[i][j].setBorderPainted(false);
-                        GUI.getBoard()[i][j].setBackground(java.awt.Color.red);
+                        //GUI.getBoard()[i][j].setBackground();
                     }
                 }
             }
