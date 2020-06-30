@@ -89,14 +89,14 @@ public class GUI {
         GridBagConstraints ipLabelGBC= new GridBagConstraints();
         ipLabelGBC.gridx=0;
         ipLabelGBC.gridy=0;
-        loginWindowManager.add(ipLabel, ipLabelGBC);
+
 
         GridBagConstraints ipTextFieldGBC = new GridBagConstraints();
         ipTextFieldGBC.gridx = 1;
         ipTextFieldGBC.gridy=0;
         ipTextFieldGBC.ipadx=100;
         ipTextFieldGBC.ipady=10;
-        loginWindowManager.add(ipTextField, ipTextFieldGBC);
+
         waitingLabel.add(ipLabel,ipLabelGBC);
         waitingLabel.add(ipTextField,ipTextFieldGBC);
         ipButton = new JButton("Next");
