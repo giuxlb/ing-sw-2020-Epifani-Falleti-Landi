@@ -99,7 +99,7 @@ public class GameControl {
 
         virtualView.setPlayers(players);
         this.sortPlayersByAge();
-        //virtualView.sendNumberOfPlayer();
+        virtualView.sendNumberOfPlayer();
         virtualView.sendPlayerTurnNumber(this.players);
 
 

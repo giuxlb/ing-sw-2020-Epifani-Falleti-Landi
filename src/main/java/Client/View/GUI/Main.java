@@ -7,35 +7,37 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
 public class Main {
+    private static String ip;
     public static void main(String[] args){
-        /*SwingUtilities.invokeLater(new Runnable() {
-            @Override
-            public void run() {*/
                 GUI GUI=new GUI();
-                String ip = null;
-
-                GUI.getIpButton().addActionListener(new customActionListener(ip,GUI.getIpTextField()));
-                System.out.println(ip);
+                GUI.getUpperLabel().setText("Please insert server IP address, the press button Next");
+                GUI.getLowerLabel().setText("If you send a wrong IP address, you won't be able to play!");
+                CustomActionListener nextListener = new CustomActionListener(GUI);
+                GUI.getIpButton().addActionListener(nextListener);
+                while(nextListener.isGoForward()==false){
+                    System.out.println("Attendo inserimento indirizzo ip");
+                }
                 GUIHandler gh= new GUIHandler(GUI,ip);
-
                 gh.launchConnection();
-          /* }
-        });*/
 
     }
 
-    static class customActionListener implements ActionListener{
-        private String ip;
-        private JTextField ipTextField;
-        public customActionListener(String ip,JTextField ipTextField)
-        {
-            this.ip = ip;
-            this.ipTextField = ipTextField;
+    static class CustomActionListener implements ActionListener{
+        private boolean goForward=false;
+        private GUI GUI;
+
+        public CustomActionListener(GUI GUI){
+            this.GUI=GUI;
+        }
+
+        public boolean isGoForward() {
+            return goForward;
         }
 
         @Override
         public void actionPerformed(ActionEvent e) {
-            ip = this.ipTextField.getText();
+            ip= GUI.getIpTextField().getText();
+            goForward=true;
         }
     }
 
