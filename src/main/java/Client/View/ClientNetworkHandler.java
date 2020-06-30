@@ -34,14 +34,16 @@ public class ClientNetworkHandler implements Runnable, ServerObserver {
     private boolean finish;
     private boolean finishPing;
     private GUIHandler gh;
+    private String ip;
 
 
     private boolean idArrived;
 
-    public ClientNetworkHandler(CLI cli){this.cli = cli;}
+    public ClientNetworkHandler(CLI cli,String ip){this.cli = cli;this.ip = ip;}
 
-    public ClientNetworkHandler(GUIHandler gh){
+    public ClientNetworkHandler(GUIHandler gh,String ip){
         this.gh=gh;
+        this.ip = ip;
     }
 
     public boolean isUpdateView() {
@@ -50,6 +52,7 @@ public class ClientNetworkHandler implements Runnable, ServerObserver {
     public boolean isIdArrived() {
         return idArrived;
     }
+
     /**
      * It sets up the connection with the server and prepare the client to receive ping and events from the server and to answer those
      *
@@ -58,7 +61,7 @@ public class ClientNetworkHandler implements Runnable, ServerObserver {
     public void run() {
 
         try {
-            server = new Socket("127.0.0.1",65000);
+            server = new Socket(ip,65000);
             output = new ObjectOutputStream(server.getOutputStream());
             input = new ObjectInputStream((server.getInputStream()));
         } catch (IOException e) {
