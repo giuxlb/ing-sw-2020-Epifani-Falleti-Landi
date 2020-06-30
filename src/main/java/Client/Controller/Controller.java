@@ -121,5 +121,16 @@ public class Controller {
         return false;
     }
 
+    public boolean isCardCorrect(String card, ArrayList<String> gods){
+        boolean isCorrect = false;
+        for(String p : gods){
+            if (p.toUpperCase().equals(card.toUpperCase())) {
+                isCorrect = true;
+                break;
+            }
+        }
+        return isCorrect;
+    }
+
 
 }

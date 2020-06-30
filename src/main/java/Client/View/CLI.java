@@ -405,13 +405,28 @@ public class CLI {
                     System.out.println("");
                     System.out.println("Scegli " + playersNumber + " carte");
 
-                    for(int i=0;i<playersNumber;i++){
+                    int i = 0;
+                    String card;
+                    while(i<playersNumber){
+                        System.out.print("Scegli la " + (i+1) + "° carta -> ");
+                        card = s.nextLine();
+                        if(c.isCardCorrect(card,gods)){
+                            chosenGods.add(card);
+                            gods.remove(card.toUpperCase());
+                            i++;
+                        }
+                        else{
+                            System.out.println("Carta non valida, riprova");
+                        }
+                    }
+
+                    /*for(int i=0;i<playersNumber;i++){
                         System.out.print("Scegli la " + (i+1) + "° carta -> ");
                         String card = s.nextLine();
-                        //card=validCard(card,gods);
+                        card=validCard(card,gods);
                         //card=isAlreadyChosen(i, card, chosenGods);
                         chosenGods.add(card);
-                    }
+                    }*/
                     System.out.println();
                     buildEvent(cnh,chosenGods, VCEvent.Event.send_all_cards);
                     break;
@@ -578,24 +593,6 @@ public class CLI {
         System.out.print("Inserire l'anno in cui si è nati in formato aaaa (solo numerico) ->");
         this.anno=s.nextInt();
         System.out.println();
-    }
-
-    /***
-     *
-     * @param insertion
-     * @param gods
-     * @return
-     */
-    String validCard(String insertion, ArrayList<String> gods){
-        String convertedInsertion= insertion.toUpperCase();
-        while(c.isInArrayListOfGods(convertedInsertion,gods)==false){
-            System.out.println("Errore! Nome divinià non valido. Scegli una divinità tra quelle presenti!");
-            System.out.print("Reinserisci il nome della divinità -> ");
-            convertedInsertion=s.nextLine();
-            convertedInsertion.toUpperCase();
-        }
-
-        return insertion;
     }
 
     /***
