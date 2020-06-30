@@ -419,14 +419,6 @@ public class CLI {
                             System.out.println("Carta non valida, riprova");
                         }
                     }
-
-                    /*for(int i=0;i<playersNumber;i++){
-                        System.out.print("Scegli la " + (i+1) + "° carta -> ");
-                        String card = s.nextLine();
-                        card=validCard(card,gods);
-                        //card=isAlreadyChosen(i, card, chosenGods);
-                        chosenGods.add(card);
-                    }*/
                     System.out.println();
                     buildEvent(cnh,chosenGods, VCEvent.Event.send_all_cards);
                     break;

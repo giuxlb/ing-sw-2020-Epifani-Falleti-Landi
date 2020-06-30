@@ -57,8 +57,6 @@ public class VirtualView {
         this.startNewGame=false;
 
     }
-
-
     /***
      * It sends the setup_request only to the first client conneceted
      * @return

@@ -27,7 +27,12 @@ public class GameControl {
     public GameControl() {
          this.game = new Game();
          this.virtualView = new VirtualView();
-        // this.virtualView.setUndoOn(true);
+         Scanner scanner = new Scanner(System.in);
+         System.out.println("Vuoi attivare la UNDO? Y per attivare, N per non attivare");
+         if(scanner.nextLine().toUpperCase().equals("Y")){
+             this.virtualView.setUndoOn(true);
+             System.out.println("UNDO attivata!");
+         }
         exit=false;
 
         players = new ArrayList<Player>();
