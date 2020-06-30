@@ -178,13 +178,15 @@ public class GUIHandler {
                     buildEvent(cnh, myDate, VCEvent.Event.date_request);
                     break;
                 case turnNumber:
-
+                    Object objectPlayerID = evento.getBox();
+                    playerID = ((Integer) objectPlayerID).intValue();
                     break;
                 case not_your_turn:
                     Object objectCurrentPlayerInformation = evento.getBox();
                     ArrayList<String> currentPlayerInformation= (ArrayList<String>) objectCurrentPlayerInformation;
                     GUI.getUpperLabel().setText(currentPlayerInformation.get(0) + " is playing with god " + currentPlayerInformation.get(1));
-                    GUI.updateGodBar(currentPlayerInformation.get(1));
+                    GUI.updateGodBar(currentPlayerInformation.get(1).toLowerCase());
+                    SwingUtilities.updateComponentTreeUI(GUI.getMainFrame());
                     break;
                 case update:
                     if(playerID!=1 && checkUpdate==false){
@@ -192,7 +194,6 @@ public class GUIHandler {
                         GUI.getLowerLabel().setText("");
                         GUI.destroyGodsWindow(godsSize);
                         GUI.buildMainWindow();
-                        GUI.updateGodBar(myGod);
                         SwingUtilities.updateComponentTreeUI(GUI.getMainFrame());
                         checkUpdate = true;
                     }
@@ -222,6 +223,8 @@ public class GUIHandler {
                     buildEvent(cnh,findIndex(positionWorkers, currentCoordinate), VCEvent.Event.ask_for_worker);
                     break;
                 case send_cells_move:
+                    GUI.getLowerLabel().setText(myGod);
+                    GUI.updateGodBar(myGod);
                     if(playerID==1 && checkSendCells==false){
                             GUI.getUpperLabel().setText("");
                             GUI.getLowerLabel().setText("");
@@ -229,9 +232,9 @@ public class GUIHandler {
                             GUI.buildMainWindow();
                             GUI.updateGodBar(myGod);
                             SwingUtilities.updateComponentTreeUI(GUI.getMainFrame());
-                            checkSendCells=true;
                             this.b = new Board();
                             turnModelBoardintoGUIBoard(b);
+                            checkSendCells=true;
                     }
                     sendCells(movingPhase, cnh, VCEvent.Event.send_cells_move,evento);
                     break;
@@ -543,11 +546,7 @@ public class GUIHandler {
 
         @Override
         public void mousePressed(MouseEvent e) {
-            if(checkIfGodisAlreadyChosen(chosenGods, gods.get(index))==true){
-                lowerLabel.setText("Pay attention, you can't choose again this god. Select another one, please");
-            }else{
-                GodsWorker gw = new GodsWorker(gods.get(index));
-            }
+
         }
 
         @Override
@@ -807,7 +806,7 @@ public class GUIHandler {
         SwingUtilities.updateComponentTreeUI(GUI.getMainFrame());
         createBoardCellMouseListener(GUI.getBoard(), validPositions);
         while(ready==false || (previousCoordinate.getX()==currentCoordinate.getX() && previousCoordinate.getY()==currentCoordinate.getY())){
-            System.out.println("Attendo che il player scelga dove posizionarsi");
+            System.out.println("Attendo che il player scelga la cella");
         }
         GUIHandler.ready=false;
         previousCoordinate.setCoordinates(currentCoordinate.getX(),currentCoordinate.getY());

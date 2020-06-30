@@ -7,10 +7,7 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.io.ObjectInputStream;
+import java.io.*;
 import java.util.ArrayList;
 
 public class GUI {
@@ -569,17 +566,11 @@ public class GUI {
         FileInputStream fis = null;
 
         try {
-            fis = new FileInputStream("./resources/gods/" + godName  + ".txt");
-            ObjectInputStream ois = new ObjectInputStream(fis);
-            godPower.setText((String ) ois.readObject());
-            ois.close();
-            fis.close();
+            godPower.setText(readGodsPower(godName));
         } catch (ClassNotFoundException| IOException ex) {
             godPower.setText("Unable to load god's power");
             ex.printStackTrace();
         }
-
-        SwingUtilities.updateComponentTreeUI(mainFrame);
 
     }
 
@@ -615,7 +606,7 @@ public class GUI {
         GridBagConstraints undoGBC = new GridBagConstraints();
         undoGBC.gridx = 1;
         undoGBC.gridy=0;
-        undoGBC.insets = new Insets(3,550,3,3);
+        undoGBC.insets = new Insets(3,500,3,3);
         messageAndUndoPanel.add(undo, undoGBC);
 
         mainFrame.add(messageAndUndoPanel, BorderLayout.NORTH);
@@ -638,6 +629,17 @@ public class GUI {
         mainWindowManager.add(godPanel, BorderLayout.WEST);
 
         mainFrame.add(mainWindowManager, BorderLayout.CENTER);
+    }
+
+    protected static String readGodsPower(String name) throws IOException, ClassNotFoundException{
+        BufferedReader reader = new BufferedReader(new FileReader(name));
+        String line = reader.readLine();
+        while(line!=null) {
+            System.out.println(line);
+            line = reader.readLine();
+        }
+
+        return line;
     }
 
 }
