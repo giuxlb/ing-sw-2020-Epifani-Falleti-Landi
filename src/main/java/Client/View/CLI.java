@@ -181,12 +181,8 @@ public class CLI {
             switch (evento.getCommand()){
                 case send_color:
                     Object objcectColorName = evento.getBox();
-                    if(objcectColorName instanceof String){
-                        this.myColor = (String) objcectColorName;
-                        System.out.println("I tuoi worker saranno di colore " + myColor);
-                    }else{
-                        System.out.println("Errore! La stringa che dovrebbe rappresentare in nome del mio colore è arrivata corrotta");
-                    }
+                    this.myColor = (String) objcectColorName;
+                    System.out.println("I tuoi worker saranno di colore " + myColor);
                     break;
                 case setup_request:
                     System.out.println("Quanti giocatori giocheranno a questa partita?\nInserire 2 per 2 giocatori, 3 per 3 giocatori");
@@ -335,7 +331,7 @@ public class CLI {
                     System.out.println("Mi spiace, non puoi più muoverti con nessuno dei tuoi worker");
                     break;
                 case number_of_players:
-                    playersNumber = (Integer)evento.getBox();
+                   playersNumber = (Integer)evento.getBox();
                     break;
                 case ask_for_divinity_activation:
                     Object objectGod = evento.getBox();

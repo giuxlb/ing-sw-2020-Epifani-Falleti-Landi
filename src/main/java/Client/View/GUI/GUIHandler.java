@@ -1,18 +1,19 @@
 package Client.View.GUI;
 import javax.swing.*;
 
+import Client.Controller.Controller;
 import Client.View.ClientNetworkHandler;
 import Client.View.Data;
 import Controller.Coordinates;
 import Controller.Network.VCEvent;
-import Model.Board;
-import Model.Color;
-import Model.SocketBoardCell;
-import Model.Worker;
-
-import java.awt.*;
+import Model.*;
 import java.awt.event.*;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.ObjectInputStream;
 import java.util.ArrayList;
+
+import static java.awt.Color.red;
 
 
 public class GUIHandler {
@@ -25,26 +26,25 @@ public class GUIHandler {
     private boolean updateView;
 
     //Support elements
-    protected static int playersNumber;
-    protected static boolean ready;
     private String ipAddress;
+    protected static int playersNumber;
+    private int playerID;
+    protected static boolean ready;
     private String myUsername;
     private Data myDate;
+    private String myColor;
     private ArrayList<String> sentGods;
     private int godsSize;
     protected static ArrayList<String> chosenGods;
     protected static String myGod;
     private boolean checkSendCells;
+    private boolean checkUpdate;
     private Board b;
     private String movingPhase = "go on";
     private String buildingPhase = "build on";
     private String removePhase = "remove";
-    protected static Coordinates previousCoordinate=new Coordinates(0,-1);
-    protected static Coordinates currentCoordinate = new Coordinates(-1,0);
-
-    //Occorre vedere se serve davvero
-    private boolean isToPaint;
-
+    protected static Coordinates previousCoordinate;
+    protected static Coordinates currentCoordinate;
     private BoardCellWorker[][] bcw;
 
     public GUIHandler(GUI GUI){
@@ -52,7 +52,10 @@ public class GUIHandler {
 
         //Initial settings
         playersNumber=0;
+        playerID=0;
         checkSendCells=false;
+        checkUpdate=false;
+        bcw= new BoardCellWorker[Board.DIM][Board.DIM];
         previousCoordinate = new Coordinates(0,-1);
         currentCoordinate = new Coordinates(-1,0);
 
@@ -96,6 +99,7 @@ public class GUIHandler {
 
    private void checkEvent(ClientNetworkHandler cnh)  {
        boolean endGame = false;
+       Controller clientSideController = new Controller();
         // Board copy = new Board();
         // int firstTimeHeMoves = 1;
         while(endGame==false){
@@ -105,8 +109,15 @@ public class GUIHandler {
             switch (evento.getCommand()){
                 case send_color:
                     System.out.println("Assegnamento del colore");
+                    Object objcectColorName = evento.getBox();
+                    this.myColor = (String) objcectColorName;
+                    playerID=understandPlayerIDFromColor(this.myColor);
+                    System.out.println("Il tuo playerID è " + playerID);
                     break;
                 case setup_request:
+                    GUI.getUpperLabel().setText("Press button 2 if you want to play with another person or button 3 to play with two friends");
+                    GUI.getLowerLabel().setText("Other options aren't allowed");
+                    playerID=1;
                     ready=false;
                     GUI.destroyWaitingLabel();
                     GUI.buildNumberOfPlayersWindow();
@@ -118,15 +129,17 @@ public class GUIHandler {
                     while(GUIHandler.ready==false){
                         System.out.println("Attendo scelta...");
                     }
-
+                    GUI.getLowerLabel().setText("Wait...");
                     buildEvent(cnh, playersNumber, VCEvent.Event.setup_request);
                     break;
                 case username_request :
-                    if(playersNumber!=0){
+                    if(playerID==1){
                         GUI.destroyNumberOfPlayersWindow();
                     }else{
                         GUI.destroyWaitingLabel();
                     }
+                    GUI.getUpperLabel().setText("Insert a username in the box below, then press button Next");
+                    GUI.getLowerLabel().setText("Please remember that you can't insert an another player's username");
                     GUI.buildLoginWindow();
                     SwingUtilities.updateComponentTreeUI(GUI.getMainFrame());
                     LoginNextButtonCustomActionListener usernameListener=new LoginNextButtonCustomActionListener();
@@ -134,11 +147,11 @@ public class GUIHandler {
                     while (usernameListener.getGoForward()==false){
                         System.out.println("Attendo che il giocatore scelga il suo username");
                     }
+                    GUI.getLowerLabel().setText("Wait...");
                     buildEvent(cnh, myUsername, VCEvent.Event.username_request);
                     break;
                 case wrong_username:
-                    GUI.getLoginMessageArea().setVisible(true);
-                    GUI.getLoginMessageArea().setText(Color.ANSI_RED + "This username has been already chosen. Insert a new one, please");
+                    GUI.getLowerLabel().setText("This username has been already chosen. Insert a new one, please");
                     SwingUtilities.updateComponentTreeUI(GUI.getMainFrame());
                     LoginNextButtonCustomActionListener wrongUsernameListener=new LoginNextButtonCustomActionListener();
                     GUI.getLoginNextButton().addActionListener(wrongUsernameListener);
@@ -146,28 +159,40 @@ public class GUIHandler {
                         System.out.println("Attendo che il giocatore reinserisca il suo username");
                     }
                     buildEvent(cnh, myUsername, VCEvent.Event.wrong_username);
+                    GUI.getLowerLabel().setText("Wait...");
                     break;
                 case date_request:
+                    GUI.getUpperLabel().setText("Insert first month (mm), then day (dd) and finally year (yy) of your own date of birth. Press Next to send");
+                    GUI.getLowerLabel().setText("The youngest player will be the first");
                     GUI.destroyLoginWindow();
                     GUI.buildDateWindow();
                     SwingUtilities.updateComponentTreeUI(GUI.getMainFrame());
-                    DateNextButtonCustomActionListener dateListener=new DateNextButtonCustomActionListener();
-                    GUI.getDateNextButton().addActionListener(dateListener);
-                    while (dateListener.isGoForward()==false){
-                        System.out.println("Attendo che il giocatore inserisca la sua data di nascita");
+                    requestDate();
+                    while(clientSideController.controllaData(myDate)==false){
+                        GUI.getLowerLabel().setText("Invalid date format, please try again");
+                        requestDate();
                     }
+                    GUI.getLowerLabel().setText("Wait...");
                     buildEvent(cnh, myDate, VCEvent.Event.date_request);
+                    break;
+                case turnNumber:
+
                     break;
                 case not_your_turn:
                     Object objectCurrentPlayerInformation = evento.getBox();
                     ArrayList<String> currentPlayerInformation= (ArrayList<String>) objectCurrentPlayerInformation;
-                    GUI.getMessageArea().setText(currentPlayerInformation.get(0) + " is playing with god " + currentPlayerInformation.get(1));
+                    GUI.getUpperLabel().setText(currentPlayerInformation.get(0) + " is playing with god " + currentPlayerInformation.get(1));
+                    GUI.updateGodBar(currentPlayerInformation.get(1));
                     break;
                 case update:
-                    if(playersNumber==0){
+                    if(playerID!=1 && checkUpdate==false){
+                        GUI.getUpperLabel().setText("");
+                        GUI.getLowerLabel().setText("");
                         GUI.destroyGodsWindow(godsSize);
                         GUI.buildMainWindow();
+                        GUI.updateGodBar(myGod);
                         SwingUtilities.updateComponentTreeUI(GUI.getMainFrame());
+                        checkUpdate = true;
                     }
                     Object objectBoardCell = evento.getBox();
                     ArrayList<SocketBoardCell> socketBoardCell = (ArrayList<SocketBoardCell>) objectBoardCell;
@@ -176,28 +201,35 @@ public class GUIHandler {
                     break;
                 case ask_for_worker:
                     ready=false;
-                    GUI.getMessageArea().setText("Select a worker");
+                    GUI.getUpperLabel().setText("Select a worker, you will find additional information at the bottom ");
+                    GUI.getLowerLabel().setText("");
                     Object objectChoices = evento.getBox();
                     ArrayList<Coordinates> positionWorkers = (ArrayList<Coordinates>) objectChoices;
-                    //paintBoardCell(positionWorkers);
+                    paintBoardCell(positionWorkers);
+                    SwingUtilities.updateComponentTreeUI(GUI.getMainFrame());
                     createBoardCellMouseListener(GUI.getBoard(), positionWorkers);
-                    //paintBoardCell(positionWorkers);
                     while(ready==false || (previousCoordinate.getX()==currentCoordinate.getX() && previousCoordinate.getY()==currentCoordinate.getY())){
                         System.out.println("Attendo che il player scelga dove posizionarsi");
                     }
                     GUIHandler.ready=false;
-                    previousCoordinate=currentCoordinate;
-                    //unpaintBoardCell(positionWorkers);
+                    previousCoordinate.setCoordinates(currentCoordinate.getX(),currentCoordinate.getY());
+                    unpaintBoardCell(positionWorkers);
+                    SwingUtilities.updateComponentTreeUI(GUI.getMainFrame());
+                    GUI.getLowerLabel().setText("Wait...");
+                    closeCellsWorkers();
                     buildEvent(cnh,findIndex(positionWorkers, currentCoordinate), VCEvent.Event.ask_for_worker);
                     break;
                 case send_cells_move:
-                    if(playersNumber!=0){
-                        if(checkSendCells==false){
+                    if(playerID==1 && checkSendCells==false){
+                            GUI.getUpperLabel().setText("");
+                            GUI.getLowerLabel().setText("");
                             GUI.destroyGodsWindow(godsSize);
                             GUI.buildMainWindow();
+                            GUI.updateGodBar(myGod);
                             SwingUtilities.updateComponentTreeUI(GUI.getMainFrame());
                             checkSendCells=true;
-                        }
+                            this.b = new Board();
+                            turnModelBoardintoGUIBoard(b);
                     }
                     sendCells(movingPhase, cnh, VCEvent.Event.send_cells_move,evento);
                     break;
@@ -236,34 +268,72 @@ public class GUIHandler {
                 case you_lost:
                     Object objectWinner = evento.getBox();
                     String winner = (String) objectWinner;
-                    GUI.getMessageArea().setText("Partita conclusa il vincitore è " + winner);
+                    ImageIcon endGameIcon = GUI.createIcon("lost.png");
+                    Object[] defeatChoices = {"Ok"};
+                    int defeat = JOptionPane.showOptionDialog(GUI.getMainFrame(),
+                            winner + " is the winner. The game will end now!",
+                            "It's over",
+                            JOptionPane.YES_OPTION,
+                            JOptionPane.QUESTION_MESSAGE,
+                            endGameIcon,
+                            defeatChoices,
+                            defeatChoices
+                    );
+                    System.exit(0);
                     buildEvent(cnh,"ho perso", VCEvent.Event.you_lost);
                     endGame=true;
                     break;
                 case you_won:
-                    GUI.getMessageArea().setText("Congratulazioni, sei il vincitore!");
+                    ImageIcon winIcon = GUI.createIcon("win.png");
+                    Object[] winChoices = {"Ok"};
+                    int win = JOptionPane.showOptionDialog(GUI.getMainFrame(),
+                            "You are the winner. Thanks to have played",
+                            "Congratulations",
+                            JOptionPane.YES_OPTION,
+                            JOptionPane.QUESTION_MESSAGE,
+                            winIcon,
+                            winChoices,
+                            winChoices
+                    );
+                    System.exit(0);
                     buildEvent(cnh,"ho vinto", VCEvent.Event.you_won);
                     endGame=true;
                     break;
                 case game_ended_foryou:
-                    GUI.getMessageArea().setText("Mi spiace, non puoi più muoverti con nessuno dei tuoi worker");
+                    ImageIcon endGameForYouIcon = GUI.createIcon("lost.png");
+                    Object[] options = {"Ok"};
+                    int lost = JOptionPane.showOptionDialog(GUI.getMainFrame(),
+                            "You can't move anymore. It's over for you",
+                            "It's over",
+                            JOptionPane.YES_OPTION,
+                            JOptionPane.QUESTION_MESSAGE,
+                            endGameForYouIcon,
+                            options,
+                            options
+                    );
+                    GUI.getUpperLabel().setText("You can still watch the game");
                     break;
                 case number_of_players:
-                    /*playersNumber = (Integer)evento.getBox();*/
+                    playersNumber = (Integer)evento.getBox();
                     break;
                 case ask_for_divinity_activation:
+                    ImageIcon godPowerActivationIcon = GUI.createIcon("QuestionSign.png");
                     Object[] choices = {"Yes", "No"};
                     int choice = JOptionPane.showOptionDialog(GUI.getMainFrame(),
-                                    "Do you want to use " + myGod + "'s power ?",
+                                    "Do you want to use " + myGod + "'s power?",
                                     "Card activation",
                                     JOptionPane.YES_NO_OPTION,
                                     JOptionPane.QUESTION_MESSAGE,
-                                    null, //Ricordati di mettere l'icona
+                                    godPowerActivationIcon,
                                     choices,
                                     choices[1]);
 
                     buildEvent(cnh, turnChoiceIntoCorrectOutput(choice), VCEvent.Event.ask_for_divinity_activation);
+                    break;
                 case send_all_cards:
+                    GUI.getUpperLabel().setText("You have to choose " + playersNumber + " card");
+                    GUI.getLowerLabel().setText("");
+                    ready=false;
                     Object objectGods = evento.getBox();
                     sentGods= (ArrayList<String>)  objectGods;
                     godsSize = sentGods.size();
@@ -271,41 +341,38 @@ public class GUIHandler {
                     GUI.buildGodsWindow(sentGods);
                     SwingUtilities.updateComponentTreeUI(GUI.getMainFrame());
                     chosenGods = new ArrayList<>(2);
-                    createGodsListener(godsSize, sentGods, GUI.getImgGodsButtons());
-                    while(chosenGods.size()!=playersNumber){
+                    createGodsListener(godsSize, sentGods, chosenGods, GUI.getImgGodsButtons(), GUI.getLowerLabel());
+                    while(playersNumber!=chosenGods.size()){
                         System.out.println("Sto aspettando che il primo player scelga le divinità");
                     }
+                    GUI.getLowerLabel().setText("Wait...");
                     buildEvent(cnh, chosenGods, VCEvent.Event.send_all_cards);
                     break;
                 case send_chosen_cards:
+                    GUI.getUpperLabel().setText("Select the god who prefer");
+                    GUI.getLowerLabel().setText("");
                     Object objectSentGods = evento.getBox();
                     sentGods= (ArrayList<String>)  objectSentGods;
                     godsSize = sentGods.size();
-                    GUI.destroyDateWindow();
-                    GUI.buildGodsWindow(sentGods);
-                    SwingUtilities.updateComponentTreeUI(GUI.getMainFrame());
                     if(godsSize==1){
                         GUIHandler.myGod=sentGods.get(0);
+                        GUI.buildJDialogForFirstPlayer(myGod);
                         buildEvent(cnh, sentGods.get(0), VCEvent.Event.send_chosen_cards);
                     }else{
                         ready=false;
-                        createGodListener(godsSize, sentGods, GUI.getImgGodsButtons());
+                        GUI.destroyDateWindow();
+                        GUI.buildGodsWindow(sentGods);
+                        SwingUtilities.updateComponentTreeUI(GUI.getMainFrame());
+                        createGodListener(godsSize, sentGods, GUI.getImgGodsButtons(), GUI.getLowerLabel());
                         while(ready==false){
                             System.out.println("Sto aspettando che il client scelga la sua divinità");
-                            try{
-                                Thread.sleep(7000);
-                            }catch (Exception ex){
-
-                            }
                         }
+                        GUI.getLowerLabel().setText("Wait...");
                         buildEvent(cnh, myGod, VCEvent.Event.send_chosen_cards);
                     }
                     break;
                 case player_disconnected_game_ended:
-                    ImageIcon currentIcon= new ImageIcon("./resources/WarningSign.png");
-                    Image tmp = currentIcon.getImage();
-                    Image newIcon = tmp.getScaledInstance(40,40, Image.SCALE_SMOOTH);
-                    ImageIcon finalIcon = new ImageIcon(newIcon);
+                    ImageIcon disconnectionIcon = GUI.createIcon("WarningSign.png");
 
                     Object objectPlayerDisconnected= evento.getBox();
                     String playerDisconnected = (String) objectPlayerDisconnected;
@@ -315,10 +382,11 @@ public class GUIHandler {
                             "Disconnection detected",
                             JOptionPane.YES_OPTION,
                             JOptionPane.QUESTION_MESSAGE,
-                            finalIcon,
+                            disconnectionIcon,
                             disconnectionChoices,
-                            disconnectionChoices);
-
+                            disconnectionChoices
+                    );
+                    System.exit(0);
                     endGame=true;
                     break;
                 default:
@@ -434,65 +502,154 @@ public class GUIHandler {
         }
     }
 
-    private void createGodsListener(int size, ArrayList<String> sentGods, JButton[] godsButton){
+    private void createGodsListener(int size, ArrayList<String> sentGods, ArrayList<String> chosenGods, JButton[] godsButton, JLabel lowerLabel){
         for (int i=0;i<size;i++){
             System.out.println("Aggiungo al bottone il listener");
-            godsButton[i].addActionListener(new sentGodsActionListener(i, sentGods));
+            godsButton[i].addMouseListener(new sentGodsMouseListener(i, sentGods, chosenGods, lowerLabel));
         }
     }
 
-    private void createGodListener(int size, ArrayList<String> sentGods, JButton[] godsButton){
+    private void createGodListener(int size, ArrayList<String> sentGods, JButton[] godsButton, JLabel lowerLabel){
         for (int i=0;i<size;i++){
             System.out.println("Aggiungo al bottone il listener");
-            godsButton[i].addActionListener(new sentGodActionListener(i, sentGods));
+            godsButton[i].addMouseListener(new sentGodMouseListener(i, sentGods, lowerLabel));
         }
     }
 
 
-        class sentGodsActionListener implements ActionListener{
-            private int index;
-            private ArrayList<String> gods;
+    class sentGodsMouseListener implements MouseListener {
+        private int index;
+        private ArrayList<String> gods;
+        private ArrayList<String> chosenGods;
+        private JLabel lowerLabel;
 
-            public sentGodsActionListener(int index, ArrayList<String> gods) {
-                this.index=index;
-                this.gods=gods;
-            }
+        public sentGodsMouseListener(int index, ArrayList<String> gods, ArrayList<String> chosenGods, JLabel lowerLabel) {
+            this.index = index;
+            this.gods = gods;
+            this.chosenGods=chosenGods;
+            this.lowerLabel=lowerLabel;
+        }
 
-            @Override
-            public void actionPerformed(ActionEvent e) {
+        @Override
+        public void mouseClicked(MouseEvent e) {
+            if(checkIfGodisAlreadyChosen(chosenGods, gods.get(index))==true){
+                lowerLabel.setText("Pay attention, you can't choose again this god. Select another one, please");
+            }else{
                 GodsWorker gw = new GodsWorker(gods.get(index));
             }
         }
 
-        class sentGodActionListener implements ActionListener{
-            private int index;
-            private ArrayList<String> gods;
-
-            public sentGodActionListener(int index, ArrayList<String> gods) {
-                this.index=index;
-                this.gods=gods;
-            }
-
-            @Override
-            public void actionPerformed(ActionEvent e) {
-               GodWorker gw= new GodWorker(gods.get(index));
+        @Override
+        public void mousePressed(MouseEvent e) {
+            if(checkIfGodisAlreadyChosen(chosenGods, gods.get(index))==true){
+                lowerLabel.setText("Pay attention, you can't choose again this god. Select another one, please");
+            }else{
+                GodsWorker gw = new GodsWorker(gods.get(index));
             }
         }
 
+        @Override
+        public void mouseReleased(MouseEvent e) {
+
+
+
+        }
+
+        @Override
+        public void mouseEntered(MouseEvent e) {
+            try {
+                FileInputStream fis = null;
+
+                fis = new FileInputStream("./resources/gods/" + gods.get(index) + ".txt");
+                ObjectInputStream ois = new ObjectInputStream(fis);
+                lowerLabel.setText((String ) ois.readObject());
+                ois.close();
+                fis.close();
+            } catch (ClassNotFoundException| IOException ex) {
+                lowerLabel.setText("Unable to load god's power");
+            }
+        }
+
+        @Override
+        public void mouseExited(MouseEvent e) {
+            lowerLabel.setText("");
+        }
+    }
+
+    class sentGodMouseListener implements MouseListener{
+        private int index;
+        private ArrayList<String> gods;
+        private JLabel lowerLabel;
+
+        public sentGodMouseListener(int index, ArrayList<String> gods, JLabel lowerLabel) {
+            this.index=index;
+            this.gods=gods;
+            this.lowerLabel=lowerLabel;
+        }
+
+        @Override
+        public void mouseClicked(MouseEvent e) {
+            GodWorker gw= new GodWorker(gods.get(index));
+        }
+
+        @Override
+        public void mousePressed(MouseEvent e) {
+            GodWorker gw= new GodWorker(gods.get(index));
+        }
+
+        @Override
+        public void mouseReleased(MouseEvent e) {
+
+        }
+
+        @Override
+        public void mouseEntered(MouseEvent e) {
+            try {
+                FileInputStream fis = null;
+
+                fis = new FileInputStream("./resources/gods/" + gods.get(index) + ".txt");
+                ObjectInputStream ois = new ObjectInputStream(fis);
+                lowerLabel.setText((String ) ois.readObject());
+                ois.close();
+                fis.close();
+            } catch (ClassNotFoundException| IOException ex) {
+                lowerLabel.setText("Unable to load god's power");
+                ex.printStackTrace();
+            }
+        }
+
+        @Override
+        public void mouseExited(MouseEvent e) {
+            lowerLabel.setText("");
+        }
+    }
+
     public void sendCells(String phase, ClientNetworkHandler cnh, VCEvent.Event command, VCEvent evento){
         GUIHandler.ready=false;
-        GUI.getMessageArea().setText("Select the red cell where you want to " + phase);
+        GUI.getUpperLabel().setText("Select the red cell where you want to " + phase);
+        GUI.getLowerLabel().setText("");
         Object objectValidPositions = evento.getBox();
         ArrayList<Coordinates> validPositions = (ArrayList<Coordinates>)objectValidPositions;
-        //paintBoardCell(validPositions);
+        paintBoardCell(validPositions);
+        SwingUtilities.updateComponentTreeUI(GUI.getMainFrame());
         createBoardCellMouseListener(GUI.getBoard(), validPositions);
         while(ready==false || (previousCoordinate.getX()==currentCoordinate.getX() && previousCoordinate.getY()==currentCoordinate.getY())){
             System.out.println("Attendo che il player scelga dove posizionarsi");
         }
         GUIHandler.ready=false;
-        previousCoordinate=currentCoordinate;
-        //unpaintBoardCell(validPositions);
-        buildEvent(cnh,findIndex(validPositions,currentCoordinate),command);
+        previousCoordinate.setCoordinates(currentCoordinate.getX(),currentCoordinate.getY());
+        unpaintBoardCell(validPositions);
+        SwingUtilities.updateComponentTreeUI(GUI.getMainFrame());
+        GUI.getLowerLabel().setText("Wait...");
+        closeCellsWorkers();
+        int control=findIndex(validPositions,currentCoordinate);
+        while(control==-1){
+            GUI.getLowerLabel().setText("Invalid move! Please select another cell");
+            selectNewCell(validPositions);
+            control=findIndex(validPositions, currentCoordinate);
+        }
+        buildEvent(cnh,control,command);
+
     }
 
     private void paintBoardCell(ArrayList<Coordinates> validPositions){
@@ -500,9 +657,7 @@ public class GUIHandler {
             for (int j = 0; j < 5; j++) {
                 for (Coordinates c: validPositions){
                     if(c.getX()==i && c.getY()==j){
-                        GUI.getBoard()[i][j].setContentAreaFilled(true);
-                        //GUIBoard[i][j].setBorderPainted(false);
-                        //GUI.getBoard()[i][j].setBackground();
+                        GUI.getBoard()[i][j].setBackground(java.awt.Color.red);
                     }
                 }
             }
@@ -514,9 +669,7 @@ public class GUIHandler {
             for (int j = 0; j < Board.DIM; j++) {
                 for (Coordinates c: validPositions){
                     if(c.getX()==i && c.getY()==j){
-                        GUI.getBoard()[i][j].setContentAreaFilled(false);
-                        //GUIBoard[i][j].setBorderPainted(false);
-                        GUI.getBoard()[i][j].setBackground(java.awt.Color.red);
+                        GUI.getBoard()[i][j].setBackground(null);
                     }
                 }
             }
@@ -528,7 +681,7 @@ public class GUIHandler {
             for(int j=0;j<Board.DIM; j++){
                 for (Coordinates c: validPositions){
                     if(c.getX()==i && c.getY()==j){
-                        GUIBoard[i][j].addMouseListener(new BoardCellMouseListener(GUI.getInformationArea(), i, j));
+                        GUIBoard[i][j].addMouseListener(new BoardCellMouseListener(GUI.getLowerLabel(), i, j, b.getBoardHeight(i,j), b.getBoardWorker(i,j), validPositions));
                     }
                 }
             }
@@ -536,23 +689,32 @@ public class GUIHandler {
     }
 
     class BoardCellMouseListener implements MouseListener {
-        int i, j;
-        JTextArea informationArea;
+        int i, j, height;
+        JLabel lowerLabel;
+        Worker w;
+        ArrayList<Coordinates> validPosition;
 
-        public BoardCellMouseListener(JTextArea informationArea, int i, int j){
-            this.informationArea=informationArea;
+        public BoardCellMouseListener(JLabel lowerLabel, int i, int j, int height, Worker w, ArrayList<Coordinates> validPosition){
+            this.lowerLabel=lowerLabel;
             this.i=i;
             this.j=j;
+            this.height=height;
+            this.w=w;
+            this.validPosition=validPosition;
         }
 
         @Override
         public void mouseClicked(MouseEvent e) {
-            BoardCellWorker bcw = new BoardCellWorker(i, j);
+            if(findIndex(validPosition, new Coordinates(i,j))!=-1){
+                bcw[i][j] = new BoardCellWorker(i, j);
+            }
         }
 
         @Override
         public void mousePressed(MouseEvent e) {
-            BoardCellWorker bcw = new BoardCellWorker(i, j);
+            if(findIndex(validPosition, new Coordinates(i,j))!=-1){
+                bcw[i][j] = new BoardCellWorker(i, j);
+            }
         }
 
         @Override
@@ -562,16 +724,21 @@ public class GUIHandler {
 
         @Override
         public void mouseEntered(MouseEvent e) {
-            informationArea.setText("Coordinate x: " + j + ", coordinate y: "+ i);
+            if(w!=null){
+                lowerLabel.setText("Coordinate (x: " + j + ", coordinate y: "+ i + "), height: " + height + ", worker: present");
+            }else{
+                lowerLabel.setText("Coordinate (x: " + j + ", coordinate y: "+ i + "), height: " + height + " worker: absent");
+            }
+
         }
 
         @Override
         public void mouseExited(MouseEvent e) {
-            informationArea.setText("");
+            lowerLabel.setText("");
         }
     }
 
-    public Integer findIndex(ArrayList<Coordinates> validPositions, Coordinates chosenCoordinates){
+    private Integer findIndex(ArrayList<Coordinates> validPositions, Coordinates chosenCoordinates){
         int index=0;
         System.out.println(chosenCoordinates);
         for(Coordinates c:validPositions){
@@ -582,6 +749,70 @@ public class GUIHandler {
         }
         //Se qualcosa è andato storto il controller lato server riceverà un -1
         return  -1;
+    }
+
+    private int understandPlayerIDFromColor(String color){
+        int ID;
+
+        switch (color){
+            case "yellow":
+                ID=1;
+                break;
+            case "white":
+                ID=2;
+                break;
+            case "purple":
+                ID=3;
+                break;
+            default:
+                System.out.println("Non ho capito questo giocatore che playerID ha");
+                ID=-1;
+        }
+
+        return ID;
+    }
+
+    private void requestDate(){
+        DateNextButtonCustomActionListener dateListener=new DateNextButtonCustomActionListener();
+        GUI.getDateNextButton().addActionListener(dateListener);
+        while (dateListener.isGoForward()==false){
+            System.out.println("Attendo che il giocatore inserisca la sua data di nascita");
+        }
+    }
+
+    private void closeCellsWorkers(){
+        for(int i=0;i<Board.DIM;i++){
+            for (int j=0;j<Board.DIM;j++){
+                bcw[i][j]=null;
+            }
+        }
+
+    }
+
+    private boolean checkIfGodisAlreadyChosen(ArrayList<String> chosenGods, String chosenGod){
+        for (String god: chosenGods){
+            if(god.equals(chosenGod)){
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    private void selectNewCell(ArrayList<Coordinates> validPositions){
+        ready=false;
+        paintBoardCell(validPositions);
+        SwingUtilities.updateComponentTreeUI(GUI.getMainFrame());
+        createBoardCellMouseListener(GUI.getBoard(), validPositions);
+        while(ready==false || (previousCoordinate.getX()==currentCoordinate.getX() && previousCoordinate.getY()==currentCoordinate.getY())){
+            System.out.println("Attendo che il player scelga dove posizionarsi");
+        }
+        GUIHandler.ready=false;
+        previousCoordinate.setCoordinates(currentCoordinate.getX(),currentCoordinate.getY());
+        unpaintBoardCell(validPositions);
+        SwingUtilities.updateComponentTreeUI(GUI.getMainFrame());
+        GUI.getLowerLabel().setText("Wait...");
+        closeCellsWorkers();
     }
 
 }

@@ -5,8 +5,10 @@ import Controller.Coordinates;
 import javax.swing.*;
 
 public class BoardCellWorker extends SwingWorker {
-    public BoardCellWorker(){
 
+    @Override
+    protected Object doInBackground() {
+        return null;
     }
 
     public BoardCellWorker(int i, int j){
@@ -14,8 +16,4 @@ public class BoardCellWorker extends SwingWorker {
         GUIHandler.ready=true;
     }
 
-    @Override
-    protected Object doInBackground() throws Exception {
-        return null;
-    }
 }

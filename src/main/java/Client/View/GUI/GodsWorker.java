@@ -6,6 +6,7 @@ import java.util.ArrayList;
 public class GodsWorker extends SwingWorker {
     public GodsWorker(String god){
         GUIHandler.chosenGods.add(god);
+
     }
 
     @Override
