@@ -15,9 +15,17 @@ import java.util.concurrent.atomic.AtomicInteger;
 public class CLI {
     public static void main(String[] args){
         System.out.println("Santorini - Epifani Falleti Landi");
+        System.out.println("Inserisci l'indirizzo del server:");
+        Scanner addrScan = new Scanner(System.in);
+        String addr = addrScan.nextLine();
         if(isAMac()==true){
             CLI CLI = new CLIForMac("Mac");
-            ClientNetworkHandler cnh = new ClientNetworkHandler(CLI);
+
+            ClientNetworkHandler cnh = new ClientNetworkHandler(CLI,addr);
+            if(cnh==null){
+                System.out.println("Indirizzo IP non valido, il gioco terminerà ora");
+                System.exit(0);
+            }
             //Thread per l'esecuzione principale della CLI
             Thread game = new Thread(cnh);
             game.start();
@@ -31,7 +39,11 @@ public class CLI {
 
         }else{
             CLI CLI = new CLI("Win");
-            ClientNetworkHandler cnh = new ClientNetworkHandler(CLI);
+            ClientNetworkHandler cnh = new ClientNetworkHandler(CLI,addr);
+            if(cnh==null){
+                System.out.println("Indirizzo IP non valido, il gioco terminerà ora");
+                System.exit(0);
+            }
             //Thread per l'esecuzione principale della CLI
             Thread game = new Thread(cnh);
             game.start();
@@ -39,7 +51,7 @@ public class CLI {
             //Ciclo di gioco
             CLI.checkEvent(cnh);
 
-            //Messagio di arriverci
+            //Messaggio di arriverci
             System.out.println("Partita terminata, grazie per aver giocato");
             cnh.setFinish(true);
 
@@ -76,6 +88,7 @@ public class CLI {
     private ArrayList<String> chosenGods = new ArrayList<String>();
     private String myCard;
     private boolean updateView;
+    private String address;
 
     //Costruttore della CLI
     /***
