@@ -605,6 +605,7 @@ public class GUIHandler {
 
         @Override
         public void mouseEntered(MouseEvent e) {
+            /*
             try {
                 FileInputStream fis = null;
 
@@ -617,6 +618,7 @@ public class GUIHandler {
                 lowerLabel.setText("Unable to load god's power");
                 ex.printStackTrace();
             }
+            */
         }
 
         @Override

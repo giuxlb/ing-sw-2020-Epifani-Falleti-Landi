@@ -564,14 +564,14 @@ public class GUI {
         godImage = new JLabel(finalIcon);
 
         FileInputStream fis = null;
-
+    /*
         try {
             godPower.setText(readGodsPower(godName));
         } catch (ClassNotFoundException| IOException ex) {
             godPower.setText("Unable to load god's power");
             ex.printStackTrace();
         }
-
+*/
     }
 
     public JTextField getIpTextField() {
