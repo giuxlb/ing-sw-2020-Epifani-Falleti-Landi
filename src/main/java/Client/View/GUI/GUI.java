@@ -52,6 +52,7 @@ public class GUI {
     private JLabel boardLabel;
     private JButton[][] board;
     private JPanel godPanel;
+    private JLabel playerName;
     private JLabel godImage;
     private JLabel godPower;
 
@@ -540,29 +541,36 @@ public class GUI {
     }
 
     private void buildGodBar(){
+
+        playerName=new JLabel("Loading player's name...");
         godImage = new JLabel("Loading god's image...");
         godPower = new JLabel("Loading god's power...");
         godPanel = new JPanel();
         godPanel.setLayout(new GridBagLayout());
 
+        GridBagConstraints playerNameGBC = new GridBagConstraints();
+        playerNameGBC.gridx = 0;
+        playerNameGBC.gridy = 0;
+        godPanel.add(playerName, playerNameGBC);
+
         GridBagConstraints godImageGBC = new GridBagConstraints();
         godImageGBC.gridx = 0;
-        godImageGBC.gridy = 0;
+        godImageGBC.gridy = 1;
         godPanel.add(godImage, godImageGBC);
 
         GridBagConstraints godPowerGBC = new GridBagConstraints();
         godPowerGBC.gridx = 0;
-        godPowerGBC.gridy = 1;
+        godPowerGBC.gridy = 2;
         godPanel.add(godPower, godPowerGBC);
     }
 
-    protected void updateGodBar(String godName){
+    protected void updateGodBar(String name, String godName){
         ImageIcon currentIcon= new ImageIcon("./resources/gods/"+ godName + ".png");
         Image tmp = currentIcon.getImage();
         Image newIcon = tmp.getScaledInstance(150,210, Image.SCALE_SMOOTH);
         ImageIcon finalIcon = new ImageIcon(newIcon);
         godImage = new JLabel(finalIcon);
-
+        playerName.setText("You are the player: " + name);
         FileInputStream fis = null;
     /*
         try {
@@ -600,13 +608,13 @@ public class GUI {
         GridBagConstraints upperLabelGBC = new GridBagConstraints();
         upperLabelGBC.gridx=0;
         upperLabelGBC.gridy=0;
-        upperLabelGBC.insets = new Insets(3,3,3,500);
+        upperLabelGBC.insets = new Insets(3,3,3,450);
         messageAndUndoPanel.add(upperLabel, upperLabelGBC);
 
         GridBagConstraints undoGBC = new GridBagConstraints();
         undoGBC.gridx = 1;
         undoGBC.gridy=0;
-        undoGBC.insets = new Insets(3,500,3,3);
+        undoGBC.insets = new Insets(3,450,3,3);
         messageAndUndoPanel.add(undo, undoGBC);
 
         mainFrame.add(messageAndUndoPanel, BorderLayout.NORTH);

@@ -185,7 +185,7 @@ public class GUIHandler {
                     Object objectCurrentPlayerInformation = evento.getBox();
                     ArrayList<String> currentPlayerInformation= (ArrayList<String>) objectCurrentPlayerInformation;
                     GUI.getUpperLabel().setText(currentPlayerInformation.get(0) + " is playing with god " + currentPlayerInformation.get(1));
-                    GUI.updateGodBar(currentPlayerInformation.get(1).toLowerCase());
+                    GUI.updateGodBar(myUsername, currentPlayerInformation.get(1).toLowerCase());
                     SwingUtilities.updateComponentTreeUI(GUI.getMainFrame());
                     break;
                 case update:
@@ -220,17 +220,22 @@ public class GUIHandler {
                     SwingUtilities.updateComponentTreeUI(GUI.getMainFrame());
                     GUI.getLowerLabel().setText("Wait...");
                     closeCellsWorkers();
-                    buildEvent(cnh,findIndex(positionWorkers, currentCoordinate), VCEvent.Event.ask_for_worker);
+                    int controlAsk=findIndex(positionWorkers, currentCoordinate);
+                    while(controlAsk==-1){
+                        GUI.getLowerLabel().setText("Invalid slection! Please select another cell");
+                        selectNewCell(positionWorkers);
+                        controlAsk=findIndex(positionWorkers, currentCoordinate);
+                    }
+                    buildEvent(cnh,controlAsk, VCEvent.Event.ask_for_worker);
                     break;
                 case send_cells_move:
                     GUI.getLowerLabel().setText(myGod);
-                    GUI.updateGodBar(myGod);
+                    GUI.updateGodBar(myUsername, myGod);
                     if(playerID==1 && checkSendCells==false){
                             GUI.getUpperLabel().setText("");
                             GUI.getLowerLabel().setText("");
                             GUI.destroyGodsWindow(godsSize);
                             GUI.buildMainWindow();
-                            GUI.updateGodBar(myGod);
                             SwingUtilities.updateComponentTreeUI(GUI.getMainFrame());
                             this.b = new Board();
                             turnModelBoardintoGUIBoard(b);
@@ -429,7 +434,7 @@ public class GUIHandler {
                     System.out.println(GUI.getBoard());
                     GUI.getBoard()[i][j].setText("Worker: null   " + "Height: " + b.getBoardHeight(i,j));
                 }else{
-                    GUI.getBoard()[i][j].setText(b.getBoardWorker(i,j).getColor() + "Worker: w   " + "Height: " + b.getBoardHeight(i,j));
+                    GUI.getBoard()[i][j].setText( "Worker: " +myUsername + " Height: " + b.getBoardHeight(i,j));
                 }
             }
         }
@@ -539,7 +544,7 @@ public class GUIHandler {
         public void mouseClicked(MouseEvent e) {
             if(checkIfGodisAlreadyChosen(chosenGods, gods.get(index))==true){
                 lowerLabel.setText("Pay attention, you can't choose again this god. Select another one, please");
-            }else{
+            }else {
                 GodsWorker gw = new GodsWorker(gods.get(index));
             }
         }
