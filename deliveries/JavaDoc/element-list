@@ -1,0 +1,10 @@
+Client.Controller
+Client.View
+Client.View.GUI
+Controller
+Controller.DivinityStrategies
+Controller.DivinityStrategies.AdvancedGods
+Controller.DivinityStrategies.SimpleGodsCompleteRules
+Controller.DivinityStrategies.SimpleGodsSimpleRules
+Controller.Network
+Model
