@@ -39,7 +39,8 @@ public class VCEvent implements Serializable {
         ask_for_worker,
         ask_for_divinity_activation,
         send_color,
-        undo_request
+        undo_request,
+        turnNumber
     }
 
     private Object box; // potrà essere o una stringa o un array di celle, o un array di carte, o la board

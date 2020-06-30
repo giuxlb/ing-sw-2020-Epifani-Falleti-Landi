@@ -245,6 +245,18 @@ public class VirtualView {
             serverHandler.sendVCEventTo(e,i);
         }
     }
+    public void sendPlayerTurnNumber(ArrayList<Player> players)
+    {
+        for (int j = 0;j<this.players.size();j++) {
+            for (int i = 0; i < players.size(); i++) {
+                if (this.players.get(j).getUsername().equals(players.get(i).getUsername()))
+                {
+                    VCEvent e = new VCEvent(i+1, VCEvent.Event.turnNumber);
+                    serverHandler.sendVCEventTo(e,j);
+                }
+            }
+        }
+    }
 
     public int askDivinityActivation(Player p, String divinity){
         if (checkConnections() == false) {
