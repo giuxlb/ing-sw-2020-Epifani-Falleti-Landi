@@ -46,9 +46,11 @@ public class GUIHandler {
     protected static Coordinates previousCoordinate;
     protected static Coordinates currentCoordinate;
     private BoardCellWorker[][] bcw;
+    private String ip;
 
-    public GUIHandler(GUI GUI){
+    public GUIHandler(GUI GUI,String ip){
         this.GUI = GUI;
+        this.ip = ip;
 
         //Initial settings
         playersNumber=0;
@@ -63,7 +65,7 @@ public class GUIHandler {
 
     public void launchConnection(){
         //Creazione della socket del client
-        cnh = new ClientNetworkHandler(this);
+        cnh = new ClientNetworkHandler(this,this.ip);
 
         //Thread per l'esecuzione principale della CLI
         game = new Thread(cnh);

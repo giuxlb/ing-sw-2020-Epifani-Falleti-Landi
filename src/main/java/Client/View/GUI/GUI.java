@@ -21,6 +21,7 @@ public class GUI {
     private JLabel waitingLabel;
     private JLabel ipLabel;
     private JTextField ipTextField;
+    private JButton ipButton;
 
     //numberOfPlayersWindowElements
     private JLabel numberOfPlayersWindowManager;
@@ -70,6 +71,7 @@ public class GUI {
 
         upperLabel = new JLabel("Wait a moment, please");
         waitingLabel = paintScreen("MainBackground.jpg", 700, 400);
+        waitingLabel.setLayout(new GridBagLayout());
         lowerLabel = new JLabel("The game will start soon");
         mainFrame.add(upperLabel, BorderLayout.NORTH);
         mainFrame.add(waitingLabel, BorderLayout.CENTER);
@@ -81,7 +83,7 @@ public class GUI {
         //mainFrame.setIconImage();
 
         //Adriano vuole mettere qui la l'indirizzo ip?
-        /*
+
         ipLabel=new JLabel("IP address: ");
         ipTextField = new JTextField();
         GridBagConstraints ipLabelGBC= new GridBagConstraints();
@@ -95,7 +97,15 @@ public class GUI {
         ipTextFieldGBC.ipadx=100;
         ipTextFieldGBC.ipady=10;
         loginWindowManager.add(ipTextField, ipTextFieldGBC);
-         */
+        waitingLabel.add(ipLabel,ipLabelGBC);
+        waitingLabel.add(ipTextField,ipTextFieldGBC);
+        ipButton = new JButton("Next");
+        GridBagConstraints ipButtonGBC = new GridBagConstraints();
+        ipButtonGBC.gridy = 1;
+        ipButtonGBC.gridx = 1;
+        ipButtonGBC.insets = new Insets(5,3,3,3);
+        waitingLabel.add(ipButton,ipButtonGBC);
+
         //Additional initial settings for Mac
         if(CLI.isAMac()==true){
             try{
@@ -571,6 +581,18 @@ public class GUI {
 
         SwingUtilities.updateComponentTreeUI(mainFrame);
 
+    }
+
+    public JTextField getIpTextField() {
+        return ipTextField;
+    }
+
+    public JButton getIpButton() {
+        return ipButton;
+    }
+
+    public void setIpButton(JButton ipButton) {
+        this.ipButton = ipButton;
     }
 
     private void buildMessageAndUndoBar(){
