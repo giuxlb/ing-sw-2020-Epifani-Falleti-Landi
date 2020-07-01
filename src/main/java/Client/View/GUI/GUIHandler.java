@@ -249,32 +249,23 @@ public class GUIHandler {
                 case send_cells_remove:
                     sendCells(removePhase,cnh, VCEvent.Event.send_cells_remove,evento);
                     break;
-                /*case undo_request:/*
-                    GUI.getMessageArea().setText("You can undo your move only in about 5 seconds. If you want to confirm press the button aside, please");
+                case undo_request:
+                    UndoButtonListener listener = new UndoButtonListener();
+
+                    GUI.getUpperLabel().setText("You can undo your move only in about 5 seconds. If you want to confirm press the button aside, please");
+                    int choose = 0;
                     long start = System.currentTimeMillis();
                     while (true){
-                        try {
-                            if (!(((System.currentTimeMillis()-start) < 5000) && !reader.ready())) break;
-                        } catch (IOException ex) { }
-                    }
-                    try {
-                        if (reader.ready())
-                            choose = Integer.parseInt(reader.readLine());
-                    } catch (IOException ex) {
-                        ex.printStackTrace();
+
+                            if (!(((System.currentTimeMillis()-start) < 5000) && !listener.isGoForward())) break;
+
                     }
 
-
-                    if (choose == 1) {
-                        firstTimeHeMoves = 1;
-                        this.b.deepCopy(copy);
-                    }
-
-
-
+                        if (listener.isGoForward())
+                            choose = 1;
 
                     buildEvent(cnh,choose, VCEvent.Event.undo_request);
-                    break;*/
+                    break;
                 case you_lost:
                     Object objectWinner = evento.getBox();
                     String winner = (String) objectWinner;
@@ -341,6 +332,7 @@ public class GUIHandler {
                     buildEvent(cnh, turnChoiceIntoCorrectOutput(choice), VCEvent.Event.ask_for_divinity_activation);
                     break;
                 case send_all_cards:
+                    /*
                     GUI.getUpperLabel().setText("You have to choose " + playersNumber + " card");
                     GUI.getLowerLabel().setText("");
                     ready=false;
@@ -358,7 +350,12 @@ public class GUIHandler {
                     }
                     GUI.getLowerLabel().setText("Wait...");
                     closeGodsWorkers();
-                    buildEvent(cnh, chosenGods, VCEvent.Event.send_all_cards);
+
+                     */
+                    ArrayList<String> gods = new ArrayList<>(2);
+                    gods.add("ZEUS");
+                    gods.add("PAN");
+                    buildEvent(cnh, gods, VCEvent.Event.send_all_cards);
                     break;
                 case send_chosen_cards:
                     GUI.getUpperLabel().setText("Select the god who prefer");
@@ -544,20 +541,26 @@ public class GUIHandler {
         public void mouseClicked(MouseEvent e) {
             if(checkIfGodisAlreadyChosen(chosenGods, chosenGod)==true){
                 lowerLabel.setText("Pay attention, you can't choose again this god. Select another one, please");
+                chosenGods.remove(chosenGods.size()-1);
             }else {
                 gw[godsCounter] = new GodsWorker(chosenGod, GUI.getUpperLabel());
                 godsCounter++;
             }
         }
 
+
         @Override
         public void mousePressed(MouseEvent e) {
+            /*
             if(checkIfGodisAlreadyChosen(chosenGods, chosenGod)==true){
                 lowerLabel.setText("Pay attention, you can't choose again this god. Select another one, please");
+                chosenGods.remove(chosenGods.size()-1);
             }else {
                 gw[godsCounter] = new GodsWorker(chosenGod, GUI.getUpperLabel());
                 godsCounter++;
             }
+
+             */
         }
 
         @Override
@@ -598,8 +601,10 @@ public class GUIHandler {
 
         @Override
         public void mousePressed(MouseEvent e) {
-            GodWorker singleGodWorker= new GodWorker(chosenGod);
+            //GodWorker singleGodWorker= new GodWorker(chosenGod);
         }
+
+
 
         @Override
         public void mouseReleased(MouseEvent e) {
@@ -819,6 +824,25 @@ public class GUIHandler {
         SwingUtilities.updateComponentTreeUI(GUI.getMainFrame());
         GUI.getLowerLabel().setText("Wait...");
         closeCellsWorkers();
+    }
+
+    class UndoButtonListener implements ActionListener{
+
+        public boolean isGoForward() {
+            return goForward;
+        }
+
+        private boolean goForward;
+        public UndoButtonListener()
+        {
+            this.goForward = false;
+        }
+
+
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            this.goForward = true;
+        }
     }
 
 }

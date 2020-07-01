@@ -629,11 +629,16 @@ public class GUI {
     }
 
     protected  String readGodsPower(String name) throws IOException{
-        InputStream is = GUI.class.getResourceAsStream("/gods/"+name+".txt");
+        InputStream is = GUI.class.getResourceAsStream("/gods/"+name+".properties");
         InputStreamReader isr = new InputStreamReader(is);
         BufferedReader reader = new BufferedReader(isr);
+        String line = null;
+        while((line = reader.readLine()) != null)
+        {
+            lowerLabel.setText(line);
+        }
 
-        return reader.readLine();
+        return line;
     }
 
 }
