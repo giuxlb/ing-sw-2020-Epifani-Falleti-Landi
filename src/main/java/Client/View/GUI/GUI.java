@@ -56,47 +56,52 @@ public class GUI {
     private JLabel godImage;
     private JLabel godPower;
 
-    //messageAndUndoBar
+    //Undo
+    private JDialog undoDialog;
     private JPanel messageAndUndoPanel;
     private JButton undo;
 
     public GUI(){
         mainFrame = new JFrame("Santorini -  Epifani Falleti Landi");
         mainFrame.addWindowListener(new CustomClosing(mainFrame));
-        mainFrame.setSize(710, 450);
+        mainFrame.setSize(710, 470);
         mainFrame.setResizable(false);
-        mainFrame.setLayout(new BorderLayout());
 
+        Image mainIcon = null;
+        try{
+            ImageIcon currentIcon= new ImageIcon(ImageIO.read(getClass().getResource("/mainIcon.jpg")));
+            mainIcon = currentIcon.getImage();
+        }catch (IOException ex){
+
+        }
+        mainFrame.setIconImage(mainIcon);
+
+        mainFrame.setLayout(new BorderLayout());
         upperLabel = new JLabel("Wait a moment, please");
+        mainFrame.add(upperLabel, BorderLayout.NORTH);
+
         waitingLabel = paintScreen("MainBackground.jpg", 700, 400);
         waitingLabel.setLayout(new GridBagLayout());
-        lowerLabel = new JLabel("The game will start soon");
-        mainFrame.add(upperLabel, BorderLayout.NORTH);
         mainFrame.add(waitingLabel, BorderLayout.CENTER);
+
+        lowerLabel = new JLabel("The game will start soon");
         mainFrame.add(lowerLabel, BorderLayout.SOUTH);
 
-
-
-        //Ricordati di mettere l'icona
-        //mainFrame.setIconImage();
-
-        //Adriano vuole mettere qui la l'indirizzo ip?
 
         ipLabel=new JLabel("IP address: ");
         ipTextField = new JTextField();
         GridBagConstraints ipLabelGBC= new GridBagConstraints();
         ipLabelGBC.gridx=0;
         ipLabelGBC.gridy=0;
-
+        waitingLabel.add(ipLabel,ipLabelGBC);
 
         GridBagConstraints ipTextFieldGBC = new GridBagConstraints();
         ipTextFieldGBC.gridx = 1;
         ipTextFieldGBC.gridy=0;
         ipTextFieldGBC.ipadx=100;
         ipTextFieldGBC.ipady=10;
-
-        waitingLabel.add(ipLabel,ipLabelGBC);
         waitingLabel.add(ipTextField,ipTextFieldGBC);
+
         ipButton = new JButton("Next");
         GridBagConstraints ipButtonGBC = new GridBagConstraints();
         ipButtonGBC.gridy = 1;
@@ -203,7 +208,19 @@ public class GUI {
             ImageIcon finalIcon = new ImageIcon(newIcon);
             return new JLabel(finalIcon);
         }catch (IOException ex){
-            return new JLabel("Unable to load thi screen");
+            return new JLabel("Unable to load this screen");
+        }
+    }
+
+    protected JButton paintButton(String name) {
+        try{
+            ImageIcon currentIcon= new ImageIcon(ImageIO.read(getClass().getResource("/DeusExMachina/"+name)));
+            Image tmp = currentIcon.getImage();
+            Image newIcon = tmp.getScaledInstance(150,150, Image.SCALE_SMOOTH);
+            ImageIcon finalIcon = new ImageIcon(newIcon);
+            return new JButton("",finalIcon);
+        }catch (IOException ex){
+            return new JButton("Unable to render this");
         }
     }
 
@@ -410,13 +427,13 @@ public class GUI {
         mainFrame.setResizable(true);
         mainFrame.setLocationRelativeTo(null);
         imgGodsButton = new JButton[gods.size()];
-        GridBagConstraints[] godBagCostraints= new GridBagConstraints[gods.size()];
+        GridBagConstraints[] godBagConstraints= new GridBagConstraints[gods.size()];
 
         for(int i=0;i<gods.size();i++){
             imgGodsButton[i]=new JButton("",paintGods(gods.get(i)));
             imgGodsButton[i].setContentAreaFilled(false);
             imgGodsButton[i].setBorderPainted(true);
-            godBagCostraints[i] = new GridBagConstraints();
+            godBagConstraints[i] = new GridBagConstraints();
         }
 
         godsWindowManager = paintScreen("GodsScreen.png", 1920, 1080);
@@ -424,45 +441,45 @@ public class GUI {
         int j=0;
         for(int i=0; i<gods.size();i++){
             if(i<5){
-                godBagCostraints[i].gridy=1;
-                godBagCostraints[i].gridx=j;
-                godBagCostraints[i].insets = new Insets(5,3,5,5);
+                godBagConstraints[i].gridy=1;
+                godBagConstraints[i].gridx=j;
+                godBagConstraints[i].insets = new Insets(5,3,5,5);
                 j++;
             }else if(i==5){
                 j=0;
-                godBagCostraints[i].gridy=2;
-                godBagCostraints[i].gridx=j;
-                godBagCostraints[i].insets = new Insets(5,3,5,3);
+                godBagConstraints[i].gridy=2;
+                godBagConstraints[i].gridx=j;
+                godBagConstraints[i].insets = new Insets(5,3,5,3);
                 j++;
             }else if(i>=6 && i<=9){
-                godBagCostraints[i].gridy=2;
-                godBagCostraints[i].gridx=j;
-                godBagCostraints[i].insets = new Insets(5,3,5,3);
+                godBagConstraints[i].gridy=2;
+                godBagConstraints[i].gridx=j;
+                godBagConstraints[i].insets = new Insets(5,3,5,3);
                 j++;
             }
-            godsWindowManager.add(imgGodsButton[i], godBagCostraints[i]);
+            godsWindowManager.add(imgGodsButton[i], godBagConstraints[i]);
 
             if(gods.size()>3){
-                godBagCostraints[10].gridy=3;
-                godBagCostraints[10].gridx=1;
-                godBagCostraints[10].insets = new Insets(5,3,5,3);
-                godsWindowManager.add(imgGodsButton[10], godBagCostraints[10]);
+                godBagConstraints[10].gridy=3;
+                godBagConstraints[10].gridx=1;
+                godBagConstraints[10].insets = new Insets(5,3,5,3);
+                godsWindowManager.add(imgGodsButton[10], godBagConstraints[10]);
 
-                godBagCostraints[11].gridy=3;
-                godBagCostraints[11].gridx=2;
-                godBagCostraints[11].insets = new Insets(5,3,5,3);
-                godsWindowManager.add(imgGodsButton[11], godBagCostraints[11]);
+                godBagConstraints[11].gridy=3;
+                godBagConstraints[11].gridx=2;
+                godBagConstraints[11].insets = new Insets(5,3,5,3);
+                godsWindowManager.add(imgGodsButton[11], godBagConstraints[11]);
 
-                godBagCostraints[12].gridy=3;
-                godBagCostraints[12].gridx=3;
-                godBagCostraints[12].insets = new Insets(5,3,5,3);
-                godsWindowManager.add(imgGodsButton[12], godBagCostraints[12]);
+                godBagConstraints[12].gridy=3;
+                godBagConstraints[12].gridx=3;
+                godBagConstraints[12].insets = new Insets(5,3,5,3);
+                godsWindowManager.add(imgGodsButton[12], godBagConstraints[12]);
 
                 if(gods.size()==14){
-                    godBagCostraints[13].gridy=3;
-                    godBagCostraints[13].gridx=0;
-                    godBagCostraints[13].insets = new Insets(5,3,5,3);
-                    godsWindowManager.add(imgGodsButton[13], godBagCostraints[13]);
+                    godBagConstraints[13].gridy=3;
+                    godBagConstraints[13].gridx=0;
+                    godBagConstraints[13].insets = new Insets(5,3,5,3);
+                    godsWindowManager.add(imgGodsButton[13], godBagConstraints[13]);
                 }
             }
 
@@ -487,28 +504,42 @@ public class GUI {
 
     protected void buildJDialogForFirstPlayer(String god){
         JDialog message = new JDialog(mainFrame);
+        JLabel screen = paintScreen("GodsScreen.png", 1000, 480);
+        message.setTitle("Santorini - Epifani Falleti Landi");
+
         JLabel info = new JLabel("The left card is");
 
-        ImageIcon currentImg= new ImageIcon("./resources/gods/"+god+".png");
-        Image img = currentImg.getImage();
-        Image newImg = img.getScaledInstance(130,190, Image.SCALE_SMOOTH);
-        ImageIcon finalImg = new ImageIcon(newImg);
-        JLabel image = new JLabel(finalImg);
-
-        FileInputStream fis = null;
+        JLabel image = new JLabel(paintGods(god));
         JLabel power = new JLabel();
 
         try {
-            fis = new FileInputStream(god + ".txt");
-            ObjectInputStream ois = new ObjectInputStream(fis);
-            power.setText((String) ois.readObject());
-        } catch (ClassNotFoundException| IOException ex) {
-            System.out.println("Errore");
+            readGodsPower(power, god);
+        } catch (IOException ex) {
+            power.setText("Unable to load god's power");
         }
 
-        message.setLayout(new BorderLayout());
-        message.add(info, BorderLayout.NORTH);
-        message.add(image, BorderLayout.CENTER);
+        screen.setLayout(new GridBagLayout());
+        GridBagConstraints infoGBC = new GridBagConstraints();
+        infoGBC.gridy=1;
+        infoGBC.gridx=1;
+        screen.add(info, infoGBC);
+
+        GridBagConstraints imageGBC = new GridBagConstraints();
+        imageGBC.gridy = 2;
+        imageGBC.gridx = 1;
+        imageGBC.insets = new Insets(15, 3, 15, 3);
+        screen.add(image, imageGBC);
+
+        GridBagConstraints powerGBC = new GridBagConstraints();
+        powerGBC.gridx = 1;
+        powerGBC.gridy = 3;
+        screen.add(power, powerGBC);
+
+        message.add(screen);
+        message.setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);
+        message.setSize(760, 960);
+        message.setLocationRelativeTo(null);
+        message.setVisible(true);
 
     }
 
@@ -562,12 +593,12 @@ public class GUI {
         godPanel.add(godPower, godPowerGBC);
     }
 
-    protected void updateGodBar(String name, String godName){
+    protected void updateGodBar(String godName){
 
         godImage = new JLabel(paintGods(godName));
 
         try {
-            readGodsPower(godName);
+            readGodsPower(godPower, godName);
         }catch (IOException e){
             godPower.setText("Unable to load god's power");
         }
@@ -628,17 +659,21 @@ public class GUI {
         mainFrame.add(mainWindowManager, BorderLayout.CENTER);
     }
 
-    protected  String readGodsPower(String name) throws IOException{
+    protected void readGodsPower(JLabel label, String name) throws IOException{
         InputStream is = GUI.class.getResourceAsStream("/gods/"+name+".properties");
         InputStreamReader isr = new InputStreamReader(is);
         BufferedReader reader = new BufferedReader(isr);
         String line = null;
+
         while((line = reader.readLine()) != null)
         {
-            lowerLabel.setText(line);
+            label.setText(line);
         }
 
-        return line;
+        reader.close();
+        isr.close();
+        is.close();
+
     }
 
 }

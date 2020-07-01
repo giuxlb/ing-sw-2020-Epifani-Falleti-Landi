@@ -9,7 +9,7 @@ public class GodsWorker extends SwingWorker {
     public GodsWorker(String god, JLabel upperLabel){
         this.upperLabel = upperLabel;
         GUIHandler.chosenGods.add(god);
-        upperLabel.setText("You have selected god: " + god + ", You have to choose "+ (GUIHandler.playersNumber-GUIHandler.chosenGods.size()) + " god");
+        upperLabel.setText("You have selected god " + god.toLowerCase() + ", You have to choose "+ (GUIHandler.playersNumber-GUIHandler.chosenGods.size()) + " god!");
         GUIHandler.ready=true;
     }
 

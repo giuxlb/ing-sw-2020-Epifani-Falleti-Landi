@@ -5,7 +5,6 @@ import Controller.Coordinates;
 import javax.swing.*;
 
 public class BoardCellWorker extends SwingWorker {
-
     @Override
     protected Object doInBackground() {
         return null;
@@ -15,5 +14,4 @@ public class BoardCellWorker extends SwingWorker {
         GUIHandler.currentCoordinate = new Coordinates(i,j);
         GUIHandler.ready=true;
     }
-
 }
