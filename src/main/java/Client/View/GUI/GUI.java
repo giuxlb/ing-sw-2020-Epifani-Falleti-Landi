@@ -3,6 +3,7 @@ package Client.View.GUI;
 import Client.View.CLI;
 import Model.Board;
 
+import javax.imageio.ImageIO;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.WindowEvent;
@@ -197,32 +198,30 @@ public class GUI {
         return lowerLabel;
     }
 
-    private JLabel paintScreen(String name, int width, int height){
-        ImageIcon currentIcon= new ImageIcon("./resources/"+name);
-        Image tmp = currentIcon.getImage();
-        Image newIcon = tmp.getScaledInstance(width,height, Image.SCALE_SMOOTH);
-        ImageIcon finalIcon = new ImageIcon(newIcon);
-
-        return new JLabel(finalIcon);
+    private JLabel paintScreen(String name, int width, int height) {
+        try{
+            ImageIcon currentIcon= new ImageIcon(ImageIO.read(getClass().getResource("/"+name)));
+            Image tmp = currentIcon.getImage();
+            Image newIcon = tmp.getScaledInstance(width,height, Image.SCALE_SMOOTH);
+            ImageIcon finalIcon = new ImageIcon(newIcon);
+            return new JLabel(finalIcon);
+        }catch (IOException ex){
+            return new JLabel("Unable to load thi screen");
+        }
     }
 
     protected ImageIcon createIcon(String name){
-        ImageIcon currentIcon= new ImageIcon("./resources/" + name);
-        Image tmp = currentIcon.getImage();
-        Image newIcon = tmp.getScaledInstance(40,40, Image.SCALE_SMOOTH);
-        ImageIcon finalIcon = new ImageIcon(newIcon);
-
-        return finalIcon;
+        try{
+            ImageIcon currentIcon= new ImageIcon(ImageIO.read(getClass().getResource("/"+name)));
+            Image tmp = currentIcon.getImage();
+            Image newIcon = tmp.getScaledInstance(40,40, Image.SCALE_SMOOTH);
+            ImageIcon finalIcon = new ImageIcon(newIcon);
+            return finalIcon;
+        }catch (IOException ex){
+            return null;
+        }
     }
 
-    protected JButton paintButton(String name, String text){
-        ImageIcon currentIcon= new ImageIcon("./resources/" + name);
-        Image tmp = currentIcon.getImage();
-        Image newIcon = tmp.getScaledInstance(100,35, Image.SCALE_SMOOTH);
-        ImageIcon finalIcon = new ImageIcon(newIcon);
-
-        return new JButton(text, finalIcon);
-    }
 
     protected void buildNumberOfPlayersWindow() {
         numberOfPlayersInformation = new JLabel("How many players are going to connect?");
@@ -417,11 +416,7 @@ public class GUI {
         GridBagConstraints[] godBagCostraints= new GridBagConstraints[gods.size()];
 
         for(int i=0;i<gods.size();i++){
-            ImageIcon currentImg= new ImageIcon("./resources/gods/"+gods.get(i)+".png");
-            Image img = currentImg.getImage();
-            Image newImg = img.getScaledInstance(130,190, Image.SCALE_SMOOTH);
-            ImageIcon finalImg = new ImageIcon(newImg);
-            imgGodsButton[i]=new JButton("",finalImg);
+            imgGodsButton[i]=new JButton("",paintGods(gods.get(i)));
             imgGodsButton[i].setContentAreaFilled(false);
             imgGodsButton[i].setBorderPainted(true);
             godBagCostraints[i] = new GridBagConstraints();
@@ -478,6 +473,19 @@ public class GUI {
         }
 
         mainFrame.add(godsWindowManager, BorderLayout.CENTER);
+    }
+
+    private ImageIcon paintGods(String name){
+        try{
+            ImageIcon currentImg= new ImageIcon(ImageIO.read(getClass().getResource("/gods/"+name+".png")));
+            Image img = currentImg.getImage();
+            Image newImg = img.getScaledInstance(130,190, Image.SCALE_SMOOTH);
+            ImageIcon finalImg = new ImageIcon(newImg);
+            return finalImg;
+        }catch (IOException ex){
+            return null;
+        }
+
     }
 
     protected void buildJDialogForFirstPlayer(String god){
@@ -565,21 +573,17 @@ public class GUI {
     }
 
     protected void updateGodBar(String name, String godName){
-        ImageIcon currentIcon= new ImageIcon("./resources/gods/"+ godName + ".png");
-        Image tmp = currentIcon.getImage();
-        Image newIcon = tmp.getScaledInstance(150,210, Image.SCALE_SMOOTH);
-        ImageIcon finalIcon = new ImageIcon(newIcon);
-        godImage = new JLabel(finalIcon);
-        playerName.setText("You are the player: " + name);
-        FileInputStream fis = null;
-    /*
+        playerName.setText("Your username is: " + name);
+
+        godImage = new JLabel(paintGods(godName));
+
         try {
-            godPower.setText(readGodsPower(godName));
-        } catch (ClassNotFoundException| IOException ex) {
+            readGodsPower(godName);
+        }catch (IOException e){
             godPower.setText("Unable to load god's power");
-            ex.printStackTrace();
         }
-*/
+
+        SwingUtilities.updateComponentTreeUI(mainFrame);
     }
 
     public JTextField getIpTextField() {
@@ -639,15 +643,12 @@ public class GUI {
         mainFrame.add(mainWindowManager, BorderLayout.CENTER);
     }
 
-    protected static String readGodsPower(String name) throws IOException, ClassNotFoundException{
-        BufferedReader reader = new BufferedReader(new FileReader(name));
-        String line = reader.readLine();
-        while(line!=null) {
-            System.out.println(line);
-            line = reader.readLine();
-        }
+    protected  String readGodsPower(String name) throws IOException{
+        InputStream is = GUI.class.getResourceAsStream("/gods/"+name+".txt");
+        InputStreamReader isr = new InputStreamReader(is);
+        BufferedReader reader = new BufferedReader(isr);
 
-        return line;
+        return reader.readLine();
     }
 
 }

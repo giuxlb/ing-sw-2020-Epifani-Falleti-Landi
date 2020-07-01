@@ -15,53 +15,26 @@ import java.util.concurrent.atomic.AtomicInteger;
 public class CLI {
     public static void main(String[] args){
         System.out.println("Santorini - Epifani Falleti Landi");
+
+        //Inserimento indirizzo IP
         System.out.println("Inserisci l'indirizzo del server:");
         Scanner addrScan = new Scanner(System.in);
         String addr = addrScan.nextLine();
-        if(isAMac()==true){
-            CLI CLI = new CLIForMac("Mac");
+        addrScan.close();
 
-            ClientNetworkHandler cnh = new ClientNetworkHandler(CLI,addr);
-            if(cnh==null){
-                System.out.println("Indirizzo IP non valido, il gioco terminerà ora");
-                System.exit(0);
-            }
-            //Thread per l'esecuzione principale della CLI
-            Thread game = new Thread(cnh);
-            game.start();
+        CLI CLI = new CLI();
+        ClientNetworkHandler cnh = new ClientNetworkHandler(CLI,addr);
 
-            //Ciclo di gioco
-            CLI.checkEvent(cnh);
+        //Thread per l'esecuzione principale della CLI
+        Thread game = new Thread(cnh);
+        game.start();
 
-            //Messagio di arriverci
-            System.out.println("Partita terminata, grazie per aver giocato");
-            cnh.setFinish(true);
+        //Ciclo di gioco
+        CLI.checkEvent(cnh);
 
-        }else{
-            CLI CLI = new CLI("Win");
-            ClientNetworkHandler cnh = new ClientNetworkHandler(CLI,addr);
-            if(cnh==null){
-                System.out.println("Indirizzo IP non valido, il gioco terminerà ora");
-                System.exit(0);
-            }
-            //Thread per l'esecuzione principale della CLI
-            Thread game = new Thread(cnh);
-            game.start();
-
-            //Ciclo di gioco
-            CLI.checkEvent(cnh);
-
-            //Messaggio di arriverci
-            System.out.println("Partita terminata, grazie per aver giocato");
-            cnh.setFinish(true);
-
-        }
-
-
-        //Creazione della socket del client
-
-
-
+        //Messaggio di arriverci
+        System.out.println("Partita terminata, grazie per aver giocato");
+        cnh.setFinish(true);
     }
 
     //Attributi grafici e testuali della CLI
@@ -94,18 +67,12 @@ public class CLI {
     /***
      *
      */
-    public CLI(String OS){
-        //cnh = new ClientNetworkHandler(CLI);
+    public CLI(){
         s = new Scanner(System.in);
         c = new Controller();
         b = new Board();
         e = new Elements();
     }
-
-    public CLI(){
-
-    }
-
 
     /***
      *
@@ -498,11 +465,23 @@ public class CLI {
         if(b.getBoardWorker(i,j)!=null){
             switch (b.getBoardWorker(i,j).getColor()){
                 case ANSI_YELLOW:
-                    return " " + Color.ANSI_YELLOW + e.getWorker() + " ";
+                    if(isAMac()==true){
+                        return "  " + Color.ANSI_YELLOW + e.getWorker() + " ";
+                    }else{
+                        return " " + Color.ANSI_YELLOW + e.getWorker() + " ";
+                    }
                 case ANSI_WHITE:
-                    return " " + Color.ANSI_WHITE + e.getWorker() + " ";
+                    if(isAMac()==true){
+                        return "  " + Color.ANSI_WHITE + e.getWorker() + " ";
+                    }else{
+                        return " " + Color.ANSI_WHITE + e.getWorker() + " ";
+                    }
                 case ANSI_PURPLE:
-                    return " " + Color.ANSI_PURPLE + e.getWorker() + " ";
+                    if(isAMac()==true){
+                        return "  " + Color.ANSI_PURPLE + e.getWorker() + " ";
+                    }else{
+                        return " " + Color.ANSI_PURPLE + e.getWorker() + " ";
+                    }
             }
         }else{
             return "    ";
@@ -585,25 +564,6 @@ public class CLI {
         System.out.print("Inserire l'anno in cui si è nati in formato aaaa (solo numerico) ->");
         this.anno=s.nextInt();
         System.out.println();
-    }
-
-    /***
-     *
-     * @param index
-     * @param insertion
-     * @param gods
-     * @return
-     */
-    String isAlreadyChosen(int index, String insertion, ArrayList<String> gods){
-        String convertedInsertion=insertion;
-        while(c.isInArrayListOfGods(convertedInsertion, gods)==true){
-            System.out.println("Errore! Non puoi selezionare una divinità due volte, per favore seleziona una nuova divinità");
-            System.out.print("Scegli la " + (index+1) + "°" + "carta -> ");
-            convertedInsertion=s.nextLine();
-            convertedInsertion.toUpperCase();
-        }
-
-        return convertedInsertion;
     }
 
     public static boolean isAMac(){

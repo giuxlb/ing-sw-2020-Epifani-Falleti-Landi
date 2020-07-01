@@ -99,7 +99,7 @@ public class GUIHandler {
     }
 
 
-   private void checkEvent(ClientNetworkHandler cnh)  {
+   private void checkEvent(ClientNetworkHandler cnh) {
        boolean endGame = false;
        Controller clientSideController = new Controller();
         // Board copy = new Board();
@@ -229,14 +229,12 @@ public class GUIHandler {
                     buildEvent(cnh,controlAsk, VCEvent.Event.ask_for_worker);
                     break;
                 case send_cells_move:
-                    GUI.getLowerLabel().setText(myGod);
-                    GUI.updateGodBar(myUsername, myGod);
                     if(playerID==1 && checkSendCells==false){
                             GUI.getUpperLabel().setText("");
                             GUI.getLowerLabel().setText("");
                             GUI.destroyGodsWindow(godsSize);
                             GUI.buildMainWindow();
-                            SwingUtilities.updateComponentTreeUI(GUI.getMainFrame());
+                            GUI.updateGodBar(myUsername, myGod);
                             this.b = new Board();
                             turnModelBoardintoGUIBoard(b);
                             checkSendCells=true;
@@ -564,15 +562,9 @@ public class GUIHandler {
         @Override
         public void mouseEntered(MouseEvent e) {
             try {
-                FileInputStream fis = null;
-
-                fis = new FileInputStream("./resources/gods/" + gods.get(index) + ".txt");
-                ObjectInputStream ois = new ObjectInputStream(fis);
-                lowerLabel.setText((String ) ois.readObject());
-                ois.close();
-                fis.close();
-            } catch (ClassNotFoundException| IOException ex) {
-                lowerLabel.setText("Unable to load god's power");
+                GUI.readGodsPower(gods.get(index));
+            }catch (IOException ex){
+                GUI.getLowerLabel().setText("Unable to read god's power");
             }
         }
 
@@ -610,20 +602,12 @@ public class GUIHandler {
 
         @Override
         public void mouseEntered(MouseEvent e) {
-            /*
             try {
-                FileInputStream fis = null;
-
-                fis = new FileInputStream("./resources/gods/" + gods.get(index) + ".txt");
-                ObjectInputStream ois = new ObjectInputStream(fis);
-                lowerLabel.setText((String ) ois.readObject());
-                ois.close();
-                fis.close();
-            } catch (ClassNotFoundException| IOException ex) {
-                lowerLabel.setText("Unable to load god's power");
-                ex.printStackTrace();
+                GUI.readGodsPower(gods.get(index));
+            }catch (IOException ex){
+                GUI.getLowerLabel().setText("Unable to read god's power");
             }
-            */
+
         }
 
         @Override
@@ -660,6 +644,7 @@ public class GUIHandler {
 
     }
 
+    //Da rivedere
     private void paintBoardCell(ArrayList<Coordinates> validPositions){
         for (int i = 0; i < 5; i++) {
             for (int j = 0; j < 5; j++) {
@@ -672,6 +657,7 @@ public class GUIHandler {
         }
     }
 
+    //Da rivedere
     private void unpaintBoardCell(ArrayList<Coordinates> validPositions){
         for (int i = 0; i < Board.DIM; i++) {
             for (int j = 0; j < Board.DIM; j++) {
