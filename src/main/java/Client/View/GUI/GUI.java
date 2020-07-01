@@ -63,7 +63,7 @@ public class GUI {
     public GUI(){
         mainFrame = new JFrame("Santorini -  Epifani Falleti Landi");
         mainFrame.addWindowListener(new CustomClosing(mainFrame));
-        mainFrame.setSize(710, 438);
+        mainFrame.setSize(710, 450);
         mainFrame.setResizable(false);
         mainFrame.setLayout(new BorderLayout());
 
@@ -597,13 +597,13 @@ public class GUI {
         GridBagConstraints upperLabelGBC = new GridBagConstraints();
         upperLabelGBC.gridx=0;
         upperLabelGBC.gridy=0;
-        upperLabelGBC.insets = new Insets(3,3,3,450);
+        upperLabelGBC.insets = new Insets(3,3,3,400);
         messageAndUndoPanel.add(upperLabel, upperLabelGBC);
 
         GridBagConstraints undoGBC = new GridBagConstraints();
         undoGBC.gridx = 1;
         undoGBC.gridy=0;
-        undoGBC.insets = new Insets(3,450,3,3);
+        undoGBC.insets = new Insets(3,400,3,3);
         messageAndUndoPanel.add(undo, undoGBC);
 
         mainFrame.add(messageAndUndoPanel, BorderLayout.NORTH);

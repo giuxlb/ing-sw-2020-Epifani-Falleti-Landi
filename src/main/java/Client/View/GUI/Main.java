@@ -11,13 +11,15 @@ public class Main {
     public static void main(String[] args){
                 GUI GUI=new GUI();
                 GUI.getUpperLabel().setText("Please insert server IP address, the press button Next");
-                GUI.getLowerLabel().setText("If you send a wrong IP address, you won't be able to play!");
+                GUI.getLowerLabel().setText("If you send a wrong IP address, you won't be able to play. Close this windows and restart game");
                 CustomActionListener nextListener = new CustomActionListener(GUI);
                 GUI.getIpButton().addActionListener(nextListener);
                 while(nextListener.isGoForward()==false){
                     System.out.println("Attendo inserimento indirizzo ip");
                 }
                 GUIHandler gh= new GUIHandler(GUI,ip);
+                GUI.getUpperLabel().setText("Wait a moment for your friends, please");
+                GUI.getLowerLabel().setText("The game will start soon");
                 gh.launchConnection();
 
     }
