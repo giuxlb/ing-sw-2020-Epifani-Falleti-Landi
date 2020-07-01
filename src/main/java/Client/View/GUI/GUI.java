@@ -53,7 +53,6 @@ public class GUI {
     private JLabel boardLabel;
     private JButton[][] board;
     private JPanel godPanel;
-    private JLabel playerName;
     private JLabel godImage;
     private JLabel godPower;
 
@@ -137,17 +136,15 @@ public class GUI {
         public void windowClosing(WindowEvent e) {
             Object[] choices = {"Yes", "No"};
 
-            ImageIcon currentIcon= new ImageIcon("./resources/WarningSign.png");
-            Image tmp = currentIcon.getImage();
-            Image newIcon = tmp.getScaledInstance(40,40, Image.SCALE_SMOOTH);
-            ImageIcon finalIcon = new ImageIcon(newIcon);
+
+            ImageIcon warningIcon = createIcon("WarningSign.png");
 
             int choice = JOptionPane.showOptionDialog(mainFrame,
                     "Are you sure to end the game?",
                     "Warning",
                     JOptionPane.YES_NO_OPTION,
                     JOptionPane.QUESTION_MESSAGE,
-                    finalIcon,
+                    warningIcon,
                     choices,
                     choices[1]);
 
@@ -549,31 +546,23 @@ public class GUI {
     }
 
     private void buildGodBar(){
-
-        playerName=new JLabel("Loading player's name...");
         godImage = new JLabel("Loading god's image...");
         godPower = new JLabel("Loading god's power...");
         godPanel = new JPanel();
         godPanel.setLayout(new GridBagLayout());
 
-        GridBagConstraints playerNameGBC = new GridBagConstraints();
-        playerNameGBC.gridx = 0;
-        playerNameGBC.gridy = 0;
-        godPanel.add(playerName, playerNameGBC);
-
         GridBagConstraints godImageGBC = new GridBagConstraints();
         godImageGBC.gridx = 0;
-        godImageGBC.gridy = 1;
+        godImageGBC.gridy = 0;
         godPanel.add(godImage, godImageGBC);
 
         GridBagConstraints godPowerGBC = new GridBagConstraints();
         godPowerGBC.gridx = 0;
-        godPowerGBC.gridy = 2;
+        godPowerGBC.gridy = 1;
         godPanel.add(godPower, godPowerGBC);
     }
 
     protected void updateGodBar(String name, String godName){
-        playerName.setText("Your username is: " + name);
 
         godImage = new JLabel(paintGods(godName));
 
@@ -601,11 +590,7 @@ public class GUI {
     private void buildMessageAndUndoBar(){
         mainFrame.remove(upperLabel);
 
-        ImageIcon currentIcon= new ImageIcon("./resources/Undo.png");
-        Image tmp = currentIcon.getImage();
-        Image newIcon = tmp.getScaledInstance(40,40, Image.SCALE_SMOOTH);
-        ImageIcon finalIcon = new ImageIcon(newIcon);
-        undo = new JButton("", finalIcon);
+        undo = new JButton("", createIcon("Undo.png"));
 
         messageAndUndoPanel = new JPanel();
         messageAndUndoPanel.setLayout(new GridBagLayout());

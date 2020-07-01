@@ -26,7 +26,6 @@ public class GUIHandler {
     private boolean updateView;
 
     //Support elements
-    private String ipAddress;
     protected static int playersNumber;
     private int playerID;
     protected static boolean ready;
@@ -35,6 +34,8 @@ public class GUIHandler {
     private String myColor;
     private ArrayList<String> sentGods;
     private int godsSize;
+    private int godsCounter=0;
+    private GodsWorker[] gw;
     protected static ArrayList<String> chosenGods;
     protected static String myGod;
     private boolean checkSendCells;
@@ -197,6 +198,7 @@ public class GUIHandler {
                         SwingUtilities.updateComponentTreeUI(GUI.getMainFrame());
                         checkUpdate = true;
                     }
+                    GUI.getUpperLabel().setText("Your username is: " + myUsername);
                     Object objectBoardCell = evento.getBox();
                     ArrayList<SocketBoardCell> socketBoardCell = (ArrayList<SocketBoardCell>) objectBoardCell;
                     recreateBoardfromSocketBoardCell(socketBoardCell);
@@ -345,6 +347,7 @@ public class GUIHandler {
                     Object objectGods = evento.getBox();
                     sentGods= (ArrayList<String>)  objectGods;
                     godsSize = sentGods.size();
+                    gw = new GodsWorker[godsSize];
                     GUI.destroyDateWindow();
                     GUI.buildGodsWindow(sentGods);
                     SwingUtilities.updateComponentTreeUI(GUI.getMainFrame());
@@ -354,6 +357,7 @@ public class GUIHandler {
                         System.out.println("Sto aspettando che il primo player scelga le divinità");
                     }
                     GUI.getLowerLabel().setText("Wait...");
+                    closeGodsWorkers();
                     buildEvent(cnh, chosenGods, VCEvent.Event.send_all_cards);
                     break;
                 case send_chosen_cards:
@@ -513,43 +517,47 @@ public class GUIHandler {
     private void createGodsListener(int size, ArrayList<String> sentGods, ArrayList<String> chosenGods, JButton[] godsButton, JLabel lowerLabel){
         for (int i=0;i<size;i++){
             System.out.println("Aggiungo al bottone il listener");
-            godsButton[i].addMouseListener(new sentGodsMouseListener(i, sentGods, chosenGods, lowerLabel));
+            godsButton[i].addMouseListener(new sentGodsMouseListener(sentGods.get(i), chosenGods, lowerLabel));
         }
     }
 
     private void createGodListener(int size, ArrayList<String> sentGods, JButton[] godsButton, JLabel lowerLabel){
         for (int i=0;i<size;i++){
             System.out.println("Aggiungo al bottone il listener");
-            godsButton[i].addMouseListener(new sentGodMouseListener(i, sentGods, lowerLabel));
+            godsButton[i].addMouseListener(new sentGodMouseListener(sentGods.get(i), lowerLabel));
         }
     }
 
 
     class sentGodsMouseListener implements MouseListener {
-        private int index;
-        private ArrayList<String> gods;
+        private String chosenGod;
         private ArrayList<String> chosenGods;
         private JLabel lowerLabel;
 
-        public sentGodsMouseListener(int index, ArrayList<String> gods, ArrayList<String> chosenGods, JLabel lowerLabel) {
-            this.index = index;
-            this.gods = gods;
+        public sentGodsMouseListener(String chosenGod, ArrayList<String> chosenGods, JLabel lowerLabel) {
+            this.chosenGod = chosenGod;
             this.chosenGods=chosenGods;
             this.lowerLabel=lowerLabel;
         }
 
         @Override
         public void mouseClicked(MouseEvent e) {
-            if(checkIfGodisAlreadyChosen(chosenGods, gods.get(index))==true){
+            if(checkIfGodisAlreadyChosen(chosenGods, chosenGod)==true){
                 lowerLabel.setText("Pay attention, you can't choose again this god. Select another one, please");
             }else {
-                GodsWorker gw = new GodsWorker(gods.get(index));
+                gw[godsCounter] = new GodsWorker(chosenGod, GUI.getUpperLabel());
+                godsCounter++;
             }
         }
 
         @Override
         public void mousePressed(MouseEvent e) {
-
+            if(checkIfGodisAlreadyChosen(chosenGods, chosenGod)==true){
+                lowerLabel.setText("Pay attention, you can't choose again this god. Select another one, please");
+            }else {
+                gw[godsCounter] = new GodsWorker(chosenGod, GUI.getUpperLabel());
+                godsCounter++;
+            }
         }
 
         @Override
@@ -562,7 +570,7 @@ public class GUIHandler {
         @Override
         public void mouseEntered(MouseEvent e) {
             try {
-                GUI.readGodsPower(gods.get(index));
+                GUI.readGodsPower(chosenGod);
             }catch (IOException ex){
                 GUI.getLowerLabel().setText("Unable to read god's power");
             }
@@ -575,24 +583,22 @@ public class GUIHandler {
     }
 
     class sentGodMouseListener implements MouseListener{
-        private int index;
-        private ArrayList<String> gods;
+        private String chosenGod;
         private JLabel lowerLabel;
 
-        public sentGodMouseListener(int index, ArrayList<String> gods, JLabel lowerLabel) {
-            this.index=index;
-            this.gods=gods;
+        public sentGodMouseListener(String chosenGod, JLabel lowerLabel) {
+            this.chosenGod = chosenGod;
             this.lowerLabel=lowerLabel;
         }
 
         @Override
         public void mouseClicked(MouseEvent e) {
-            GodWorker gw= new GodWorker(gods.get(index));
+            GodWorker singleGodWorker= new GodWorker(chosenGod);
         }
 
         @Override
         public void mousePressed(MouseEvent e) {
-            GodWorker gw= new GodWorker(gods.get(index));
+            GodWorker singleGodWorker= new GodWorker(chosenGod);
         }
 
         @Override
@@ -603,7 +609,7 @@ public class GUIHandler {
         @Override
         public void mouseEntered(MouseEvent e) {
             try {
-                GUI.readGodsPower(gods.get(index));
+                GUI.readGodsPower(chosenGod);
             }catch (IOException ex){
                 GUI.getLowerLabel().setText("Unable to read god's power");
             }
@@ -771,6 +777,12 @@ public class GUIHandler {
         GUI.getDateNextButton().addActionListener(dateListener);
         while (dateListener.isGoForward()==false){
             System.out.println("Attendo che il giocatore inserisca la sua data di nascita");
+        }
+    }
+
+    private void closeGodsWorkers(){
+        for(GodsWorker w: gw){
+            w=null;
         }
     }
 
