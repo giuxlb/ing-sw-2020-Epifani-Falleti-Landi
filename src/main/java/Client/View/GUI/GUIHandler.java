@@ -13,6 +13,7 @@ import java.awt.*;
 import java.awt.event.*;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.concurrent.TimeUnit;
 
 
 public class GUIHandler {
@@ -25,6 +26,7 @@ public class GUIHandler {
     private boolean updateView;
 
     //Support elements
+    private String ip;
     protected static int playersNumber;
     private int playerID;
     protected static boolean ready;
@@ -33,7 +35,7 @@ public class GUIHandler {
     private String myColor;
     private ArrayList<String> sentGods;
     private int godsSize;
-    private int godsCounter=0;
+    private int godsCounter;
     private GodsWorker[] gw;
     protected static ArrayList<String> chosenGods;
     protected static String myGod;
@@ -43,10 +45,9 @@ public class GUIHandler {
     private String movingPhase = "go on";
     private String buildingPhase = "build on";
     private String removePhase = "remove";
-    protected static Coordinates previousCoordinate;
     protected static Coordinates currentCoordinate;
     private BoardCellWorker[][] bcw;
-    private String ip;
+    protected static int choose;
 
     public GUIHandler(GUI GUI,String ip){
         this.GUI = GUI;
@@ -55,6 +56,7 @@ public class GUIHandler {
         //Initial settings
         playersNumber=0;
         playerID=0;
+        godsCounter = 0;
         checkSendCells=false;
         checkUpdate=false;
     }
@@ -160,7 +162,7 @@ public class GUIHandler {
                     GUI.getLowerLabel().setText("Wait...");
                     break;
                 case date_request:
-                    GUI.getUpperLabel().setText("Insert first month (mm), then day (dd) and finally year (yy) of your own date of birth. Press Next to send");
+                    GUI.getUpperLabel().setText("Insert first month (mm), then day (dd) and finally year (yyyy) of your own date of birth. Press Next to send");
                     GUI.getLowerLabel().setText("The youngest player will be the first");
                     GUI.destroyLoginWindow();
                     GUI.buildDateWindow();
@@ -194,7 +196,6 @@ public class GUIHandler {
                         SwingUtilities.updateComponentTreeUI(GUI.getMainFrame());
                         checkUpdate = true;
                     }
-                    GUI.getUpperLabel().setText("Your username is: " + myUsername);
                     Object objectBoardCell = evento.getBox();
                     ArrayList<SocketBoardCell> socketBoardCell = (ArrayList<SocketBoardCell>) objectBoardCell;
                     recreateBoardfromSocketBoardCell(socketBoardCell);
@@ -248,25 +249,32 @@ public class GUIHandler {
                 case send_cells_remove:
                     sendCells(removePhase,cnh, VCEvent.Event.send_cells_remove,evento);
                     break;
-                case undo_request:/*
+                case undo_request:
                     GUI.buildUndoJDialog();
-                    int choose = 0;
+                    choose=-1;
+                    SwingUtilities.updateComponentTreeUI(GUI.getMainFrame());
+                    UndoCustomListener uclYes = new UndoCustomListener(1);
+                    GUI.getYes().addActionListener(uclYes);
+                    UndoCustomListener uclNo = new UndoCustomListener(0);
+                    GUI.getNo().addActionListener(uclNo);
                     long start = System.currentTimeMillis();
                     while (true){
 
-                            if (!(((System.currentTimeMillis()-start) < 5000) && !listener.isGoForward())) break;
+                            if ((System.currentTimeMillis()-start) >= 5000 || choose!=-1) {
+                                break;
+                            }else{
+                                GUI.getUndoTimeMessage().setText((5-TimeUnit.MILLISECONDS.toSeconds(System.currentTimeMillis()-start)) + " seconds left to choose");
+                            }
 
                     }
                     GUI.getUndoDialog().setVisible(false);
                     SwingUtilities.updateComponentTreeUI(GUI.getMainFrame());
 
-                        if (listener.isGoForward()){
-                            choose = 1;
-                        }
-
+                    if (choose==-1){
+                            choose = 0;
+                    }
 
                     buildEvent(cnh,choose, VCEvent.Event.undo_request);
-                    break;*/
                     break;
                 case you_lost:
                     Object objectWinner = evento.getBox();
@@ -432,11 +440,10 @@ public class GUIHandler {
                 Color worker = null;
                 if (b.getBoardWorker(i, j) != null) {
                     worker = (b.getBoardWorker(i, j)).getColor();
-                    System.out.println(worker);
                 }
                 switch (b.getBoardHeight(i, j)) {
                     case 0:
-                        if (b.getBoardWorker(j, j) != null) {
+                        if (b.getBoardWorker(i, j) != null) {
                             if (worker.equals(Model.Color.ANSI_YELLOW)) {
                                 updateSantoriniButton(i,j, "/DeusExMachina/blue.jpg");
                             } else if (worker.equals(Model.Color.ANSI_WHITE)) {
@@ -444,6 +451,8 @@ public class GUIHandler {
                             } else if (worker.equals(Model.Color.ANSI_PURPLE)) {
                                 updateSantoriniButton(i,j, "/DeusExMachina/brown.jpg");
                             }
+                        }else if(b.getBoardWorker(i, j) == null){
+                            updateSantoriniButton(i,j, "/BoardCell.jpg");
                         }
                         break;
                     case 1:
@@ -711,7 +720,7 @@ public class GUIHandler {
             for (int j = 0; j < 5; j++) {
                 for (Coordinates c: validPositions){
                     if(c.getX()==i && c.getY()==j){
-                        GUI.getBoard()[i][j].setBackground(java.awt.Color.red);
+                        //GUI.getBoard()[i][j].setBackground(new java.awt.Color());
                     }
                 }
             }
@@ -880,6 +889,20 @@ public class GUIHandler {
         if(findIndex(validPositions, currentCoordinate)!=-1){
             currentCoordinate = new Coordinates(-1,-1);
         }
+    }
+
+    class UndoCustomListener implements ActionListener{
+        private int choose;
+
+        public UndoCustomListener(int choose){
+            this.choose=choose;
+        }
+
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            UndoWorker uw= new UndoWorker(choose);
+        }
+
     }
 
 }

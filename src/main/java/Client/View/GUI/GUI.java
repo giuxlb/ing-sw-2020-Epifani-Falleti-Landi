@@ -20,6 +20,7 @@ public class GUI {
     private JLabel ipLabel;
     private JTextField ipTextField;
     private JButton ipButton;
+    private Font defaultFont;
 
     //numberOfPlayersWindowElements
     private JLabel numberOfPlayersWindowManager;
@@ -54,7 +55,7 @@ public class GUI {
     private JLabel boardLabel;
     private SantoriniButton[][] board;
     //godBar elements
-    private JPanel godPanel;
+    private JLabel godBarManager;
     private JLabel godInfo;
     private SantoriniLabel godImage;
     private ArrayList<JLabel> godPower;
@@ -74,6 +75,7 @@ public class GUI {
         mainFrame.addWindowListener(new CustomClosing(mainFrame));
         mainFrame.setSize(710, 470);
         mainFrame.setResizable(false);
+        defineFont();
 
         Image mainIcon = null;
         try{
@@ -97,6 +99,7 @@ public class GUI {
 
 
         ipLabel=new JLabel("IP address: ");
+        ipLabel.setFont(defaultFont);
         ipTextField = new JTextField();
         GridBagConstraints ipLabelGBC= new GridBagConstraints();
         ipLabelGBC.gridx=0;
@@ -259,6 +262,7 @@ public class GUI {
 
     protected void buildNumberOfPlayersWindow() {
         numberOfPlayersInformation = new JLabel("How many players are going to connect?");
+        numberOfPlayersInformation.setFont(defaultFont);
         two = new JButton("2");
         three = new JButton("3");
         numberOfPlayersWindowManager = paintScreen("MainBackground.jpg", 700, 400);
@@ -316,6 +320,7 @@ public class GUI {
     protected void buildLoginWindow(){
         loginWindowManager=paintScreen("MainBackground.jpg", 700, 400);
         usernameLabel = new JLabel("Username: ");
+        usernameLabel.setFont(defaultFont);
         usernameTextField = new JTextField();
         loginNextButton = new JButton("Next");
 
@@ -360,11 +365,14 @@ public class GUI {
     }
 
     protected void buildDateWindow(){
-        monthLabel=new JLabel("Insert mounth of birth (mm) ");
+        monthLabel=new JLabel("Mounth of birth (mm) ");
+        monthLabel.setFont(defaultFont);
         monthTextField = new JTextField();
-        dayLabel = new JLabel("Insert day of birth (gg) ");
+        dayLabel = new JLabel("Day of birth (dd) ");
+        dayLabel.setFont(defaultFont);
         dayTextField = new JTextField();
-        yearLabel = new JLabel("Insert year of birth (aaaa)");
+        yearLabel = new JLabel("Year of birth (yyyy)");
+        yearLabel.setFont(defaultFont);
         yearTextField = new JTextField();
         dateNextButton = new JButton("Send date");
 
@@ -443,7 +451,7 @@ public class GUI {
     }
 
     protected void buildGodsWindow(ArrayList<String> gods){
-        mainFrame.setSize(1920,1080);
+        mainFrame.setSize(1366,728);
         mainFrame.setResizable(true);
         mainFrame.setLocationRelativeTo(null);
         imgGodsButton = new JButton[gods.size()];
@@ -524,13 +532,15 @@ public class GUI {
 
     protected void buildJDialogForFirstPlayer(String god){
         JDialog message = new JDialog(mainFrame);
-        JLabel screen = paintScreen("GodsScreen.png", 1000, 480);
+        JLabel screen = paintScreen("MainBackground.jpg", 1150, 580);
         message.setTitle("Santorini - Epifani Falleti Landi");
 
         JLabel info = new JLabel("The left card is");
+        info.setFont(defaultFont);
 
         JLabel image = new JLabel(paintGods(god));
         JLabel power = new JLabel();
+        power.setFont(defaultFont);
 
         try {
             readGodsPower(power, god);
@@ -548,6 +558,8 @@ public class GUI {
         imageGBC.gridy = 2;
         imageGBC.gridx = 1;
         imageGBC.insets = new Insets(15, 3, 15, 3);
+        imageGBC.ipadx = 150;
+        imageGBC.ipady = 210;
         screen.add(image, imageGBC);
 
         GridBagConstraints powerGBC = new GridBagConstraints();
@@ -604,21 +616,24 @@ public class GUI {
 
     private void buildGodBar(){
         godInfo = new JLabel();
+        godInfo.setFont(defaultFont);
         godImage = new SantoriniLabel(paintScreenForSantoriniLabel("DefaultGodImage.jpg", 240, 360));
-        godPanel = new JPanel();
-        godPanel.setLayout(new GridBagLayout());
+        godBarManager = new JLabel();
+        godBarManager.setLayout(new GridBagLayout());
 
         GridBagConstraints godInfoGBC = new GridBagConstraints();
         godInfoGBC.gridx = 1;
         godInfoGBC.gridy = 0;
         godInfoGBC.insets = new Insets(5,3,3,3);
-        godPanel.add(godInfo, godInfoGBC);
+        godBarManager.add(godInfo, godInfoGBC);
 
         GridBagConstraints godImageGBC = new GridBagConstraints();
         godImageGBC.gridx = 1;
         godImageGBC.gridy = 1;
         godImageGBC.insets = new Insets(3,3,5,3);
-        godPanel.add(godImage, godImageGBC);
+        godBarManager.add(godImage, godImageGBC);
+
+        godPower = new ArrayList<JLabel>();
     }
 
    protected void updateGodBar(String info, String godName){
@@ -639,7 +654,7 @@ public class GUI {
             godPowerConstraints[i].gridx=1;
             godPowerConstraints[i].gridy=i+2;
             godPowerConstraints[i].insets = new Insets(3,3,3,3);
-            godPanel.add(godPower.get(i), godPowerConstraints[i]);
+            godBarManager.add(godPower.get(i), godPowerConstraints[i]);
         }
 
         SwingUtilities.updateComponentTreeUI(mainFrame);
@@ -657,6 +672,7 @@ public class GUI {
         undoDialog = new JDialog(mainFrame);
         undoMessage = new JLabel("Do you want to undo your last move?");
         undoTimeMessage = new JLabel("(You have only 5 seconds to choose)");
+        answerManager = new JLabel();
         ImageIcon undoIcon = createIcon("Undo.png");
         undoImage = new JLabel(undoIcon);
         yes = new JButton("Yes");
@@ -703,7 +719,7 @@ public class GUI {
         undoTimeMessageGBC.insets = new Insets(3,3,5,3);
         undoDialog.add(undoTimeMessage, undoTimeMessageGBC);
 
-        undoDialog.setSize(490, 240);
+        undoDialog.setSize(440, 190);
         undoDialog.setResizable(false);
         undoDialog.setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);
         undoDialog.setLocationRelativeTo(null);
@@ -714,15 +730,26 @@ public class GUI {
         return undoDialog;
     }
 
+    public JLabel getUndoTimeMessage() {
+        return undoTimeMessage;
+    }
+
+    public JButton getYes() {
+        return yes;
+    }
+
+    public JButton getNo() {
+        return no;
+    }
+
     protected void buildMainWindow(){
-        mainFrame.setSize(1000,750);
-        mainWindowManager = paintScreen("GodsScreen.png", 1000,700);
+        mainWindowManager = paintScreen("GodsScreen.png", 1920,1080);
         buildBoard();
         buildGodBar();
 
         mainWindowManager.setLayout(new BorderLayout());
         mainWindowManager.add(boardLabel, BorderLayout.CENTER);
-        mainWindowManager.add(godPanel, BorderLayout.WEST);
+        mainWindowManager.add(godBarManager, BorderLayout.WEST);
 
         mainFrame.add(mainWindowManager, BorderLayout.CENTER);
     }
@@ -745,21 +772,31 @@ public class GUI {
     }
 
     private void readGodsPowerForGodBar(String name) throws IOException{
-        godPower = new ArrayList<JLabel>();
         InputStream is = GUI.class.getResourceAsStream("/gods/"+name+"GodBar");
         InputStreamReader isr = new InputStreamReader(is);
         BufferedReader reader = new BufferedReader(isr);
         String line = null;
 
+        if(godPower.size()!=0){
+            for(int i=0;i<godPower.size();i++){
+                godPower.remove(i);
+            }
+        }
+
         while((line = reader.readLine()) != null)
         {
             JLabel lineLabel = new JLabel(line);
+            lineLabel.setFont(defaultFont);
             godPower.add(lineLabel);
         }
 
         reader.close();
         isr.close();
         is.close();
+    }
+
+    private void defineFont(){
+        defaultFont = new Font(Font.SERIF, Font.BOLD, 25);
     }
 
 }

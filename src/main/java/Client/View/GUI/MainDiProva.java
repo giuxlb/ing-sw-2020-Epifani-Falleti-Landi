@@ -12,11 +12,15 @@ public class MainDiProva {
         JFrame prova = new JFrame("Prova");
         prova.setSize(500,500);
         SantoriniButton img = new SantoriniButton(paintBackgroundForSantoriniButton("BoardCell.jpg"));
+        img.setBackground(new Color(255,0,0,100));
+        //img.setActive(true);
+        Graphics g = img.getGraphics();
+        img.paintComponent(g);
         prova.add(img);
         prova.setVisible(true);
     }
 
-    private static ImageIcon paintBackgroundForSantoriniButton(String name) {
+   private static ImageIcon paintBackgroundForSantoriniButton(String name) {
         try{
             ImageIcon currentIcon= new ImageIcon(ImageIO.read(MainDiProva.class.getResource("/"+name)));
             Image tmp = currentIcon.getImage();
