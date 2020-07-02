@@ -278,7 +278,7 @@ public class GUIHandler {
                 case you_lost:
                     Object objectWinner = evento.getBox();
                     String winner = (String) objectWinner;
-                    ImageIcon endGameIcon = GUI.createIcon("Lost.png");
+                    ImageIcon endGameIcon = GUI.createIcon("Lost.jpg");
                     Object[] defeatChoices = {"Ok"};
                     int defeat = JOptionPane.showOptionDialog(GUI.getMainFrame(),
                             winner + " is the winner. The game will end now!",
@@ -294,7 +294,7 @@ public class GUIHandler {
                     endGame=true;
                     break;
                 case you_won:
-                    ImageIcon winIcon = GUI.createIcon("Win.png");
+                    ImageIcon winIcon = GUI.createIcon("Win.jpg");
                     Object[] winChoices = {"Ok"};
                     int win = JOptionPane.showOptionDialog(GUI.getMainFrame(),
                             "You are the winner. Thanks to have played",
@@ -310,7 +310,7 @@ public class GUIHandler {
                     endGame=true;
                     break;
                 case game_ended_foryou:
-                    ImageIcon endGameForYouIcon = GUI.createIcon("Lost.png");
+                    ImageIcon endGameForYouIcon = GUI.createIcon("Lost.jpg");
                     Object[] options = {"Ok"};
                     int lost = JOptionPane.showOptionDialog(GUI.getMainFrame(),
                             "You can't move anymore. It's over for you",
@@ -327,7 +327,7 @@ public class GUIHandler {
                     playersNumber = (Integer)evento.getBox();
                     break;
                 case ask_for_divinity_activation:
-                    ImageIcon godPowerActivationIcon = GUI.createIcon("QuestionSign.png");
+                    ImageIcon godPowerActivationIcon = GUI.createIcon("QuestionSign.jpg");
                     Object[] choices = {"Yes", "No"};
                     int choice = JOptionPane.showOptionDialog(GUI.getMainFrame(),
                                     "Do you want to use " + myGod + "'s power?",
@@ -384,7 +384,7 @@ public class GUIHandler {
                     }
                     break;
                 case player_disconnected_game_ended:
-                    ImageIcon disconnectionIcon = GUI.createIcon("WarningSign.png");
+                    ImageIcon disconnectionIcon = GUI.createIcon("WarningSign.jpg");
 
                     Object objectPlayerDisconnected= evento.getBox();
                     String playerDisconnected = (String) objectPlayerDisconnected;

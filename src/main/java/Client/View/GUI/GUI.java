@@ -153,7 +153,7 @@ public class GUI {
             Object[] choices = {"Yes", "No"};
 
 
-            ImageIcon warningIcon = createIcon("WarningSign.png");
+            ImageIcon warningIcon = createIcon("WarningSign.jpg");
 
             int choice = JOptionPane.showOptionDialog(mainFrame,
                     "Are you sure to end the game?",
@@ -464,7 +464,7 @@ public class GUI {
             godBagConstraints[i] = new GridBagConstraints();
         }
 
-        godsWindowManager = paintScreen("GodsScreen.png", 1920, 1080);
+        godsWindowManager = paintScreen("GodsScreen.jpg", 1920, 1080);
         godsWindowManager.setLayout(new GridBagLayout());
         int j=0;
         for(int i=0; i<gods.size();i++){
@@ -518,7 +518,7 @@ public class GUI {
     }
 
     private ImageIcon paintGods(String name){
-        String path = "/gods/"+name+".png";
+        String path = "/gods/"+name+".jpg";
         try{
             ImageIcon currentImg= new ImageIcon(ImageIO.read(getClass().getResource(path)));
             Image img = currentImg.getImage();
@@ -638,7 +638,7 @@ public class GUI {
 
    protected void updateGodBar(String info, String godName){
         godInfo.setText(info);
-        godImage.setPath("/gods/" + godName+ ".png");
+        godImage.setPath("/gods/" + godName+ ".jpg");
         Graphics g = godImage.getGraphics();
         godImage.paintComponent(g);
 
@@ -673,7 +673,7 @@ public class GUI {
         undoMessage = new JLabel("Do you want to undo your last move?");
         undoTimeMessage = new JLabel("(You have only 5 seconds to choose)");
         answerManager = new JLabel();
-        ImageIcon undoIcon = createIcon("Undo.png");
+        ImageIcon undoIcon = createIcon("Undo.jpg");
         undoImage = new JLabel(undoIcon);
         yes = new JButton("Yes");
         no = new JButton("No");
@@ -743,7 +743,7 @@ public class GUI {
     }
 
     protected void buildMainWindow(){
-        mainWindowManager = paintScreen("GodsScreen.png", 1920,1080);
+        mainWindowManager = paintScreen("GodsScreen.jpg", 1920,1080);
         buildBoard();
         buildGodBar();
 
