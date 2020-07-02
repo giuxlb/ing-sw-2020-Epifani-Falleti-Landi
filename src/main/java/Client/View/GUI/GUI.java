@@ -50,16 +50,23 @@ public class GUI {
 
     //mainWindow elements
     private JLabel mainWindowManager;
+    //board elements
     private JLabel boardLabel;
-    private JButton[][] board;
+    private SantoriniButton[][] board;
+    //godBar elements
     private JPanel godPanel;
-    private JLabel godImage;
-    private JLabel godPower;
+    private SantoriniLabel godImage;
+    private ArrayList<JLabel> godPower;
 
     //Undo
     private JDialog undoDialog;
-    private JPanel messageAndUndoPanel;
-    private JButton undo;
+    private JLabel undoMessage;
+    private JLabel undoTimeMessage;
+    private JLabel answerManager;
+    private JLabel undoImage;
+    private JButton yes;
+    private JButton no;
+
 
     public GUI(){
         mainFrame = new JFrame("Santorini -  Epifani Falleti Landi");
@@ -69,7 +76,7 @@ public class GUI {
 
         Image mainIcon = null;
         try{
-            ImageIcon currentIcon= new ImageIcon(ImageIO.read(getClass().getResource("/mainIcon.jpg")));
+            ImageIcon currentIcon= new ImageIcon(ImageIO.read(getClass().getResource("/MainIcon.jpg")));
             mainIcon = currentIcon.getImage();
         }catch (IOException ex){
 
@@ -212,15 +219,27 @@ public class GUI {
         }
     }
 
-    protected JButton paintButton(String name) {
+    private ImageIcon paintScreenForSantoriniLabel(String name, int width, int height) {
         try{
-            ImageIcon currentIcon= new ImageIcon(ImageIO.read(getClass().getResource("/DeusExMachina/"+name)));
+            ImageIcon currentIcon= new ImageIcon(ImageIO.read(getClass().getResource("/"+name)));
             Image tmp = currentIcon.getImage();
-            Image newIcon = tmp.getScaledInstance(150,150, Image.SCALE_SMOOTH);
+            Image newIcon = tmp.getScaledInstance(width,height, Image.SCALE_SMOOTH);
             ImageIcon finalIcon = new ImageIcon(newIcon);
-            return new JButton("",finalIcon);
+            return finalIcon;
         }catch (IOException ex){
-            return new JButton("Unable to render this");
+            return null;
+        }
+    }
+
+    private ImageIcon paintBackgroundForSantoriniButton(String name) {
+        try{
+            ImageIcon currentIcon= new ImageIcon(ImageIO.read(getClass().getResource("/"+name)));
+            Image tmp = currentIcon.getImage();
+            Image newIcon = tmp.getScaledInstance(140,140, Image.SCALE_SMOOTH);
+            ImageIcon finalIcon = new ImageIcon(newIcon);
+            return finalIcon;
+        }catch (IOException ex){
+            return null;
         }
     }
 
@@ -537,7 +556,8 @@ public class GUI {
 
         message.add(screen);
         message.setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);
-        message.setSize(760, 960);
+        message.setResizable(false);
+        message.setSize(1000, 510);
         message.setLocationRelativeTo(null);
         message.setVisible(true);
 
@@ -557,54 +577,65 @@ public class GUI {
     }
 
     private void buildBoard(){
-        board=new JButton[Board.DIM][Board.DIM];
+        board=new SantoriniButton[Board.DIM][Board.DIM];
+        GridBagConstraints[][] boardCostraints = new GridBagConstraints[Board.DIM][Board.DIM];
 
-        boardLabel = paintScreen("SantoriniBoard.png", 900, 900);
-        boardLabel.setLayout(new GridLayout(5,5));
+        boardLabel = paintScreen("SantoriniBoard.png", 700, 700);
+        boardLabel.setSize(700, 700);
+        boardLabel.setLayout(new GridBagLayout());
 
         for(int i=0;i<Board.DIM;i++){
             for(int j=0;j<Board.DIM;j++){
-                board[i][j] = new JButton();
+                boardCostraints[i][j] = new GridBagConstraints();
+                boardCostraints[i][j].gridx=j;
+                boardCostraints[i][j].gridy=i;
+                board[i][j]= new SantoriniButton("", paintBackgroundForSantoriniButton("DefaultButtonImage.jpg"));
                 board[i][j].setContentAreaFilled(false);
                 board[i][j].setBorderPainted(true);
-                boardLabel.add(board[i][j]);
+                boardLabel.add(board[i][j], boardCostraints[i][j]);
             }
         }
     }
 
-    public JButton[][] getBoard() {
+    public SantoriniButton[][] getBoard() {
         return board;
     }
 
-    private void buildGodBar(){
-        godImage = new JLabel("Loading god's image...");
-        godPower = new JLabel("Loading god's power...");
+    /*private void buildGodBar(){
+
+        godImage = new SantoriniLabel(paintScreenForSantoriniLabel("DefaultGodImage.jpg", 240, 360));
         godPanel = new JPanel();
         godPanel.setLayout(new GridBagLayout());
 
         GridBagConstraints godImageGBC = new GridBagConstraints();
         godImageGBC.gridx = 0;
         godImageGBC.gridy = 0;
+        godImageGBC.insets = new Insets(5,3,5,3);
         godPanel.add(godImage, godImageGBC);
+    }*/
 
-        GridBagConstraints godPowerGBC = new GridBagConstraints();
-        godPowerGBC.gridx = 0;
-        godPowerGBC.gridy = 1;
-        godPanel.add(godPower, godPowerGBC);
-    }
+   /* protected void updateGodBar(String godName){
+        godImage.setPath("/gods/" + godName+ ".png");
+        Graphics g = godImage.getGraphics();
+        godImage.paintComponent(g);
 
-    protected void updateGodBar(String godName){
-
-        godImage = new JLabel(paintGods(godName));
-
-        try {
-            readGodsPower(godPower, godName);
+        /*try {
+            readGodsPowerForGodBar(godName);
         }catch (IOException e){
-            godPower.setText("Unable to load god's power");
+            godPower.add(new JLabel("Unable to load god's power"));
+        }
+
+        GridBagConstraints[] godPowerConstraints = new GridBagConstraints[godPower.size()];
+        for (int i=0;i<godPower.size();i++){
+            godPowerConstraints[i] = new GridBagConstraints();
+            godPowerConstraints[i].gridx=0;
+            godPowerConstraints[i].gridy=i+1;
+            godPowerConstraints[i].insets = new Insets(3,3,3,3);
+            godPanel.add(godPower.get(i), godPowerConstraints[i]);
         }
 
         SwingUtilities.updateComponentTreeUI(mainFrame);
-    }
+    }*/
 
     public JTextField getIpTextField() {
         return ipTextField;
@@ -614,47 +645,73 @@ public class GUI {
         return ipButton;
     }
 
-    public void setIpButton(JButton ipButton) {
-        this.ipButton = ipButton;
+    private void buildUndoJDialog(){
+        undoDialog = new JDialog(mainFrame);
+        undoMessage = new JLabel("Do you want to undo your last move?");
+        undoTimeMessage = new JLabel("(You have only 5 seconds to choose)");
+        ImageIcon undoIcon = createIcon("Undo.png");
+        undoImage = new JLabel(undoIcon);
+        yes = new JButton("Yes");
+        no = new JButton("No");
+
+        undoDialog.setLayout(new GridBagLayout());
+
+        answerManager.setLayout(new GridBagLayout());
+        GridBagConstraints undoImageGBC = new GridBagConstraints();
+        undoImageGBC.gridx=0;
+        undoImageGBC.gridy=2;
+        undoImageGBC.insets = new Insets(3,3,3,5);
+        answerManager.add(undoImage, undoImageGBC);
+
+        GridBagConstraints yesGBC = new GridBagConstraints();
+        yesGBC.gridx=1;
+        yesGBC.gridy=2;
+        yesGBC.insets = new Insets(3,3,3,3);
+        answerManager.add(yes, yesGBC);
+
+        GridBagConstraints noGBC = new GridBagConstraints();
+        noGBC.gridx = 2;
+        noGBC.gridy = 2;
+        noGBC.insets = new Insets(3,3,3,3);
+        answerManager.add(no, noGBC);
+
+        GridBagConstraints answerManagerGBC = new GridBagConstraints();
+        answerManagerGBC.gridy=3;
+        answerManagerGBC.gridx=1;
+        answerManagerGBC.insets = new Insets(5,3,3,3);
+        answerManagerGBC.ipadx=200;
+        answerManagerGBC.ipady=55;
+        undoDialog.add(answerManager, answerManagerGBC);
+
+        GridBagConstraints undoMessageGBC = new GridBagConstraints();
+        undoMessageGBC.gridx=1;
+        undoMessageGBC.gridy=1;
+        undoMessageGBC.insets = new Insets(3,3,3,3);
+        undoDialog.add(undoMessage, undoMessageGBC);
+
+        GridBagConstraints undoTimeMessageGBC = new GridBagConstraints();
+        undoTimeMessageGBC.gridx=1;
+        undoTimeMessageGBC.gridy=2;
+        undoTimeMessageGBC.insets = new Insets(3,3,5,3);
+        undoDialog.add(undoTimeMessage, undoTimeMessageGBC);
+
+        undoDialog.setSize(490, 240);
+        undoDialog.setResizable(false);
+        undoDialog.setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);
+        undoDialog.setLocationRelativeTo(null);
+        undoDialog.setVisible(true);
     }
 
-    private void buildMessageAndUndoBar(){
-        mainFrame.remove(upperLabel);
 
-        undo = new JButton("", createIcon("Undo.png"));
-
-        messageAndUndoPanel = new JPanel();
-        messageAndUndoPanel.setLayout(new GridBagLayout());
-        GridBagConstraints upperLabelGBC = new GridBagConstraints();
-        upperLabelGBC.gridx=0;
-        upperLabelGBC.gridy=0;
-        upperLabelGBC.insets = new Insets(3,3,3,400);
-        messageAndUndoPanel.add(upperLabel, upperLabelGBC);
-
-        GridBagConstraints undoGBC = new GridBagConstraints();
-        undoGBC.gridx = 1;
-        undoGBC.gridy=0;
-        undoGBC.insets = new Insets(3,400,3,3);
-        messageAndUndoPanel.add(undo, undoGBC);
-
-        mainFrame.add(messageAndUndoPanel, BorderLayout.NORTH);
-
-        SwingUtilities.updateComponentTreeUI(mainFrame);
-    }
-
-    public JButton getUndo() {
-        return undo;
-    }
 
     protected void buildMainWindow(){
-        mainWindowManager = new JLabel();
-        buildMessageAndUndoBar();
+        mainWindowManager = paintScreen("GodsScreen.png", 1920,1080);
         buildBoard();
-        buildGodBar();
+        //buildGodBar();
 
         mainWindowManager.setLayout(new BorderLayout());
         mainWindowManager.add(boardLabel, BorderLayout.CENTER);
-        mainWindowManager.add(godPanel, BorderLayout.WEST);
+        //mainWindowManager.add(godPanel, BorderLayout.WEST);
 
         mainFrame.add(mainWindowManager, BorderLayout.CENTER);
     }
@@ -674,6 +731,24 @@ public class GUI {
         isr.close();
         is.close();
 
+    }
+
+    private void readGodsPowerForGodBar(String name) throws IOException{
+        godPower = new ArrayList<JLabel>();
+        InputStream is = GUI.class.getResourceAsStream("/gods/"+name+"GodBar.properties");
+        InputStreamReader isr = new InputStreamReader(is);
+        BufferedReader reader = new BufferedReader(isr);
+        String line = null;
+
+        while((line = reader.readLine()) != null)
+        {
+            JLabel lineLabel = new JLabel(line);
+            godPower.add(lineLabel);
+        }
+
+        reader.close();
+        isr.close();
+        is.close();
     }
 
 }

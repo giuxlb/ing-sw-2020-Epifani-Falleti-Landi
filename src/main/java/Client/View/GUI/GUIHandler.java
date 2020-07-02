@@ -7,13 +7,12 @@ import Client.View.Data;
 import Controller.Coordinates;
 import Controller.Network.VCEvent;
 import Model.*;
-import java.awt.event.*;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.util.ArrayList;
+import Model.Color;
 
-import static java.awt.Color.red;
+import java.awt.*;
+import java.awt.event.*;
+import java.io.IOException;
+import java.util.ArrayList;
 
 
 public class GUIHandler {
@@ -185,7 +184,7 @@ public class GUIHandler {
                     Object objectCurrentPlayerInformation = evento.getBox();
                     ArrayList<String> currentPlayerInformation= (ArrayList<String>) objectCurrentPlayerInformation;
                     GUI.getUpperLabel().setText(currentPlayerInformation.get(0).toLowerCase() + " is playing with god " + currentPlayerInformation.get(1).toLowerCase());
-                    GUI.updateGodBar(currentPlayerInformation.get(1).toLowerCase());
+                    //GUI.updateGodBar(currentPlayerInformation.get(1).toLowerCase());
                     SwingUtilities.updateComponentTreeUI(GUI.getMainFrame());
                     break;
                 case update:
@@ -194,7 +193,7 @@ public class GUIHandler {
                         GUI.getLowerLabel().setText("");
                         GUI.destroyGodsWindow(godsSize);
                         GUI.buildMainWindow();
-                        GUI.updateGodBar(myGod.toLowerCase());
+                        //GUI.updateGodBar(myGod.toLowerCase());
                         SwingUtilities.updateComponentTreeUI(GUI.getMainFrame());
                         checkUpdate = true;
                     }
@@ -236,11 +235,12 @@ public class GUIHandler {
                     if(playerID==1 && checkSendCells==false){
                             GUI.destroyGodsWindow(godsSize);
                             GUI.buildMainWindow();
+                            SwingUtilities.updateComponentTreeUI(GUI.getMainFrame());
                             this.b = new Board();
                             turnModelBoardintoGUIBoard(b);
                             checkSendCells=true;
                     }
-                    GUI.updateGodBar(myGod.toLowerCase());
+                    //GUI.updateGodBar(myGod.toLowerCase());
                     ready=false;
                     sendCells(movingPhase, cnh, VCEvent.Event.send_cells_move,evento);
                     break;
@@ -250,10 +250,7 @@ public class GUIHandler {
                 case send_cells_remove:
                     sendCells(removePhase,cnh, VCEvent.Event.send_cells_remove,evento);
                     break;
-                case undo_request:
-                    UndoButtonListener listener = new UndoButtonListener();
-
-                    GUI.getUpperLabel().setText("You can undo your move only in about 5 seconds. If you want to confirm press the button aside, please");
+                case undo_request: /*
                     int choose = 0;
                     long start = System.currentTimeMillis();
                     while (true){
@@ -265,12 +262,12 @@ public class GUIHandler {
                         if (listener.isGoForward())
                             choose = 1;
 
-                    buildEvent(cnh,choose, VCEvent.Event.undo_request);
+                    buildEvent(cnh,choose, VCEvent.Event.undo_request);*/
                     break;
                 case you_lost:
                     Object objectWinner = evento.getBox();
                     String winner = (String) objectWinner;
-                    ImageIcon endGameIcon = GUI.createIcon("lost.png");
+                    ImageIcon endGameIcon = GUI.createIcon("Lost.png");
                     Object[] defeatChoices = {"Ok"};
                     int defeat = JOptionPane.showOptionDialog(GUI.getMainFrame(),
                             winner + " is the winner. The game will end now!",
@@ -286,7 +283,7 @@ public class GUIHandler {
                     endGame=true;
                     break;
                 case you_won:
-                    ImageIcon winIcon = GUI.createIcon("win.png");
+                    ImageIcon winIcon = GUI.createIcon("Win.png");
                     Object[] winChoices = {"Ok"};
                     int win = JOptionPane.showOptionDialog(GUI.getMainFrame(),
                             "You are the winner. Thanks to have played",
@@ -302,7 +299,7 @@ public class GUIHandler {
                     endGame=true;
                     break;
                 case game_ended_foryou:
-                    ImageIcon endGameForYouIcon = GUI.createIcon("lost.png");
+                    ImageIcon endGameForYouIcon = GUI.createIcon("Lost.png");
                     Object[] options = {"Ok"};
                     int lost = JOptionPane.showOptionDialog(GUI.getMainFrame(),
                             "You can't move anymore. It's over for you",
@@ -428,78 +425,81 @@ public class GUIHandler {
                 } else {
                     GUI.getBoard()[i][j].setText("Worker: " + b.getBoardWorker(i, j) + "    Height:" + b.getBoardHeight(i, j));
                 }
-            }
-        }
-                /*String worker=null;
-                if(b.getBoardWorker(i,j)!=null) {
+                /*String worker = null;
+                if (b.getBoardWorker(i, j) != null) {
                     worker = String.valueOf(b.getBoardWorker(i, j));
                     System.out.println(worker);
                 }
-                switch (b.getBoardHeight(i,j)){
+                switch (b.getBoardHeight(i, j)) {
                     case 0:
-                        if(b.getBoardWorker(j,j)!=null){/*
-                            if(worker.equals(Color.ANSI_YELLOW)){
-                                GUI.getBoard()[i][j] = GUI.paintButton("blue.jpg");
-                            }else if(worker.equals(Color.ANSI_WHITE)){
-                                GUI.getBoard()[i][j] = GUI.paintButton("white.jpg");
-                            }else if(worker.equals(Color.ANSI_PURPLE)){
-                                GUI.getBoard()[i][j] = GUI.paintButton("brown.jpg");
+                        if (b.getBoardWorker(j, j) != null) {
+                            if (worker.equals(Model.Color.ANSI_YELLOW)) {
+                                updateSantoriniButton(i,j, "/DeusExMachina/blue.jpg");
+                            } else if (worker.equals(Model.Color.ANSI_WHITE)) {
+                                updateSantoriniButton(i,j, "/DeusExMachina/white.jpg");
+                            } else if (worker.equals(Model.Color.ANSI_PURPLE)) {
+                                updateSantoriniButton(i,j, "/DeusExMachina/brown.jpg");
                             }
-                        }
-                        else if(b.getBoardWorker(j,j)==null){
-                            GUI.getBoard()[i][j] = GUI.paintButton("0.jpg");
+                        } else if (b.getBoardWorker(j, j) == null) {
+                            //updateSantoriniButton(i,j, "/DeusExMachina/1.jpg");
                         }
                         break;
                     case 1:
-                        if(b.getBoardWorker(j,j)!=null){
-                           if(worker.equals(Color.ANSI_YELLOW)){
-                                GUI.getBoard()[i][j] = GUI.paintButton("blue1.jpg");
-                            }else if(worker.equals(Color.ANSI_WHITE)){
-                                GUI.getBoard()[i][j] = GUI.paintButton("white1.jpg");
-                            }else if(worker.equals(Color.ANSI_PURPLE)){
-                                GUI.getBoard()[i][j] = GUI.paintButton("brown1.jpg");
+                        if (b.getBoardWorker(j, j) != null) {
+                            if (worker.equals(Color.ANSI_YELLOW)) {
+                                updateSantoriniButton(i,j, "/DeusExMachina/blue1.jpg");
+                            } else if (worker.equals(Color.ANSI_WHITE)) {
+                                updateSantoriniButton(i,j, "/DeusExMachina/white1.jpg");
+                            } else if (worker.equals(Color.ANSI_PURPLE)) {
+                                updateSantoriniButton(i,j, "/DeusExMachina/brown1.jpg");
                             }
-                        }else if(b.getBoardWorker(j,j)==null){
-                            GUI.getBoard()[i][j] = GUI.paintButton("1.jpg");
+                        } else if (b.getBoardWorker(j, j) == null) {
+                            updateSantoriniButton(i,j, "/DeusExMachina/1.jpg");
                         }
-                       break;
+                        break;
                     case 2:
-                        if(b.getBoardWorker(i,j)!=null){/*
-                            if(worker.equals(Color.ANSI_YELLOW)){
-                                GUI.getBoard()[i][j] = GUI.paintButton("blue2.jpg");
-                            }else if(worker.equals(Color.ANSI_WHITE)){
-                                GUI.getBoard()[i][j] = GUI.paintButton("white2.jpg");
-                            }else if(worker.equals(Color.ANSI_PURPLE)){
-                                GUI.getBoard()[i][j] = GUI.paintButton("brown2.jpg");
+                        if (b.getBoardWorker(i, j) != null) {
+                            if (worker.equals(Color.ANSI_YELLOW)) {
+                                updateSantoriniButton(i,j, "/DeusExMachina/blue2.jpg");
+                            } else if (worker.equals(Color.ANSI_WHITE)) {
+                                updateSantoriniButton(i,j, "/DeusExMachina/white2.jpg");
+                            } else if (worker.equals(Color.ANSI_PURPLE)) {
+                                updateSantoriniButton(i,j, "/DeusExMachina/brown2.jpg");
                             }
-                        }else if(b.getBoardWorker(i,j)==null){
-                            GUI.getBoard()[i][j] = GUI.paintButton("2.jpg");
+                        } else if (b.getBoardWorker(i, j) == null) {
+                            updateSantoriniButton(i,j, "/DeusExMachina/2.jpg");
                         }
                         break;
                     case 3:
-                        if(b.getBoardWorker(i,j)!=null){/*
+                        if (b.getBoardWorker(i, j) != null) {
 
-                            if(worker.equals(Color.ANSI_YELLOW)){
-                                GUI.getBoard()[i][j] = GUI.paintButton("blue3.jpg");
-                            }else if(worker.equals(Color.ANSI_WHITE)){
-                                GUI.getBoard()[i][j] = GUI.paintButton("white3.jpg");
-                            }else if(worker.equals(Color.ANSI_PURPLE)){
-                                GUI.getBoard()[i][j] = GUI.paintButton("brown3.jpg");
+                            if (worker.equals(Color.ANSI_YELLOW)) {
+                                updateSantoriniButton(i,j, "/DeusExMachina/blue3.jpg");
+                            } else if (worker.equals(Color.ANSI_WHITE)) {
+                                updateSantoriniButton(i,j, "/DeusExMachina/white3.jpg");
+                            } else if (worker.equals(Color.ANSI_PURPLE)) {
+                                updateSantoriniButton(i,j, "/DeusExMachina/brown3.jpg");
                             }
-                        }else if(b.getBoardWorker(j,j)==null){
-                            GUI.getBoard()[i][j] = GUI.paintButton("3.jpg");
+                        } else if (b.getBoardWorker(j, j) == null) {
+                            updateSantoriniButton(i,j, "/DeusExMachina/3.jpg");
                         }
                         break;
                     case 4:
-                        GUI.getBoard()[i][j] = GUI.paintButton("4.jpg");
+                        updateSantoriniButton(i,j, "/DeusExMachina/4.jpg");
                         break;
                     default:
                         break;
-                }
+                }*/
             }
         }
 
-        SwingUtilities.updateComponentTreeUI(GUI.getMainFrame());*/
+        SwingUtilities.updateComponentTreeUI(GUI.getMainFrame());
+    }
+
+    private void updateSantoriniButton(int i, int j, String path){
+        GUI.getBoard()[i][j].setPath(path);
+        Graphics g = GUI.getBoard()[i][j].getGraphics();
+        GUI.getBoard()[i][j].paintComponent(g);
     }
 
     private void buildEvent(ClientNetworkHandler cnh, Object o, VCEvent.Event command){
@@ -879,25 +879,6 @@ public class GUIHandler {
         closeCellsWorkers();
         if(findIndex(validPositions, currentCoordinate)!=-1){
             currentCoordinate = new Coordinates(-1,-1);
-        }
-    }
-
-    class UndoButtonListener implements ActionListener{
-
-        public boolean isGoForward() {
-            return goForward;
-        }
-
-        private boolean goForward;
-        public UndoButtonListener()
-        {
-            this.goForward = false;
-        }
-
-
-        @Override
-        public void actionPerformed(ActionEvent e) {
-            this.goForward = true;
         }
     }
 
