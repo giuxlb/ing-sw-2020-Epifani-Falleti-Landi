@@ -520,12 +520,13 @@ public class GUI {
     private ImageIcon paintGods(String name){
         String path = "/gods/"+name+".jpg";
         try{
-            ImageIcon currentImg= new ImageIcon(ImageIO.read(getClass().getResource(path)));
+            ImageIcon currentImg= new ImageIcon(GUI.class.getResource(path));
             Image img = currentImg.getImage();
             Image newImg = img.getScaledInstance(130,190, Image.SCALE_SMOOTH);
             ImageIcon finalImg = new ImageIcon(newImg);
             return finalImg;
-        }catch (IOException ex){
+        }catch (Exception ex){
+            System.out.println("Problema nel jar");
             return null;
         }
 
@@ -772,6 +773,7 @@ public class GUI {
     }
 
     private void readGodsPowerForGodBar(String name) throws IOException{
+        godPower = new ArrayList<JLabel>();
         InputStream is = GUI.class.getResourceAsStream("/gods/"+name+"GodBar");
         InputStreamReader isr = new InputStreamReader(is);
         BufferedReader reader = new BufferedReader(isr);
