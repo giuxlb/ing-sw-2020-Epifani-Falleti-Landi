@@ -41,7 +41,7 @@ public class GUIHandler {
     protected static String myGod;
     private boolean checkSendCells;
     private boolean checkUpdate;
-    private Board b;
+    private Board b;12
     private String movingPhase = "go on";
     private String buildingPhase = "build on";
     private String removePhase = "remove";
@@ -715,11 +715,11 @@ public class GUIHandler {
     }
 
     private void paintBoardCell(ArrayList<Coordinates> validPositions) {
-        for (int i = 0; i < 5; i++) {
-            for (int j = 0; j < 5; j++) {
+        int i, j;
                 for (Coordinates c : validPositions) {
-                    if (c.getX() == i && c.getY() == j) {
                         Color worker = null;
+                        i=c.getX();
+                        j=c.getY();
                         if (b.getBoardWorker(i, j) != null) {
                             worker = (b.getBoardWorker(i, j)).getColor();
                         }
@@ -783,9 +783,6 @@ public class GUIHandler {
                                 break;
                         }
                     }
-                }
-            }
-        }
     }
 
     private void createGodsListener(int size, ArrayList<String> sentGods, JButton[] godsButton, JLabel lowerLabel){
