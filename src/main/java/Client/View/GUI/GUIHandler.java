@@ -222,8 +222,7 @@ public class GUIHandler {
                     int controlAsk=findIndex(positionWorkers, currentCoordinate);
                     while(controlAsk==-1){
                         GUI.getLowerLabel().setText("Invalid slection! Please select another cell");
-                        selectNewCell(positionWorkers);
-                        controlAsk=findIndex(positionWorkers, currentCoordinate);
+                        controlAsk=selectNewCell(positionWorkers);
                     }
                     currentCoordinate = new Coordinates(-1,-1);
                     buildEvent(cnh,controlAsk, VCEvent.Event.ask_for_worker);
@@ -706,8 +705,7 @@ public class GUIHandler {
         int control=findIndex(validPositions,currentCoordinate);
         while(control==-1){
             GUI.getLowerLabel().setText("Invalid move! Please select another cell");
-            selectNewCell(validPositions);
-            control=findIndex(validPositions, currentCoordinate);
+            control=selectNewCell(validPositions);
         }
         currentCoordinate =  new Coordinates(-1,-1);
         buildEvent(cnh,control,command);
@@ -918,7 +916,7 @@ public class GUIHandler {
         return false;
     }
 
-    private void selectNewCell(ArrayList<Coordinates> validPositions){
+    private int selectNewCell(ArrayList<Coordinates> validPositions){
         paintBoardCell(validPositions);
         SwingUtilities.updateComponentTreeUI(GUI.getMainFrame());
         currentCoordinate = new Coordinates(-1,-1);
@@ -931,9 +929,7 @@ public class GUIHandler {
         SwingUtilities.updateComponentTreeUI(GUI.getMainFrame());
         GUI.getLowerLabel().setText("Wait...");
         closeCellsWorkers();
-        if(findIndex(validPositions, currentCoordinate)!=-1){
-            currentCoordinate = new Coordinates(-1,-1);
-        }
+        return findIndex(validPositions,currentCoordinate);
     }
 
     class UndoCustomListener implements ActionListener{
