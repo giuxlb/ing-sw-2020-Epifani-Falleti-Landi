@@ -207,16 +207,16 @@ public class GUIHandler {
                     GUI.getLowerLabel().setText("");
                     Object objectChoices = evento.getBox();
                     ArrayList<Coordinates> positionWorkers = (ArrayList<Coordinates>) objectChoices;
-                    //paintBoardCell(positionWorkers);
-                    //SwingUtilities.updateComponentTreeUI(GUI.getMainFrame());
+                    paintBoardCell(positionWorkers);
+                    SwingUtilities.updateComponentTreeUI(GUI.getMainFrame());
                     currentCoordinate = new Coordinates(-1,-1);
                     bcw = new BoardCellWorker[Board.DIM][Board.DIM];
                     createBoardCellMouseListener(bcw, GUI.getBoard(), positionWorkers);
                     while(currentCoordinate.getX()==-1 && currentCoordinate.getY()==-1){
                         System.out.println("Attendo che il player scelga quale worker usare");
                     }
-                    //unpaintBoardCell(positionWorkers);
-                    //SwingUtilities.updateComponentTreeUI(GUI.getMainFrame());
+                    turnModelBoardintoGUIBoard(b);
+                    SwingUtilities.updateComponentTreeUI(GUI.getMainFrame());
                     GUI.getLowerLabel().setText("Wait...");
                     closeCellsWorkers();
                     int controlAsk=findIndex(positionWorkers, currentCoordinate);
@@ -368,8 +368,8 @@ public class GUIHandler {
                     sentGods= (ArrayList<String>)  objectSentGods;
                     godsSize = sentGods.size();
                     if(godsSize==1){
-                        myGod=sentGods.get(0);
-                        GUI.buildJDialogForFirstPlayer(myGod);
+                        myGod=sentGods.get(0).toUpperCase();
+                        GUI.buildJDialogForFirstPlayer(myGod.toLowerCase());
                         buildEvent(cnh, myGod, VCEvent.Event.send_chosen_cards);
                     }else{
                         ready=false;
@@ -692,15 +692,15 @@ public class GUIHandler {
         Object objectValidPositions = evento.getBox();
         ArrayList<Coordinates> validPositions = (ArrayList<Coordinates>)objectValidPositions;
         bcw = new BoardCellWorker[Board.DIM][Board.DIM];
-        //paintBoardCell(validPositions);
-        //SwingUtilities.updateComponentTreeUI(GUI.getMainFrame());
+        paintBoardCell(validPositions);
+        SwingUtilities.updateComponentTreeUI(GUI.getMainFrame());
         currentCoordinate = new Coordinates(-1,-1);
         createBoardCellMouseListener(bcw, GUI.getBoard(), validPositions);
         while(currentCoordinate.getX()==-1 && currentCoordinate.getY()==-1){
             System.out.println("Attendo che il client selezioni una cella");
         }
-        //unpaintBoardCell(validPositions);
-        //SwingUtilities.updateComponentTreeUI(GUI.getMainFrame());
+        turnModelBoardintoGUIBoard(b);
+        SwingUtilities.updateComponentTreeUI(GUI.getMainFrame());
         GUI.getLowerLabel().setText("Wait...");
         closeCellsWorkers();
         int control=findIndex(validPositions,currentCoordinate);
@@ -714,26 +714,74 @@ public class GUIHandler {
 
     }
 
-    //Da rivedere
-    private void paintBoardCell(ArrayList<Coordinates> validPositions){
+    private void paintBoardCell(ArrayList<Coordinates> validPositions) {
         for (int i = 0; i < 5; i++) {
             for (int j = 0; j < 5; j++) {
-                for (Coordinates c: validPositions){
-                    if(c.getX()==i && c.getY()==j){
-                        //GUI.getBoard()[i][j].setBackground(new java.awt.Color());
-                    }
-                }
-            }
-        }
-    }
-
-    //Da rivedere
-    private void unpaintBoardCell(ArrayList<Coordinates> validPositions){
-        for (int i = 0; i < Board.DIM; i++) {
-            for (int j = 0; j < Board.DIM; j++) {
-                for (Coordinates c: validPositions){
-                    if(c.getX()==i && c.getY()==j){
-                        GUI.getBoard()[i][j].setBackground(null);
+                for (Coordinates c : validPositions) {
+                    if (c.getX() == i && c.getY() == j) {
+                        Color worker = null;
+                        if (b.getBoardWorker(i, j) != null) {
+                            worker = (b.getBoardWorker(i, j)).getColor();
+                        }
+                        switch (b.getBoardHeight(i, j)) {
+                            case 0:
+                                if (b.getBoardWorker(i, j) != null) {
+                                    if (worker.equals(Model.Color.ANSI_YELLOW)) {
+                                        updateSantoriniButton(i, j, "/DeusExMachina/RedBlue.jpg");
+                                    } else if (worker.equals(Model.Color.ANSI_WHITE)) {
+                                        updateSantoriniButton(i, j, "/DeusExMachina/RedWhite.jpg");
+                                    } else if (worker.equals(Model.Color.ANSI_PURPLE)) {
+                                        updateSantoriniButton(i, j, "/DeusExMachina/RedBrown.jpg");
+                                    }
+                                } else if (b.getBoardWorker(i, j) == null) {
+                                    updateSantoriniButton(i, j, "/DeusExMachina/Red0.jpg");
+                                }
+                                break;
+                            case 1:
+                                if (b.getBoardWorker(i, j) != null) {
+                                    if (worker.equals(Color.ANSI_YELLOW)) {
+                                        updateSantoriniButton(i, j, "/DeusExMachina/RedBlue1.jpg");
+                                    } else if (worker.equals(Color.ANSI_WHITE)) {
+                                        updateSantoriniButton(i, j, "/DeusExMachina/RedWhite1.jpg");
+                                    } else if (worker.equals(Color.ANSI_PURPLE)) {
+                                        updateSantoriniButton(i, j, "/DeusExMachina/RedBrown1.jpg");
+                                    }
+                                } else if (b.getBoardWorker(i, j) == null) {
+                                    updateSantoriniButton(i, j, "/DeusExMachina/Red1.jpg");
+                                }
+                                break;
+                            case 2:
+                                if (b.getBoardWorker(i, j) != null) {
+                                    if (worker.equals(Color.ANSI_YELLOW)) {
+                                        updateSantoriniButton(i, j, "/DeusExMachina/RedBlue2.jpg");
+                                    } else if (worker.equals(Color.ANSI_WHITE)) {
+                                        updateSantoriniButton(i, j, "/DeusExMachina/RedWhite2.jpg");
+                                    } else if (worker.equals(Color.ANSI_PURPLE)) {
+                                        updateSantoriniButton(i, j, "/DeusExMachina/RedBrown2.jpg");
+                                    }
+                                } else if (b.getBoardWorker(i, j) == null) {
+                                    updateSantoriniButton(i, j, "/DeusExMachina/Red2.jpg");
+                                }
+                                break;
+                            case 3:
+                                if (b.getBoardWorker(i, j) != null) {
+                                    if (worker.equals(Color.ANSI_YELLOW)) {
+                                        updateSantoriniButton(i, j, "/DeusExMachina/RedBlue3.jpg");
+                                    } else if (worker.equals(Color.ANSI_WHITE)) {
+                                        updateSantoriniButton(i, j, "/DeusExMachina/RedWhite3.jpg");
+                                    } else if (worker.equals(Color.ANSI_PURPLE)) {
+                                        updateSantoriniButton(i, j, "/DeusExMachina/RedBrown3.jpg");
+                                    }
+                                } else if (b.getBoardWorker(i, j) == null) {
+                                    updateSantoriniButton(i, j, "/DeusExMachina/Red3.jpg");
+                                }
+                                break;
+                            case 4:
+                                updateSantoriniButton(i, j, "/DeusExMachina/Red4.jpg");
+                                break;
+                            default:
+                                break;
+                        }
                     }
                 }
             }
@@ -874,16 +922,16 @@ public class GUIHandler {
     }
 
     private void selectNewCell(ArrayList<Coordinates> validPositions){
-        //paintBoardCell(validPositions);
-        //SwingUtilities.updateComponentTreeUI(GUI.getMainFrame());
+        paintBoardCell(validPositions);
+        SwingUtilities.updateComponentTreeUI(GUI.getMainFrame());
         currentCoordinate = new Coordinates(-1,-1);
         bcw = new BoardCellWorker[Board.DIM][Board.DIM];
         createBoardCellMouseListener(bcw, GUI.getBoard(), validPositions);
         while(currentCoordinate.getY()==-1 && currentCoordinate.getX()==-1){
             System.out.println("Attendo che il player scelga la cella");
         }
-        //unpaintBoardCell(validPositions);
-        //SwingUtilities.updateComponentTreeUI(GUI.getMainFrame());
+        turnModelBoardintoGUIBoard(b);
+        SwingUtilities.updateComponentTreeUI(GUI.getMainFrame());
         GUI.getLowerLabel().setText("Wait...");
         closeCellsWorkers();
         if(findIndex(validPositions, currentCoordinate)!=-1){
