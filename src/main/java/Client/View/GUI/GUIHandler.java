@@ -57,9 +57,6 @@ public class GUIHandler {
         playerID=0;
         checkSendCells=false;
         checkUpdate=false;
-        previousCoordinate = new Coordinates(0,-1);
-        currentCoordinate = new Coordinates(-1,0);
-
     }
 
     public void launchConnection(){
@@ -212,7 +209,8 @@ public class GUIHandler {
                     //paintBoardCell(positionWorkers);
                     //SwingUtilities.updateComponentTreeUI(GUI.getMainFrame());
                     currentCoordinate = new Coordinates(-1,-1);
-                    createBoardCellMouseListener(GUI.getBoard());
+                    bcw = new BoardCellWorker[Board.DIM][Board.DIM];
+                    createBoardCellMouseListener(bcw, GUI.getBoard(), positionWorkers);
                     while(currentCoordinate.getX()==-1 && currentCoordinate.getY()==-1){
                         System.out.println("Attendo che il player scelga quale worker usare");
                     }
@@ -269,6 +267,7 @@ public class GUIHandler {
 
                     buildEvent(cnh,choose, VCEvent.Event.undo_request);
                     break;*/
+                    break;
                 case you_lost:
                     Object objectWinner = evento.getBox();
                     String winner = (String) objectWinner;
@@ -420,20 +419,6 @@ public class GUIHandler {
             }
 
         }
-
-        counter =0;
-        for (int i = 0; i < Board.DIM; i++) {
-            for (int j = 0; j < Board.DIM; j++) {
-                b.setBoardHeight(i, j, socketBoardCell.get(counter).getHeight());
-                if (socketBoardCell.get(counter).getWorkerColor() != null) {
-                    b.setBoardWorker(i, j, new Worker(i, j, socketBoardCell.get(counter).getWorkerColor()));
-                } else {
-                    b.setBoardWorker(i, j, null);
-                }
-                System.out.println("Worker: " + b.getBoardWorker(i,j) + "    Height: " + b.getBoardHeight(i,j));
-            }
-
-        }
     }
 
     private void turnModelBoardintoGUIBoard(Board b){
@@ -444,9 +429,9 @@ public class GUIHandler {
                 } else {
                     GUI.getBoard()[i][j].setText("Worker: " + b.getBoardWorker(i, j) + "    Height:" + b.getBoardHeight(i, j));
                 }*/
-                String worker = null;
+                Color worker = null;
                 if (b.getBoardWorker(i, j) != null) {
-                    worker = String.valueOf((b.getBoardWorker(i, j)).getColor());
+                    worker = (b.getBoardWorker(i, j)).getColor();
                     System.out.println(worker);
                 }
                 switch (b.getBoardHeight(i, j)) {
@@ -462,7 +447,7 @@ public class GUIHandler {
                         }
                         break;
                     case 1:
-                        if (b.getBoardWorker(j, j) != null) {
+                        if (b.getBoardWorker(i, j) != null) {
                             if (worker.equals(Color.ANSI_YELLOW)) {
                                 updateSantoriniButton(i,j, "/DeusExMachina/blue1.jpg");
                             } else if (worker.equals(Color.ANSI_WHITE)) {
@@ -470,7 +455,7 @@ public class GUIHandler {
                             } else if (worker.equals(Color.ANSI_PURPLE)) {
                                 updateSantoriniButton(i,j, "/DeusExMachina/brown1.jpg");
                              }
-                        } else if (b.getBoardWorker(j, j) == null) {
+                        } else if (b.getBoardWorker(i, j) == null) {
                             updateSantoriniButton(i,j, "/DeusExMachina/1.jpg");
                         }
                         break;
@@ -496,7 +481,7 @@ public class GUIHandler {
                             } else if (worker.equals(Color.ANSI_PURPLE)) {
                                 updateSantoriniButton(i,j, "/DeusExMachina/brown3.jpg");
                             }
-                        } else if (b.getBoardWorker(j, j) == null) {
+                        } else if (b.getBoardWorker(i, j) == null) {
                             updateSantoriniButton(i,j, "/DeusExMachina/3.jpg");
                         }
                         break;
@@ -701,7 +686,7 @@ public class GUIHandler {
         //paintBoardCell(validPositions);
         //SwingUtilities.updateComponentTreeUI(GUI.getMainFrame());
         currentCoordinate = new Coordinates(-1,-1);
-        createBoardCellMouseListener(GUI.getBoard());
+        createBoardCellMouseListener(bcw, GUI.getBoard(), validPositions);
         while(currentCoordinate.getX()==-1 && currentCoordinate.getY()==-1){
             System.out.println("Attendo che il client selezioni una cella");
         }
@@ -753,10 +738,14 @@ public class GUIHandler {
         }
     }
 
-    private void createBoardCellMouseListener(JButton[][] GUIBoard){
+    private void createBoardCellMouseListener(BoardCellWorker[][] bcw, JButton[][] GUIBoard, ArrayList<Coordinates> validPositions){
         for (int i=0;i<Board.DIM;i++){
             for(int j=0;j<Board.DIM; j++){
-                GUIBoard[i][j].addMouseListener(new BoardCellMouseListener(GUI.getLowerLabel(), i, j, b.getBoardHeight(i,j), b.getBoardWorker(i,j)));
+                for(Coordinates c: validPositions){
+                    if(c.getX()==i && c.getY()==j){
+                        GUIBoard[i][j].addMouseListener(new BoardCellMouseListener(bcw, GUI.getLowerLabel(), i, j, b.getBoardHeight(i,j), b.getBoardWorker(i,j)));
+                    }
+                }
             }
         }
     }
@@ -765,32 +754,25 @@ public class GUIHandler {
         int i, j, height;
         JLabel lowerLabel;
         Worker w;
-        ArrayList<Coordinates> validPosition;
         BoardCellWorker[][] bcw;
 
-        public BoardCellMouseListener(JLabel lowerLabel, int i, int j, int height, Worker w){
+        public BoardCellMouseListener(BoardCellWorker[][] bcw, JLabel lowerLabel, int i, int j, int height, Worker w){
+            this.bcw=bcw;
             this.lowerLabel=lowerLabel;
             this.i=i;
             this.j=j;
             this.height=height;
             this.w=w;
-            System.out.println("Sto costruendo il boardCellMouseListener");
         }
 
         @Override
         public void mouseClicked(MouseEvent e) {
-            for(int i=0;i<Board.DIM; i++){
-                for(int j=0;j<Board.DIM;j++){
-                    if(e.getSource()==GUI.getBoard()[i][j]);
-                    currentCoordinate=new Coordinates(i,j);
-                    System.out.println("E' stato il bottone in posizione i: " + i + ", j: " + j);
-                }
-            }
+            bcw[i][j] = new BoardCellWorker(i, j);
         }
 
         @Override
         public void mousePressed(MouseEvent e) {
-            //bcw[i][j] = new BoardCellWorker(i, j);
+            bcw[i][j] = new BoardCellWorker(i, j);
         }
 
         @Override
@@ -813,6 +795,7 @@ public class GUIHandler {
             lowerLabel.setText("");
         }
     }
+
 
     private Integer findIndex(ArrayList<Coordinates> validPositions, Coordinates chosenCoordinates){
         int index=0;
@@ -885,7 +868,8 @@ public class GUIHandler {
         //paintBoardCell(validPositions);
         //SwingUtilities.updateComponentTreeUI(GUI.getMainFrame());
         currentCoordinate = new Coordinates(-1,-1);
-        createBoardCellMouseListener(GUI.getBoard());
+        bcw = new BoardCellWorker[Board.DIM][Board.DIM];
+        createBoardCellMouseListener(bcw, GUI.getBoard(), validPositions);
         while(currentCoordinate.getY()==-1 && currentCoordinate.getX()==-1){
             System.out.println("Attendo che il player scelga la cella");
         }
