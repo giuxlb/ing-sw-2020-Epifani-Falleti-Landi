@@ -518,8 +518,9 @@ public class GUI {
     }
 
     private ImageIcon paintGods(String name){
+        String path = "/gods/"+name+".png";
         try{
-            ImageIcon currentImg= new ImageIcon(ImageIO.read(getClass().getResource("/gods/"+name+".png")));
+            ImageIcon currentImg= new ImageIcon(ImageIO.read(getClass().getResource(path)));
             Image img = currentImg.getImage();
             Image newImg = img.getScaledInstance(130,190, Image.SCALE_SMOOTH);
             ImageIcon finalImg = new ImageIcon(newImg);
@@ -633,7 +634,6 @@ public class GUI {
         godImageGBC.insets = new Insets(3,3,5,3);
         godBarManager.add(godImage, godImageGBC);
 
-        godPower = new ArrayList<JLabel>();
     }
 
    protected void updateGodBar(String info, String godName){
@@ -776,12 +776,6 @@ public class GUI {
         InputStreamReader isr = new InputStreamReader(is);
         BufferedReader reader = new BufferedReader(isr);
         String line = null;
-
-        if(godPower.size()!=0){
-            for(int i=0;i<godPower.size();i++){
-                godPower.remove(i);
-            }
-        }
 
         while((line = reader.readLine()) != null)
         {
