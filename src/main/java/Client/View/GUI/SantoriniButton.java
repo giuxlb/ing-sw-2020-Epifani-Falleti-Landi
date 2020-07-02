@@ -6,14 +6,14 @@ import java.awt.*;
 import java.io.IOException;
 
 public class SantoriniButton extends JButton {
-    private String path;
+    private String path="/BoardCell.jpg";
 
     public void setPath(String path) {
         this.path = path;
     }
 
-    public SantoriniButton(String text, ImageIcon image){
-        super(text, image);
+    public SantoriniButton(ImageIcon image){
+        super(image);
     }
 
     protected void paintComponent(Graphics g){

@@ -20,7 +20,6 @@ public class CLI {
         System.out.println("Inserisci l'indirizzo del server:");
         Scanner addrScan = new Scanner(System.in);
         String addr = addrScan.nextLine();
-        addrScan.close();
 
         CLI CLI = new CLI();
         ClientNetworkHandler cnh = new ClientNetworkHandler(CLI,addr);

@@ -184,7 +184,7 @@ public class GUIHandler {
                     Object objectCurrentPlayerInformation = evento.getBox();
                     ArrayList<String> currentPlayerInformation= (ArrayList<String>) objectCurrentPlayerInformation;
                     GUI.getUpperLabel().setText(currentPlayerInformation.get(0).toLowerCase() + " is playing with god " + currentPlayerInformation.get(1).toLowerCase());
-                    //GUI.updateGodBar(currentPlayerInformation.get(1).toLowerCase());
+                    GUI.updateGodBar("Your opponent's card is: ", currentPlayerInformation.get(1).toLowerCase());
                     SwingUtilities.updateComponentTreeUI(GUI.getMainFrame());
                     break;
                 case update:
@@ -193,7 +193,7 @@ public class GUIHandler {
                         GUI.getLowerLabel().setText("");
                         GUI.destroyGodsWindow(godsSize);
                         GUI.buildMainWindow();
-                        //GUI.updateGodBar(myGod.toLowerCase());
+                        GUI.updateGodBar("Your card is: ", myGod.toLowerCase());
                         SwingUtilities.updateComponentTreeUI(GUI.getMainFrame());
                         checkUpdate = true;
                     }
@@ -240,7 +240,7 @@ public class GUIHandler {
                             turnModelBoardintoGUIBoard(b);
                             checkSendCells=true;
                     }
-                    //GUI.updateGodBar(myGod.toLowerCase());
+                    GUI.updateGodBar("Your card is: ", myGod.toLowerCase());
                     ready=false;
                     sendCells(movingPhase, cnh, VCEvent.Event.send_cells_move,evento);
                     break;
@@ -250,7 +250,8 @@ public class GUIHandler {
                 case send_cells_remove:
                     sendCells(removePhase,cnh, VCEvent.Event.send_cells_remove,evento);
                     break;
-                case undo_request: /*
+                case undo_request:/*
+                    GUI.buildUndoJDialog();
                     int choose = 0;
                     long start = System.currentTimeMillis();
                     while (true){
@@ -258,12 +259,16 @@ public class GUIHandler {
                             if (!(((System.currentTimeMillis()-start) < 5000) && !listener.isGoForward())) break;
 
                     }
+                    GUI.getUndoDialog().setVisible(false);
+                    SwingUtilities.updateComponentTreeUI(GUI.getMainFrame());
 
-                        if (listener.isGoForward())
+                        if (listener.isGoForward()){
                             choose = 1;
+                        }
 
-                    buildEvent(cnh,choose, VCEvent.Event.undo_request);*/
-                    break;
+
+                    buildEvent(cnh,choose, VCEvent.Event.undo_request);
+                    break;*/
                 case you_lost:
                     Object objectWinner = evento.getBox();
                     String winner = (String) objectWinner;
@@ -415,19 +420,33 @@ public class GUIHandler {
             }
 
         }
+
+        counter =0;
+        for (int i = 0; i < Board.DIM; i++) {
+            for (int j = 0; j < Board.DIM; j++) {
+                b.setBoardHeight(i, j, socketBoardCell.get(counter).getHeight());
+                if (socketBoardCell.get(counter).getWorkerColor() != null) {
+                    b.setBoardWorker(i, j, new Worker(i, j, socketBoardCell.get(counter).getWorkerColor()));
+                } else {
+                    b.setBoardWorker(i, j, null);
+                }
+                System.out.println("Worker: " + b.getBoardWorker(i,j) + "    Height: " + b.getBoardHeight(i,j));
+            }
+
+        }
     }
 
     private void turnModelBoardintoGUIBoard(Board b){
         for(int i=0;i<Board.DIM;i++) {
             for (int j = 0; j < Board.DIM; j++) {
-                if (b.getBoardWorker(i, j) == null) {
+                /*if (b.getBoardWorker(i, j) == null) {
                     GUI.getBoard()[i][j].setText("Worker: null" + "    Height:" + b.getBoardHeight(i, j));
                 } else {
                     GUI.getBoard()[i][j].setText("Worker: " + b.getBoardWorker(i, j) + "    Height:" + b.getBoardHeight(i, j));
-                }
-                /*String worker = null;
+                }*/
+                String worker = null;
                 if (b.getBoardWorker(i, j) != null) {
-                    worker = String.valueOf(b.getBoardWorker(i, j));
+                    worker = String.valueOf((b.getBoardWorker(i, j)).getColor());
                     System.out.println(worker);
                 }
                 switch (b.getBoardHeight(i, j)) {
@@ -440,8 +459,6 @@ public class GUIHandler {
                             } else if (worker.equals(Model.Color.ANSI_PURPLE)) {
                                 updateSantoriniButton(i,j, "/DeusExMachina/brown.jpg");
                             }
-                        } else if (b.getBoardWorker(j, j) == null) {
-                            //updateSantoriniButton(i,j, "/DeusExMachina/1.jpg");
                         }
                         break;
                     case 1:
@@ -452,7 +469,7 @@ public class GUIHandler {
                                 updateSantoriniButton(i,j, "/DeusExMachina/white1.jpg");
                             } else if (worker.equals(Color.ANSI_PURPLE)) {
                                 updateSantoriniButton(i,j, "/DeusExMachina/brown1.jpg");
-                            }
+                             }
                         } else if (b.getBoardWorker(j, j) == null) {
                             updateSantoriniButton(i,j, "/DeusExMachina/1.jpg");
                         }
@@ -472,7 +489,6 @@ public class GUIHandler {
                         break;
                     case 3:
                         if (b.getBoardWorker(i, j) != null) {
-
                             if (worker.equals(Color.ANSI_YELLOW)) {
                                 updateSantoriniButton(i,j, "/DeusExMachina/blue3.jpg");
                             } else if (worker.equals(Color.ANSI_WHITE)) {
@@ -489,7 +505,7 @@ public class GUIHandler {
                         break;
                     default:
                         break;
-                }*/
+                }
             }
         }
 

@@ -6,7 +6,7 @@ import java.awt.*;
 import java.io.IOException;
 
 public class SantoriniLabel extends JLabel {
-    private String path;
+    private String path="/DefaultGodImage.jpg";
 
     public SantoriniLabel(ImageIcon image) {
         super(image);

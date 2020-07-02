@@ -55,6 +55,7 @@ public class GUI {
     private SantoriniButton[][] board;
     //godBar elements
     private JPanel godPanel;
+    private JLabel godInfo;
     private SantoriniLabel godImage;
     private ArrayList<JLabel> godPower;
 
@@ -580,7 +581,7 @@ public class GUI {
         board=new SantoriniButton[Board.DIM][Board.DIM];
         GridBagConstraints[][] boardCostraints = new GridBagConstraints[Board.DIM][Board.DIM];
 
-        boardLabel = paintScreen("SantoriniBoard.png", 700, 700);
+        boardLabel = new JLabel("");
         boardLabel.setSize(700, 700);
         boardLabel.setLayout(new GridBagLayout());
 
@@ -589,37 +590,44 @@ public class GUI {
                 boardCostraints[i][j] = new GridBagConstraints();
                 boardCostraints[i][j].gridx=j;
                 boardCostraints[i][j].gridy=i;
-                board[i][j]= new SantoriniButton("", paintBackgroundForSantoriniButton("DefaultButtonImage.jpg"));
-                board[i][j].setContentAreaFilled(false);
-                board[i][j].setBorderPainted(true);
+                board[i][j]= new SantoriniButton(paintBackgroundForSantoriniButton("BoardCell.jpg"));
+                board[i][j].setPreferredSize(new Dimension(140,140));
                 boardLabel.add(board[i][j], boardCostraints[i][j]);
             }
         }
+        SwingUtilities.updateComponentTreeUI(mainFrame);
     }
 
     public SantoriniButton[][] getBoard() {
         return board;
     }
 
-    /*private void buildGodBar(){
-
+    private void buildGodBar(){
+        godInfo = new JLabel();
         godImage = new SantoriniLabel(paintScreenForSantoriniLabel("DefaultGodImage.jpg", 240, 360));
         godPanel = new JPanel();
         godPanel.setLayout(new GridBagLayout());
 
-        GridBagConstraints godImageGBC = new GridBagConstraints();
-        godImageGBC.gridx = 0;
-        godImageGBC.gridy = 0;
-        godImageGBC.insets = new Insets(5,3,5,3);
-        godPanel.add(godImage, godImageGBC);
-    }*/
+        GridBagConstraints godInfoGBC = new GridBagConstraints();
+        godInfoGBC.gridx = 1;
+        godInfoGBC.gridy = 0;
+        godInfoGBC.insets = new Insets(5,3,3,3);
+        godPanel.add(godInfo, godInfoGBC);
 
-   /* protected void updateGodBar(String godName){
+        GridBagConstraints godImageGBC = new GridBagConstraints();
+        godImageGBC.gridx = 1;
+        godImageGBC.gridy = 1;
+        godImageGBC.insets = new Insets(3,3,5,3);
+        godPanel.add(godImage, godImageGBC);
+    }
+
+   protected void updateGodBar(String info, String godName){
+        godInfo.setText(info);
         godImage.setPath("/gods/" + godName+ ".png");
         Graphics g = godImage.getGraphics();
         godImage.paintComponent(g);
 
-        /*try {
+        try {
             readGodsPowerForGodBar(godName);
         }catch (IOException e){
             godPower.add(new JLabel("Unable to load god's power"));
@@ -628,14 +636,14 @@ public class GUI {
         GridBagConstraints[] godPowerConstraints = new GridBagConstraints[godPower.size()];
         for (int i=0;i<godPower.size();i++){
             godPowerConstraints[i] = new GridBagConstraints();
-            godPowerConstraints[i].gridx=0;
-            godPowerConstraints[i].gridy=i+1;
+            godPowerConstraints[i].gridx=1;
+            godPowerConstraints[i].gridy=i+2;
             godPowerConstraints[i].insets = new Insets(3,3,3,3);
             godPanel.add(godPower.get(i), godPowerConstraints[i]);
         }
 
         SwingUtilities.updateComponentTreeUI(mainFrame);
-    }*/
+    }
 
     public JTextField getIpTextField() {
         return ipTextField;
@@ -645,7 +653,7 @@ public class GUI {
         return ipButton;
     }
 
-    private void buildUndoJDialog(){
+    protected void buildUndoJDialog(){
         undoDialog = new JDialog(mainFrame);
         undoMessage = new JLabel("Do you want to undo your last move?");
         undoTimeMessage = new JLabel("(You have only 5 seconds to choose)");
@@ -702,22 +710,25 @@ public class GUI {
         undoDialog.setVisible(true);
     }
 
-
+    public JDialog getUndoDialog() {
+        return undoDialog;
+    }
 
     protected void buildMainWindow(){
-        mainWindowManager = paintScreen("GodsScreen.png", 1920,1080);
+        mainFrame.setSize(1000,750);
+        mainWindowManager = paintScreen("GodsScreen.png", 1000,700);
         buildBoard();
-        //buildGodBar();
+        buildGodBar();
 
         mainWindowManager.setLayout(new BorderLayout());
         mainWindowManager.add(boardLabel, BorderLayout.CENTER);
-        //mainWindowManager.add(godPanel, BorderLayout.WEST);
+        mainWindowManager.add(godPanel, BorderLayout.WEST);
 
         mainFrame.add(mainWindowManager, BorderLayout.CENTER);
     }
 
     protected void readGodsPower(JLabel label, String name) throws IOException{
-        InputStream is = GUI.class.getResourceAsStream("/gods/"+name+".properties");
+        InputStream is = GUI.class.getResourceAsStream("/gods/"+name);
         InputStreamReader isr = new InputStreamReader(is);
         BufferedReader reader = new BufferedReader(isr);
         String line = null;
@@ -735,7 +746,7 @@ public class GUI {
 
     private void readGodsPowerForGodBar(String name) throws IOException{
         godPower = new ArrayList<JLabel>();
-        InputStream is = GUI.class.getResourceAsStream("/gods/"+name+"GodBar.properties");
+        InputStream is = GUI.class.getResourceAsStream("/gods/"+name+"GodBar");
         InputStreamReader isr = new InputStreamReader(is);
         BufferedReader reader = new BufferedReader(isr);
         String line = null;
