@@ -41,7 +41,7 @@ public class GUIHandler {
     protected static String myGod;
     private boolean checkSendCells;
     private boolean checkUpdate;
-    private Board b;12
+    private Board b;
     private String movingPhase = "go on";
     private String buildingPhase = "build on";
     private String removePhase = "remove";
@@ -368,7 +368,7 @@ public class GUIHandler {
                     sentGods= (ArrayList<String>)  objectSentGods;
                     godsSize = sentGods.size();
                     if(godsSize==1){
-                        myGod=sentGods.get(0).toUpperCase();
+                        myGod=sentGods.get(0);
                         GUI.buildJDialogForFirstPlayer(myGod.toLowerCase());
                         buildEvent(cnh, myGod, VCEvent.Event.send_chosen_cards);
                     }else{

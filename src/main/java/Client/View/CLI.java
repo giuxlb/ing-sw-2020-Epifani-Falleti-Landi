@@ -377,7 +377,7 @@ public class CLI {
                         System.out.print("Scegli la " + (i+1) + "° carta -> ");
                         card = s.nextLine();
                         if(c.isCardCorrect(card,gods)){
-                            chosenGods.add(card);
+                            chosenGods.add(card.toUpperCase());
                             gods.remove(card.toUpperCase());
                             i++;
                         }
@@ -397,7 +397,7 @@ public class CLI {
                         System.out.println("La tua carta divinità sarà " + sentGods.get(0)); //Operazione sulla GUI
                         this.myCard=sentGods.get(0);
                         //In realtà non ci sarebbe bisogno dello statement successivo
-                        buildEvent(cnh, sentGods.get(0), VCEvent.Event.send_chosen_cards);
+                        buildEvent(cnh, sentGods.get(0).toUpperCase(), VCEvent.Event.send_chosen_cards);
                     }else{
                         for(String god:sentGods){
                             System.out.print(god + " ");
@@ -405,11 +405,20 @@ public class CLI {
                         System.out.println();
                         System.out.print("Digita il nome della divinità che preferisci ->");
                         //Il controller deve controllare che effettivamente la divinità scelta sia un elemento delle divinità ricevute
-                        String chosenGod= s.nextLine(); //Operazione GUI
+                        boolean correct = false;
+                        String chosenGod = null;
+                        while(!correct) {
+                            chosenGod = s.nextLine(); //Operazione GUI
+                            if(c.isCardCorrect(chosenGod,sentGods)){
+                                correct=true;
+                            }else{
+                                System.out.println("Carta non valida, riprova");
+                            }
+                        }
                         //chosenGod=validCard(chosenGod,sentGods);
                         this.myCard=chosenGod;
                         System.out.println();
-                        buildEvent(cnh, chosenGod, VCEvent.Event.send_chosen_cards);
+                        buildEvent(cnh, chosenGod.toUpperCase(), VCEvent.Event.send_chosen_cards);
                     }
                     break;
                 case player_disconnected_game_ended:

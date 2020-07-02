@@ -147,7 +147,10 @@ public class GameControl {
             }
 
             cardChoice = virtualView.sendChosenCards(players.get(game.getTurnNumber()), chosenCards);
-            if(cardChoice==null) return;
+            if(cardChoice==null){
+                System.out.println("STO QUI");
+                return;
+            }
 
             //setto l'ultima carta rimasta al primo player
             players.get(game.getTurnNumber()).chooseCard(cardChoice);
