@@ -168,18 +168,25 @@ public class CLI {
                     String input = s.nextLine();
                     int n=-1;
                     boolean temp=false;
+
                     while(temp==false){
                         while((n=c.tryToCastStringInInt(input))==-1){
                             System.out.println("Errore, numero non valido, inserisci nuovamente");
                             input = s.nextLine();
                         }
                         if(c.checkNumberOfPlayers(n)==false) {
-                            System.out.println("Non hai messo 2 o 3");
+                            System.out.println("Non hai messo 2 o 3, inserisci nuovamente il numero di giocatori");
+                            input = s.nextLine();
                         }else{
                             temp=true;
                         }
                     }
+
+
+
                     this.playersNumber=n;
+
+
                     buildEvent(cnh, n, VCEvent.Event.setup_request);
                     break;
                 case username_request :
@@ -393,7 +400,7 @@ public class CLI {
                     endGame=true;
                     break;
                 default:
-                    System.out.println("Errore nel protocollo");
+
                     break;
             }
 
