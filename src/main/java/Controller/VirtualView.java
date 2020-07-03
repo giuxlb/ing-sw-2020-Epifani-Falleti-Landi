@@ -676,8 +676,10 @@ public class VirtualView {
         if (numberOfPlayers != null) {
             VCEvent evento = new VCEvent(p.getUsername(), VCEvent.Event.player_disconnected_game_ended);
             for (int i = 0; i < numberOfPlayers; i++) {
-                if (!(p.getUsername().equals(players.get(i).getUsername())) && serverHandler.getClients()[i] != null)
+                if (!(p.getUsername().equals(players.get(i).getUsername())) && serverHandler.getClients()[i] != null) {
+                    System.out.println("Mando l'evento a "+ i);
                     serverHandler.sendVCEventTo(evento, i);
+                }
             }
         }
     }

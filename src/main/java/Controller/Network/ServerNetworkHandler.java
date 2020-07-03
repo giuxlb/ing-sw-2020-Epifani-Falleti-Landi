@@ -124,7 +124,7 @@ public class ServerNetworkHandler  implements Runnable, ClientObserver {
         int n = numberOfPlayers;
 
         System.out.println(n);
-        while (numberOfPlayers > 1) {
+        while (numberOfPlayers > 1 ) {
             try{
                 clients[counter] = server.accept();
                 clients[counter].setSoTimeout(20000);
@@ -141,6 +141,13 @@ public class ServerNetworkHandler  implements Runnable, ClientObserver {
                 if (counter == 2) {
                     receiver2.canReceiveEvents();
                     receiver2.start();
+                    if (checkFinishFlags() == true) {
+                        System.out.println("Sto scollegando il player perchè il primo si è scollegato");
+                        clients[0] = null;
+                        virtualView.player_disconnected_game_ended(virtualView.getPlayers().get(0));
+                        numberOfPlayers = 1;
+                        break;
+                    }
                 }
                 if (counter == 3) {
                     receiver3.canReceiveEvents();
@@ -267,7 +274,7 @@ public class ServerNetworkHandler  implements Runnable, ClientObserver {
             } catch (IOException e) {
 
                 System.out.println("Scollego perchè non riesco a mandare un evento");
-               // e.printStackTrace();
+
                 this.virtualView.playerDisconnected(clientIndex);
             }
             this.canWrite[clientIndex] = true;
@@ -337,4 +344,7 @@ public class ServerNetworkHandler  implements Runnable, ClientObserver {
 
         return false;
     }
+
+
+
 }
