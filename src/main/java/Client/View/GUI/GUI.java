@@ -225,7 +225,7 @@ public class GUI {
 
     private ImageIcon paintScreenForSantoriniLabel(String name, int width, int height) {
         try{
-            ImageIcon currentIcon= new ImageIcon(ImageIO.read(getClass().getResource("/"+(name.toUpperCase()))));
+            ImageIcon currentIcon= new ImageIcon(ImageIO.read(getClass().getResource("/"+ name)));
             Image tmp = currentIcon.getImage();
             Image newIcon = tmp.getScaledInstance(width,height, Image.SCALE_SMOOTH);
             ImageIcon finalIcon = new ImageIcon(newIcon);
@@ -629,7 +629,7 @@ public class GUI {
         godInfo = new JLabel();
         godInfo.setPreferredSize(new Dimension(500,700));
         godInfo.setFont(defaultFont);
-        godImage = new SantoriniLabel(paintScreenForSantoriniLabel("DefaultGodImage.jpg", 240, 360));
+        godImage = new SantoriniLabel(paintScreenForSantoriniLabel("DEFAULTGODIMAGE.jpg", 240, 360));
         godPowerLines = new JLabel[3];
         godBarManager = new JLabel();
         godBarManager.setLayout(new GridBagLayout());
@@ -766,11 +766,11 @@ public class GUI {
     protected void buildMainWindow(){
         mainWindowManager = paintScreen("GodsScreen.jpg", 1920,1080);
         buildBoard();
-        buildGodBar();
+        //buildGodBar();
 
         mainWindowManager.setLayout(new BorderLayout());
         mainWindowManager.add(boardLabel, BorderLayout.CENTER);
-        mainWindowManager.add(godBarManager, BorderLayout.WEST);
+        //mainWindowManager.add(godBarManager, BorderLayout.WEST);
 
         mainFrame.add(mainWindowManager, BorderLayout.CENTER);
     }

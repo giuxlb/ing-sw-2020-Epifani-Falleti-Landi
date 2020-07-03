@@ -184,7 +184,7 @@ public class GUIHandler {
                     Object objectCurrentPlayerInformation = evento.getBox();
                     ArrayList<String> currentPlayerInformation= (ArrayList<String>) objectCurrentPlayerInformation;
                     GUI.getUpperLabel().setText(currentPlayerInformation.get(0).toLowerCase() + " is playing with god " + currentPlayerInformation.get(1).toLowerCase());
-                    GUI.updateGodBar("Your opponent's card is: ", currentPlayerInformation.get(1).toUpperCase());
+                    //GUI.updateGodBar("Your opponent's card is: ", currentPlayerInformation.get(1).toUpperCase());
                     SwingUtilities.updateComponentTreeUI(GUI.getMainFrame());
                     break;
                 case update:
@@ -193,7 +193,7 @@ public class GUIHandler {
                         GUI.getLowerLabel().setText("");
                         GUI.destroyGodsWindow(godsSize);
                         GUI.buildMainWindow();
-                        GUI.updateGodBar("Your card is: ", myGod.toUpperCase());
+                        //GUI.updateGodBar("Your card is: ", myGod.toUpperCase());
                         SwingUtilities.updateComponentTreeUI(GUI.getMainFrame());
                         checkUpdate = true;
                     }
@@ -239,7 +239,7 @@ public class GUIHandler {
                             turnModelBoardintoGUIBoard(b);
                             checkSendCells=true;
                     }
-                    GUI.updateGodBar("Your card is: ", myGod.toUpperCase());
+                    //GUI.updateGodBar("Your card is: ", myGod.toUpperCase());
                     SwingUtilities.updateComponentTreeUI(GUI.getMainFrame());
                     ready=false;
                     sendCells(movingPhase, cnh, VCEvent.Event.send_cells_move,evento);
