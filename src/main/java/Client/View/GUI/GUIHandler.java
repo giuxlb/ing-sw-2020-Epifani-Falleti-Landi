@@ -57,6 +57,7 @@ public class GUIHandler {
         playersNumber=0;
         playerID=0;
         godsCounter = 0;
+        myGod = null;
         checkSendCells=false;
         checkUpdate=false;
     }
@@ -217,14 +218,14 @@ public class GUIHandler {
                     }
                     turnModelBoardintoGUIBoard(b);
                     SwingUtilities.updateComponentTreeUI(GUI.getMainFrame());
-                    GUI.getLowerLabel().setText("Wait...");
                     closeCellsWorkers();
                     int controlAsk=findIndex(positionWorkers, currentCoordinate);
                     while(controlAsk==-1){
-                        GUI.getLowerLabel().setText("Invalid slection! Please select another cell");
+                        GUI.getLowerLabel().setText("Invalid selection! Please select another cell");
                         controlAsk=selectNewCell(positionWorkers);
                     }
                     currentCoordinate = new Coordinates(-1,-1);
+                    GUI.getLowerLabel().setText("Wait...");
                     buildEvent(cnh,controlAsk, VCEvent.Event.ask_for_worker);
                     break;
                 case send_cells_move:
@@ -239,6 +240,7 @@ public class GUIHandler {
                             checkSendCells=true;
                     }
                     GUI.updateGodBar("Your card is: ", myGod.toLowerCase());
+                    SwingUtilities.updateComponentTreeUI(GUI.getMainFrame());
                     ready=false;
                     sendCells(movingPhase, cnh, VCEvent.Event.send_cells_move,evento);
                     break;
@@ -364,7 +366,10 @@ public class GUIHandler {
                     GUI.getUpperLabel().setText("Select the god who prefer");
                     GUI.getLowerLabel().setText("");
                     Object objectSentGods = evento.getBox();
-                    sentGods= (ArrayList<String>)  objectSentGods;
+                    //sentGods= (ArrayList<String>)  objectSentGods;
+                    sentGods = new ArrayList<String>();
+                    sentGods.add("Apollo.jpg");
+                    sentGods.add("Artemis.jpg");
                     godsSize = sentGods.size();
                     if(godsSize==1){
                         myGod=sentGods.get(0);
@@ -613,12 +618,6 @@ public class GUIHandler {
 
         @Override
         public void mousePressed(MouseEvent e) {
-            if(checkIfGodisAlreadyChosen(chosenGods, chosenGod)==true){
-                lowerLabel.setText("Pay attention, you can't choose again this god. Select another one, please");
-            }else {
-                gw[godsCounter] = new GodsWorker(chosenGod, GUI.getUpperLabel());
-                godsCounter++;
-            }
         }
 
         @Override
@@ -630,16 +629,21 @@ public class GUIHandler {
 
         @Override
         public void mouseEntered(MouseEvent e) {
-            try {
-                GUI.readGodsPower(GUI.getLowerLabel(), chosenGod);
-            }catch (IOException ex){
-                GUI.getLowerLabel().setText("Unable to read god's power");
+            if(chosenGods.size()<playersNumber){
+                try {
+                    GUI.readGodsPower(GUI.getLowerLabel(), chosenGod);
+                }catch (IOException ex){
+                    GUI.getLowerLabel().setText("Unable to read god's power");
+                }
             }
+
         }
 
         @Override
         public void mouseExited(MouseEvent e) {
-            lowerLabel.setText("");
+            if(chosenGods.size()<playersNumber) {
+                lowerLabel.setText("");
+            }
         }
     }
 
@@ -659,7 +663,6 @@ public class GUIHandler {
 
         @Override
         public void mousePressed(MouseEvent e) {
-            GodWorker singleGodWorker= new GodWorker(chosenGod);
         }
 
 
@@ -671,17 +674,20 @@ public class GUIHandler {
 
         @Override
         public void mouseEntered(MouseEvent e) {
-            try {
-                GUI.readGodsPower(GUI.getLowerLabel(), chosenGod);
-            }catch (IOException ex){
-                GUI.getLowerLabel().setText("Unable to read god's power");
+            if(myGod==null){
+                try {
+                    GUI.readGodsPower(GUI.getLowerLabel(), chosenGod);
+                }catch (IOException ex){
+                    GUI.getLowerLabel().setText("Unable to read god's power");
+                }
             }
-
         }
 
         @Override
         public void mouseExited(MouseEvent e) {
-            lowerLabel.setText("");
+            if(myGod==null){
+                lowerLabel.setText("");
+            }
         }
     }
 
@@ -700,7 +706,6 @@ public class GUIHandler {
         }
         turnModelBoardintoGUIBoard(b);
         SwingUtilities.updateComponentTreeUI(GUI.getMainFrame());
-        GUI.getLowerLabel().setText("Wait...");
         closeCellsWorkers();
         int control=findIndex(validPositions,currentCoordinate);
         while(control==-1){
@@ -708,6 +713,7 @@ public class GUIHandler {
             control=selectNewCell(validPositions);
         }
         currentCoordinate =  new Coordinates(-1,-1);
+        GUI.getLowerLabel().setText("Wait...");
         buildEvent(cnh,control,command);
 
     }
@@ -834,17 +840,16 @@ public class GUIHandler {
 
         @Override
         public void mouseEntered(MouseEvent e) {
-            if(w!=null){
-                lowerLabel.setText("Coordinate (x: " + j + ", coordinate y: "+ i + "), height: " + height + ", worker: present");
-            }else{
-                lowerLabel.setText("Coordinate (x: " + j + ", coordinate y: "+ i + "), height: " + height + " worker: absent");
+            if(currentCoordinate.getX()==-1 && currentCoordinate.getY()==-1) {
+                lowerLabel.setText("Coordinate (x: " + j + ", coordinate y: " + i + "), height: " + height);
             }
-
         }
 
         @Override
         public void mouseExited(MouseEvent e) {
-            lowerLabel.setText("");
+            if(currentCoordinate.getX()==-1 && currentCoordinate.getY()==-1){
+                lowerLabel.setText("");
+            }
         }
     }
 
@@ -927,7 +932,6 @@ public class GUIHandler {
         }
         turnModelBoardintoGUIBoard(b);
         SwingUtilities.updateComponentTreeUI(GUI.getMainFrame());
-        GUI.getLowerLabel().setText("Wait...");
         closeCellsWorkers();
         return findIndex(validPositions,currentCoordinate);
     }

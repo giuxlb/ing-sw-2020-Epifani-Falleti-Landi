@@ -58,7 +58,7 @@ public class GUI {
     private JLabel godBarManager;
     private JLabel godInfo;
     private SantoriniLabel godImage;
-    private ArrayList<JLabel> godPower;
+    private JLabel[] godPowerLines;
 
     //Undo
     private JDialog undoDialog;
@@ -533,20 +533,28 @@ public class GUI {
 
     protected void buildJDialogForFirstPlayer(String god){
         JDialog message = new JDialog(mainFrame);
-        JLabel screen = paintScreen("MainBackground.jpg", 1150, 580);
+        JLabel screen = paintScreen("GodsScreen.jpg", 1150, 580);
         message.setTitle("Santorini - Epifani Falleti Landi");
+        setCustomIcon(message);
 
         JLabel info = new JLabel("The left card is");
         info.setFont(defaultFont);
 
         JLabel image = new JLabel(paintGods(god));
-        JLabel power = new JLabel();
-        power.setFont(defaultFont);
+        JLabel[] power = new JLabel[3];
+        for (int i=0;i<3;i++){
+            power[i] = new JLabel("");
+        }
 
         try {
-            readGodsPower(power, god);
+            readGodsPowerForGodBar(power, god);
         } catch (IOException ex) {
-            power.setText("Unable to load god's power");
+            power[0].setText("Unable to load god's power");
+            int i=1;
+            while(i<3){
+                power[i].setText("");
+                i++;
+            }
         }
 
         screen.setLayout(new GridBagLayout());
@@ -559,14 +567,16 @@ public class GUI {
         imageGBC.gridy = 2;
         imageGBC.gridx = 1;
         imageGBC.insets = new Insets(15, 3, 15, 3);
-        imageGBC.ipadx = 150;
-        imageGBC.ipady = 210;
         screen.add(image, imageGBC);
 
-        GridBagConstraints powerGBC = new GridBagConstraints();
-        powerGBC.gridx = 1;
-        powerGBC.gridy = 3;
-        screen.add(power, powerGBC);
+        GridBagConstraints[] powerDialogGBC= new GridBagConstraints[3];
+        for (int i=0;i<3;i++){
+            powerDialogGBC[i] = new GridBagConstraints();
+            powerDialogGBC[i].gridx=1;
+            powerDialogGBC[i].gridy=i+3;
+            powerDialogGBC[i].insets = new Insets(3,3,3,3);
+            screen.add(power[i], powerDialogGBC[i]);
+        }
 
         message.add(screen);
         message.setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);
@@ -604,7 +614,7 @@ public class GUI {
                 boardCostraints[i][j].gridx=j;
                 boardCostraints[i][j].gridy=i;
                 board[i][j]= new SantoriniButton(paintBackgroundForSantoriniButton("BoardCell.jpg"));
-                board[i][j].setPreferredSize(new Dimension(140,140));
+                board[i][j].setPreferredSize(new Dimension(100,100));
                 boardLabel.add(board[i][j], boardCostraints[i][j]);
             }
         }
@@ -617,8 +627,10 @@ public class GUI {
 
     private void buildGodBar(){
         godInfo = new JLabel();
+        godInfo.setPreferredSize(new Dimension(500,700));
         godInfo.setFont(defaultFont);
         godImage = new SantoriniLabel(paintScreenForSantoriniLabel("DefaultGodImage.jpg", 240, 360));
+        godPowerLines = new JLabel[3];
         godBarManager = new JLabel();
         godBarManager.setLayout(new GridBagLayout());
 
@@ -634,6 +646,17 @@ public class GUI {
         godImageGBC.insets = new Insets(3,3,5,3);
         godBarManager.add(godImage, godImageGBC);
 
+        GridBagConstraints[] godPowerConstraints = new GridBagConstraints[3];
+        for (int i=0;i<3;i++){
+            godPowerLines[i] = new JLabel("");
+            godPowerConstraints[i] = new GridBagConstraints();
+            godPowerConstraints[i].gridx=1;
+            godPowerConstraints[i].gridy=i+2;
+            godPowerConstraints[i].insets = new Insets(3,3,3,3);
+            godBarManager.add(godPowerLines[i], godPowerConstraints[i]);
+        }
+
+        SwingUtilities.updateComponentTreeUI(mainFrame);
     }
 
    protected void updateGodBar(String info, String godName){
@@ -643,21 +666,15 @@ public class GUI {
         godImage.paintComponent(g);
 
         try {
-            readGodsPowerForGodBar(godName);
+            readGodsPowerForGodBar(godPowerLines, godName);
         }catch (IOException e){
-            godPower.add(new JLabel("Unable to load god's power"));
+            godPowerLines[0].setText("Unable to load god's power");
+            int i=1;
+            while(i<3){
+                godPowerLines[i].setText("");
+                i++;
+            }
         }
-
-        GridBagConstraints[] godPowerConstraints = new GridBagConstraints[godPower.size()];
-        for (int i=0;i<godPower.size();i++){
-            godPowerConstraints[i] = new GridBagConstraints();
-            godPowerConstraints[i].gridx=1;
-            godPowerConstraints[i].gridy=i+2;
-            godPowerConstraints[i].insets = new Insets(3,3,3,3);
-            godBarManager.add(godPower.get(i), godPowerConstraints[i]);
-        }
-
-        SwingUtilities.updateComponentTreeUI(mainFrame);
     }
 
     public JTextField getIpTextField() {
@@ -670,6 +687,10 @@ public class GUI {
 
     protected void buildUndoJDialog(){
         undoDialog = new JDialog(mainFrame);
+        undoDialog.setTitle("Santorini - Epifani Falleti Landi");
+
+        setCustomIcon(undoDialog);
+
         undoMessage = new JLabel("Do you want to undo your last move?");
         undoTimeMessage = new JLabel("(You have only 5 seconds to choose)");
         answerManager = new JLabel();
@@ -771,8 +792,8 @@ public class GUI {
 
     }
 
-    private void readGodsPowerForGodBar(String name) throws IOException{
-        godPower = new ArrayList<JLabel>();
+    private void readGodsPowerForGodBar(JLabel[] lines, String name) throws IOException{
+        int i=0;
         InputStream is = GUI.class.getResourceAsStream("/"+name+"GodBar");
         InputStreamReader isr = new InputStreamReader(is);
         BufferedReader reader = new BufferedReader(isr);
@@ -780,9 +801,16 @@ public class GUI {
 
         while((line = reader.readLine()) != null)
         {
-            JLabel lineLabel = new JLabel(line);
-            lineLabel.setFont(defaultFont);
-            godPower.add(lineLabel);
+            lines[i].setText(line);
+            lines[i].setFont(defaultFont);
+            i++;
+        }
+        int size=i+1;
+        if(size<3){
+            while(i<3){
+                lines[i].setText("");
+                i++;
+            }
         }
 
         reader.close();
@@ -792,6 +820,17 @@ public class GUI {
 
     private void defineFont(){
         defaultFont = new Font(Font.SERIF, Font.BOLD, 25);
+    }
+
+    private void setCustomIcon(JDialog dialog){
+        Image mainIcon = null;
+        try{
+            ImageIcon currentIcon= new ImageIcon(ImageIO.read(getClass().getResource("/MainIcon.jpg")));
+            mainIcon = currentIcon.getImage();
+        }catch (IOException ex){
+
+        }
+        dialog.setIconImage(mainIcon);
     }
 
 }

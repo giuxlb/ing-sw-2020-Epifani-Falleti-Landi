@@ -20,7 +20,7 @@ public class SantoriniButton extends JButton {
         try{
             ImageIcon currentImg= new ImageIcon(ImageIO.read(getClass().getResource(path)));
             Image img = currentImg.getImage();
-            Image newImg = img.getScaledInstance(140, 140, Image.SCALE_SMOOTH);
+            Image newImg = img.getScaledInstance(100, 100, Image.SCALE_SMOOTH);
             ImageIcon finalImg = new ImageIcon(newImg);
             finalImg.paintIcon(this, g, 0, 0);
         } catch (IOException ex){
