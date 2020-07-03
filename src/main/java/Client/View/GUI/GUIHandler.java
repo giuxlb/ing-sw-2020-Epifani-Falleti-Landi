@@ -444,11 +444,11 @@ public class GUIHandler {
                     case 0:
                         if (b.getBoardWorker(i, j) != null) {
                             if (worker.equals(Model.Color.ANSI_YELLOW)) {
-                                updateSantoriniButton(i,j, "/DeusExMachina/blue.jpg");
+                                updateSantoriniButton(i,j, "/blue.jpg");
                             } else if (worker.equals(Model.Color.ANSI_WHITE)) {
-                                updateSantoriniButton(i,j, "/DeusExMachina/white.jpg");
+                                updateSantoriniButton(i,j, "/white.jpg");
                             } else if (worker.equals(Model.Color.ANSI_PURPLE)) {
-                                updateSantoriniButton(i,j, "/DeusExMachina/brown.jpg");
+                                updateSantoriniButton(i,j, "/brown.jpg");
                             }
                         }else if(b.getBoardWorker(i, j) == null){
                             updateSantoriniButton(i,j, "/BoardCell.jpg");
@@ -457,44 +457,44 @@ public class GUIHandler {
                     case 1:
                         if (b.getBoardWorker(i, j) != null) {
                             if (worker.equals(Color.ANSI_YELLOW)) {
-                                updateSantoriniButton(i,j, "/DeusExMachina/blue1.jpg");
+                                updateSantoriniButton(i,j, "/blue1.jpg");
                             } else if (worker.equals(Color.ANSI_WHITE)) {
-                                updateSantoriniButton(i,j, "/DeusExMachina/white1.jpg");
+                                updateSantoriniButton(i,j, "/white1.jpg");
                             } else if (worker.equals(Color.ANSI_PURPLE)) {
-                                updateSantoriniButton(i,j, "/DeusExMachina/brown1.jpg");
+                                updateSantoriniButton(i,j, "/brown1.jpg");
                              }
                         } else if (b.getBoardWorker(i, j) == null) {
-                            updateSantoriniButton(i,j, "/DeusExMachina/1.jpg");
+                            updateSantoriniButton(i,j, "/1.jpg");
                         }
                         break;
                     case 2:
                         if (b.getBoardWorker(i, j) != null) {
                             if (worker.equals(Color.ANSI_YELLOW)) {
-                                updateSantoriniButton(i,j, "/DeusExMachina/blue2.jpg");
+                                updateSantoriniButton(i,j, "/blue2.jpg");
                             } else if (worker.equals(Color.ANSI_WHITE)) {
-                                updateSantoriniButton(i,j, "/DeusExMachina/white2.jpg");
+                                updateSantoriniButton(i,j, "/white2.jpg");
                             } else if (worker.equals(Color.ANSI_PURPLE)) {
-                                updateSantoriniButton(i,j, "/DeusExMachina/brown2.jpg");
+                                updateSantoriniButton(i,j, "/brown2.jpg");
                             }
                         } else if (b.getBoardWorker(i, j) == null) {
-                            updateSantoriniButton(i,j, "/DeusExMachina/2.jpg");
+                            updateSantoriniButton(i,j, "/2.jpg");
                         }
                         break;
                     case 3:
                         if (b.getBoardWorker(i, j) != null) {
                             if (worker.equals(Color.ANSI_YELLOW)) {
-                                updateSantoriniButton(i,j, "/DeusExMachina/blue3.jpg");
+                                updateSantoriniButton(i,j, "/blue3.jpg");
                             } else if (worker.equals(Color.ANSI_WHITE)) {
-                                updateSantoriniButton(i,j, "/DeusExMachina/white3.jpg");
+                                updateSantoriniButton(i,j, "/white3.jpg");
                             } else if (worker.equals(Color.ANSI_PURPLE)) {
-                                updateSantoriniButton(i,j, "/DeusExMachina/brown3.jpg");
+                                updateSantoriniButton(i,j, "/brown3.jpg");
                             }
                         } else if (b.getBoardWorker(i, j) == null) {
-                            updateSantoriniButton(i,j, "/DeusExMachina/3.jpg");
+                            updateSantoriniButton(i,j, "/3.jpg");
                         }
                         break;
                     case 4:
-                        updateSantoriniButton(i,j, "/DeusExMachina/4.jpg");
+                        updateSantoriniButton(i,j, "/4.jpg");
                         break;
                     default:
                         break;
@@ -725,57 +725,57 @@ public class GUIHandler {
                             case 0:
                                 if (b.getBoardWorker(i, j) != null) {
                                     if (worker.equals(Model.Color.ANSI_YELLOW)) {
-                                        updateSantoriniButton(i, j, "/DeusExMachina/RedBlue.jpg");
+                                        updateSantoriniButton(i, j, "/RedBlue.jpg");
                                     } else if (worker.equals(Model.Color.ANSI_WHITE)) {
-                                        updateSantoriniButton(i, j, "/DeusExMachina/RedWhite.jpg");
+                                        updateSantoriniButton(i, j, "/RedWhite.jpg");
                                     } else if (worker.equals(Model.Color.ANSI_PURPLE)) {
-                                        updateSantoriniButton(i, j, "/DeusExMachina/RedBrown.jpg");
+                                        updateSantoriniButton(i, j, "/RedBrown.jpg");
                                     }
                                 } else if (b.getBoardWorker(i, j) == null) {
-                                    updateSantoriniButton(i, j, "/DeusExMachina/Red0.jpg");
+                                    updateSantoriniButton(i, j, "/Red0.jpg");
                                 }
                                 break;
                             case 1:
                                 if (b.getBoardWorker(i, j) != null) {
                                     if (worker.equals(Color.ANSI_YELLOW)) {
-                                        updateSantoriniButton(i, j, "/DeusExMachina/RedBlue1.jpg");
+                                        updateSantoriniButton(i, j, "/RedBlue1.jpg");
                                     } else if (worker.equals(Color.ANSI_WHITE)) {
-                                        updateSantoriniButton(i, j, "/DeusExMachina/RedWhite1.jpg");
+                                        updateSantoriniButton(i, j, "/RedWhite1.jpg");
                                     } else if (worker.equals(Color.ANSI_PURPLE)) {
-                                        updateSantoriniButton(i, j, "/DeusExMachina/RedBrown1.jpg");
+                                        updateSantoriniButton(i, j, "/RedBrown1.jpg");
                                     }
                                 } else if (b.getBoardWorker(i, j) == null) {
-                                    updateSantoriniButton(i, j, "/DeusExMachina/Red1.jpg");
+                                    updateSantoriniButton(i, j, "/Red1.jpg");
                                 }
                                 break;
                             case 2:
                                 if (b.getBoardWorker(i, j) != null) {
                                     if (worker.equals(Color.ANSI_YELLOW)) {
-                                        updateSantoriniButton(i, j, "/DeusExMachina/RedBlue2.jpg");
+                                        updateSantoriniButton(i, j, "/RedBlue2.jpg");
                                     } else if (worker.equals(Color.ANSI_WHITE)) {
-                                        updateSantoriniButton(i, j, "/DeusExMachina/RedWhite2.jpg");
+                                        updateSantoriniButton(i, j, "/RedWhite2.jpg");
                                     } else if (worker.equals(Color.ANSI_PURPLE)) {
-                                        updateSantoriniButton(i, j, "/DeusExMachina/RedBrown2.jpg");
+                                        updateSantoriniButton(i, j, "/RedBrown2.jpg");
                                     }
                                 } else if (b.getBoardWorker(i, j) == null) {
-                                    updateSantoriniButton(i, j, "/DeusExMachina/Red2.jpg");
+                                    updateSantoriniButton(i, j, "/Red2.jpg");
                                 }
                                 break;
                             case 3:
                                 if (b.getBoardWorker(i, j) != null) {
                                     if (worker.equals(Color.ANSI_YELLOW)) {
-                                        updateSantoriniButton(i, j, "/DeusExMachina/RedBlue3.jpg");
+                                        updateSantoriniButton(i, j, "/RedBlue3.jpg");
                                     } else if (worker.equals(Color.ANSI_WHITE)) {
-                                        updateSantoriniButton(i, j, "/DeusExMachina/RedWhite3.jpg");
+                                        updateSantoriniButton(i, j, "/RedWhite3.jpg");
                                     } else if (worker.equals(Color.ANSI_PURPLE)) {
-                                        updateSantoriniButton(i, j, "/DeusExMachina/RedBrown3.jpg");
+                                        updateSantoriniButton(i, j, "/RedBrown3.jpg");
                                     }
                                 } else if (b.getBoardWorker(i, j) == null) {
-                                    updateSantoriniButton(i, j, "/DeusExMachina/Red3.jpg");
+                                    updateSantoriniButton(i, j, "/Red3.jpg");
                                 }
                                 break;
                             case 4:
-                                updateSantoriniButton(i, j, "/DeusExMachina/Red4.jpg");
+                                updateSantoriniButton(i, j, "/Red4.jpg");
                                 break;
                             default:
                                 break;

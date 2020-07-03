@@ -518,9 +518,8 @@ public class GUI {
     }
 
     private ImageIcon paintGods(String name){
-        String path = "/gods/"+name+".jpg";
         try{
-            ImageIcon currentImg= new ImageIcon(GUI.class.getResource(path));
+            ImageIcon currentImg= new ImageIcon(GUI.class.getResource("/"+name +".jpg"));
             Image img = currentImg.getImage();
             Image newImg = img.getScaledInstance(130,190, Image.SCALE_SMOOTH);
             ImageIcon finalImg = new ImageIcon(newImg);
@@ -639,7 +638,7 @@ public class GUI {
 
    protected void updateGodBar(String info, String godName){
         godInfo.setText(info);
-        godImage.setPath("/gods/" + godName+ ".jpg");
+        godImage.setPath("/" + godName+ ".jpg");
         Graphics g = godImage.getGraphics();
         godImage.paintComponent(g);
 
@@ -756,7 +755,7 @@ public class GUI {
     }
 
     protected void readGodsPower(JLabel label, String name) throws IOException{
-        InputStream is = GUI.class.getResourceAsStream("/gods/"+name);
+        InputStream is = GUI.class.getResourceAsStream("/"+name);
         InputStreamReader isr = new InputStreamReader(is);
         BufferedReader reader = new BufferedReader(isr);
         String line = null;
@@ -774,7 +773,7 @@ public class GUI {
 
     private void readGodsPowerForGodBar(String name) throws IOException{
         godPower = new ArrayList<JLabel>();
-        InputStream is = GUI.class.getResourceAsStream("/gods/"+name+"GodBar");
+        InputStream is = GUI.class.getResourceAsStream("/"+name+"GodBar");
         InputStreamReader isr = new InputStreamReader(is);
         BufferedReader reader = new BufferedReader(isr);
         String line = null;
