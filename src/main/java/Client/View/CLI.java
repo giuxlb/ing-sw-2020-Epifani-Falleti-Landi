@@ -433,19 +433,19 @@ public class CLI {
         if(b.getBoardWorker(i,j)!=null){
             switch (b.getBoardWorker(i,j).getColor()){
                 case ANSI_YELLOW:
-                    if(isAMac()==true){
+                    if(isAMac()==true || isWin()==true){
                         return "  " + Color.ANSI_YELLOW + e.getWorker() + " ";
                     }else{
                         return " " + Color.ANSI_YELLOW + e.getWorker() + " ";
                     }
                 case ANSI_WHITE:
-                    if(isAMac()==true){
+                    if(isAMac()==true || isWin()==true){
                         return "  " + Color.ANSI_WHITE + e.getWorker() + " ";
                     }else{
                         return " " + Color.ANSI_WHITE + e.getWorker() + " ";
                     }
                 case ANSI_PURPLE:
-                    if(isAMac()==true){
+                    if(isAMac()==true || isWin()==true){
                         return "  " + Color.ANSI_PURPLE + e.getWorker() + " ";
                     }else{
                         return " " + Color.ANSI_PURPLE + e.getWorker() + " ";
@@ -559,6 +559,14 @@ public class CLI {
     public static boolean isAMac(){
         String OS = System.getProperty("os.name").toLowerCase();
         if(OS.indexOf("mac")>=0){
+            return true;
+        }
+        return false;
+    }
+
+    public static boolean isWin(){
+        String OS = System.getProperty("os.name").toLowerCase();
+        if(OS.indexOf("win")>=0){
             return true;
         }
         return false;
