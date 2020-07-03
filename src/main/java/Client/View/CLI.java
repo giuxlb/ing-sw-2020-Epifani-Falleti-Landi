@@ -203,11 +203,9 @@ public class CLI {
                 case date_request:
                     insertDate();
                     dateOfBirth = new Data(giorno,mese,anno);
-                    s.nextLine();
                     while(c.controllaData(dateOfBirth)==false){
                         System.out.println("Data non valida, per favore inserire nuovamente");
                         insertDate();
-                        s.nextLine();
                         this.dateOfBirth = new Data(giorno,mese,anno);
                     }
                     buildEvent(cnh,dateOfBirth, VCEvent.Event.date_request);
