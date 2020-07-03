@@ -324,6 +324,7 @@ public class CLI {
                             }
                             if(c.isYesOrNo(num)==false) {
                                 System.out.println("Non hai messo 0 o 1");
+                                response = s.nextLine();
                             }else{
                                 tmp=true;
                             }
