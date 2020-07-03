@@ -142,7 +142,7 @@ public class GameControl {
                 cardChoice = virtualView.sendChosenCards(players.get(game.getTurnNumber()), chosenCards);
                 if (cardChoice==null) return;
                 players.get(game.getTurnNumber()).chooseCard(cardChoice);
-                chosenCards.remove(cardChoice);
+                chosenCards.remove(cardChoice.toUpperCase());
                 game.nextTurnNumber();
             }
 
