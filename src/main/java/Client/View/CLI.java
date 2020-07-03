@@ -165,12 +165,19 @@ public class CLI {
                     break;
                 case setup_request:
                     System.out.println("Quanti giocatori giocheranno a questa partita?\nInserire 2 per 2 giocatori, 3 per 3 giocatori");
-                    int n = s.nextInt();
-                    s.nextLine();
-                    while (c.checkNumberOfPlayers(n) == false) {
-                        System.out.println("Errore, impossibile avviare una partita con questo numero di giocatori, chiedere solo per 2 o 3 giocatori");
-                        n = s.nextInt();
-                        s.nextLine();
+                    String input = s.nextLine();
+                    int n=-1;
+                    boolean temp=false;
+                    while(temp==false){
+                        while((n=c.tryToCastStringInInt(input))==-1){
+                            System.out.println("Errore, numero non valido, inserisci nuovamente");
+                            input = s.nextLine();
+                        }
+                        if(c.checkNumberOfPlayers(n)==false) {
+                            System.out.println("Non hai messo 2 o 3");
+                        }else{
+                            temp=true;
+                        }
                     }
                     this.playersNumber=n;
                     buildEvent(cnh, n, VCEvent.Event.setup_request);
@@ -225,7 +232,6 @@ public class CLI {
                     printBoard(b);
                     break;
                 case ask_for_worker:
-                    //ATTENZIONE: Una parte di ask_for_worker contiene del codice duplicato con sendCells(). CORREGGERE!!!
                     Object objectChoices = evento.getBox();
                     ArrayList<Coordinates> positionWorkers = (ArrayList<Coordinates>) objectChoices;
                     System.out.println("Puoi muovere i seguenti worker: ");
@@ -234,16 +240,12 @@ public class CLI {
                     }
                     System.out.println("Quale worker vuoi muovere?");
                     int x=chooseCoordinate(xPosition);
-                    s.nextLine();
                     int y=chooseCoordinate(yPosition);
-                    s.nextLine();
                     Coordinates chosenCoordinates = new Coordinates(x,y);
                     while(c.checkRequestedPosition(positionWorkers, chosenCoordinates)==false){
                         System.out.println("Errore! Selezione non valida");
                         x=chooseCoordinate(xPosition);
-                        s.nextLine();
                         y=chooseCoordinate(yPosition);
-                        s.nextLine();
                         chosenCoordinates = new Coordinates(x,y);
                     }
                     buildEvent(cnh,findIndex(positionWorkers,chosenCoordinates), VCEvent.Event.ask_for_worker);
@@ -274,18 +276,6 @@ public class CLI {
                     } catch (IOException ex) {
                         ex.printStackTrace();
                     }
-
-/*
-                    if (choose == 1) {
-                        firstTimeHeMoves = 1;
-                        this.b.deepCopy(copy);
-                    }
-
-
- */
-
-
-
                     buildEvent(cnh,choose, VCEvent.Event.undo_request);
                     break;
 
@@ -315,51 +305,23 @@ public class CLI {
                 case ask_for_divinity_activation:
                     Object objectGod = evento.getBox();
                     String god_name = (String) objectGod;
-                    switch (god_name.toUpperCase()){
-                        case "ARTEMIS":
-                            System.out.println("Vuoi attivare l'effetto di Artemis e fare un secondo movimento?");
-                            break;
-                        case "ATLAS":
-                            System.out.println("Vuoi attivare l'effetto di Atlas e costruire una cupola?");
-                            break;
-                        case "DEMETER":
-                            System.out.println("Vuoi attivare l'effetto di Demeter e fare una seconda costruzione?");
-                            break;
-                        case "HEPHAESTUS":
-                            System.out.println("Vuoi attivare l'effetto di Hephaestus e costruire una seconda volta sullo stesso blocco?");
-                            break;
-                        case "PROMETHEUS":
-                            System.out.println("Vuoi attivare l'effetto di Prometheus? (Costruisci prima e dopo il movimento però non puoi salire di livello)");
-                            break;
-                        case "HESTIA":
-                            System.out.println("Vuoi attivare l'effetto di Hestia e fare una seconda costruzione, ma non in una casella perimetrale?");
-                            break;
-                        case "TRITON":
-                            System.out.println("Vuoi attivare l'effetto di Triton e fare una altro movimento?");
-                            break;
-                        case "ARES":
-                            System.out.println("Vuoi attivare l'effetto di Ares e rimuovere un blocco libero (non una cupola) con il worker che non hai mosso?");
-                            break;
-                    }
-                    boolean temp = false;
-                    //Se ne deve occupare il clientSideController
-                    while(temp == false) {
-                        System.out.println("(Y) per attivare, (N) per non attivare:");
+
+                        System.out.println("Inserisci 0 per non attivare il potere di " + god_name +" , 1 per attivarlo");
                         String response = s.nextLine();
-                        switch (response.toUpperCase()) {
-                            case "Y":
-                                temp = true;
-                                buildEvent(cnh, 1, VCEvent.Event.ask_for_divinity_activation);
-                                break;
-                            case "N":
-                                temp = true;
-                                buildEvent(cnh, 0, VCEvent.Event.ask_for_divinity_activation);
-                                break;
-                            default:
-                                System.out.println("Input non valido, riprova.");
-                                break;
+                        int num=-1;
+                        boolean tmp = false;
+                        while(tmp==false){
+                            while((num=c.tryToCastStringInInt(response))==-1){
+                                System.out.println("Errore, numero non valido, inserisci nuovamente");
+                                response = s.nextLine();
+                            }
+                            if(c.isYesOrNo(num)==false) {
+                                System.out.println("Non hai messo 0 o 1");
+                            }else{
+                                tmp=true;
+                            }
                         }
-                    }
+                    buildEvent(cnh, 0, VCEvent.Event.ask_for_divinity_activation);
                     break;
                 case send_all_cards:
                     System.out.println("Hai a disposizione le seguenti divinità:");
@@ -404,18 +366,16 @@ public class CLI {
                         }
                         System.out.println();
                         System.out.print("Digita il nome della divinità che preferisci ->");
-                        //Il controller deve controllare che effettivamente la divinità scelta sia un elemento delle divinità ricevute
                         boolean correct = false;
                         String chosenGod = null;
                         while(!correct) {
-                            chosenGod = s.nextLine(); //Operazione GUI
+                            chosenGod = s.nextLine();
                             if(c.isCardCorrect(chosenGod,sentGods)){
                                 correct=true;
                             }else{
                                 System.out.println("Carta non valida, riprova");
                             }
                         }
-                        //chosenGod=validCard(chosenGod,sentGods);
                         this.myCard=chosenGod;
                         System.out.println();
                         buildEvent(cnh, chosenGod.toUpperCase(), VCEvent.Event.send_chosen_cards);
@@ -505,13 +465,25 @@ public class CLI {
      */
     public int chooseCoordinate(String type){
         System.out.println("Inserisci posizione " + type);
-        int coordinate = s.nextInt();
-        while(c.checkLimits(coordinate)==false){
-            System.out.println("Errore! Puoi scegliere solo valori tra 0 e 4, inserisci nuovamente la posizione " + type);
-            coordinate=s.nextInt();
+        boolean tmp = false;
+        int pos = -1;
+        String posString;
+        posString = s.nextLine();
+        while(tmp==false){
+            while((pos=c.tryToCastStringInInt(posString))==-1){
+                System.out.println("Errore, numero non valido");
+                posString = s.nextLine();
+            }
+            if(c.checkLimits(pos)==false){
+                System.out.println("Errore! Puoi scegliere solo valori tra 0 e 4, inserisci nuovamente la posizione " + type);
+                posString=s.nextLine();
+            }else{
+                tmp=true;
+            }
         }
 
-        return coordinate;
+
+        return pos;
     }
 
     /***
@@ -540,22 +512,17 @@ public class CLI {
      */
     public void sendCells(String phase, ClientNetworkHandler cnh, VCEvent.Event command,VCEvent evento){
         System.out.println(phase);
-        System.out.println("Le celle in rosso ti dicono " /*+ specification*/);
+        System.out.println("Le celle in rosso ti dicono dove la mossa è valida");
         Object objectValidPositions = evento.getBox();
-        //Attenzione: qui non possiamo controllare se il dato arrivi corrotto o meno!
         ArrayList<Coordinates> validPositions = (ArrayList<Coordinates>)objectValidPositions;
         paintBoardCell(b, validPositions );
         int x=chooseCoordinate(xPosition);
-        s.nextLine();
         int y=chooseCoordinate(yPosition);
-        s.nextLine();
         Coordinates chosenCoordinates = new Coordinates(x,y);
         while(c.checkRequestedPosition(validPositions, chosenCoordinates)==false){
             System.out.println("Errore! Mossa non valida, controlla le caselle in rosso per poter eseguire una mossa valida");
             x=chooseCoordinate(xPosition);
-            s.nextLine();
             y=chooseCoordinate(yPosition);
-            s.nextLine();
             chosenCoordinates = new Coordinates(x,y);
         }
         buildEvent(cnh,findIndex(validPositions, chosenCoordinates),command);
@@ -566,11 +533,26 @@ public class CLI {
      */
     public void insertDate(){
         System.out.print("Inserire il giorno in cui si è nati in formato gg (solo numerico) ->");
-        this.giorno=s.nextInt();
+        String day=s.nextLine();
+        giorno=-1;
+        while((giorno=c.tryToCastStringInInt(day))==-1){
+            System.out.println("Errore, numero non valido, inserisci nuovamente il giorno");
+            day = s.nextLine();
+        }
         System.out.print("Inserire il mese in cui si è nati in formato mm (solo numerico) ->");
-        this.mese=s.nextInt();
+        String mounth = s.nextLine();
+        mese=-1;
+        while((mese=c.tryToCastStringInInt(mounth))==-1){
+            System.out.println("Errore, numero non valido, inserisci nuovamente il mese");
+            mounth = s.nextLine();
+        }
         System.out.print("Inserire l'anno in cui si è nati in formato aaaa (solo numerico) ->");
-        this.anno=s.nextInt();
+        String year = s.nextLine();
+        anno=-1;
+        while((anno=c.tryToCastStringInInt(year))==-1){
+            System.out.println("Errore, numero non valido, inserisci nuovamente l'anno");
+            year =s.nextLine();
+        }
         System.out.println();
     }
 

@@ -132,5 +132,22 @@ public class Controller {
         return isCorrect;
     }
 
+    public int tryToCastStringInInt(String s){
+        try{
+           return Integer.parseInt(s);
+        }catch (Exception ex){
+            return -1;
+        }
+
+    }
+
+    public boolean isYesOrNo(int choice){
+        if(choice==0 || choice==1){
+            return true;
+        }else {
+            return false;
+        }
+    }
+
 
 }
