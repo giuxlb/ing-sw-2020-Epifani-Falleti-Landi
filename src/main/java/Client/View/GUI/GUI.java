@@ -225,7 +225,7 @@ public class GUI {
 
     private ImageIcon paintScreenForSantoriniLabel(String name, int width, int height) {
         try{
-            ImageIcon currentIcon= new ImageIcon(ImageIO.read(getClass().getResource("/"+name)));
+            ImageIcon currentIcon= new ImageIcon(ImageIO.read(getClass().getResource("/"+(name.toUpperCase()))));
             Image tmp = currentIcon.getImage();
             Image newIcon = tmp.getScaledInstance(width,height, Image.SCALE_SMOOTH);
             ImageIcon finalIcon = new ImageIcon(newIcon);
@@ -458,7 +458,7 @@ public class GUI {
         GridBagConstraints[] godBagConstraints= new GridBagConstraints[gods.size()];
 
         for(int i=0;i<gods.size();i++){
-            imgGodsButton[i]=new JButton("",paintGods(gods.get(i)));
+            imgGodsButton[i]=new JButton("",paintGods(gods.get(i).toUpperCase()));
             imgGodsButton[i].setContentAreaFilled(false);
             imgGodsButton[i].setBorderPainted(true);
             godBagConstraints[i] = new GridBagConstraints();
@@ -540,14 +540,14 @@ public class GUI {
         JLabel info = new JLabel("The left card is");
         info.setFont(defaultFont);
 
-        JLabel image = new JLabel(paintGods(god));
+        JLabel image = new JLabel(paintGods(god.toUpperCase()));
         JLabel[] power = new JLabel[3];
         for (int i=0;i<3;i++){
             power[i] = new JLabel("");
         }
 
         try {
-            readGodsPowerForGodBar(power, god);
+            readGodsPowerForGodBar(power, god.toUpperCase());
         } catch (IOException ex) {
             power[0].setText("Unable to load god's power");
             int i=1;
@@ -661,12 +661,12 @@ public class GUI {
 
    protected void updateGodBar(String info, String godName){
         godInfo.setText(info);
-        godImage.setPath("/" + godName+ ".jpg");
+        godImage.setPath("/" + (godName.toUpperCase())+ ".jpg");
         Graphics g = godImage.getGraphics();
         godImage.paintComponent(g);
 
         try {
-            readGodsPowerForGodBar(godPowerLines, godName);
+            readGodsPowerForGodBar(godPowerLines, godName.toUpperCase());
         }catch (IOException e){
             godPowerLines[0].setText("Unable to load god's power");
             int i=1;
@@ -776,7 +776,7 @@ public class GUI {
     }
 
     protected void readGodsPower(JLabel label, String name) throws IOException{
-        InputStream is = GUI.class.getResourceAsStream("/"+name);
+        InputStream is = GUI.class.getResourceAsStream("/"+(name.toUpperCase()) + ".txt");
         InputStreamReader isr = new InputStreamReader(is);
         BufferedReader reader = new BufferedReader(isr);
         String line = null;
@@ -794,7 +794,7 @@ public class GUI {
 
     private void readGodsPowerForGodBar(JLabel[] lines, String name) throws IOException{
         int i=0;
-        InputStream is = GUI.class.getResourceAsStream("/"+name+"GodBar");
+        InputStream is = GUI.class.getResourceAsStream("/"+name.toUpperCase()+"GODBAR.txt");
         InputStreamReader isr = new InputStreamReader(is);
         BufferedReader reader = new BufferedReader(isr);
         String line = null;

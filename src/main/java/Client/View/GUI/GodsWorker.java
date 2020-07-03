@@ -7,10 +7,13 @@ public class GodsWorker extends SwingWorker {
     private JLabel upperLabel;
 
     public GodsWorker(String god, JLabel upperLabel){
-        this.upperLabel = upperLabel;
-        GUIHandler.chosenGods.add(god);
-        upperLabel.setText("You have selected god " + god.toLowerCase() + ", You have to choose "+ (GUIHandler.playersNumber-GUIHandler.chosenGods.size()) + " god!");
-        GUIHandler.ready=true;
+        if(GUIHandler.chosenGods.size()<=GUIHandler.playersNumber){
+            this.upperLabel = upperLabel;
+            GUIHandler.chosenGods.add(god.toUpperCase());
+            upperLabel.setText("You have selected god " + god.toLowerCase() + ", You have to choose "+ (GUIHandler.playersNumber-GUIHandler.chosenGods.size()) + " god!");
+            GUIHandler.ready=true;
+        }
+
     }
 
     @Override

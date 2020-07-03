@@ -184,7 +184,7 @@ public class GUIHandler {
                     Object objectCurrentPlayerInformation = evento.getBox();
                     ArrayList<String> currentPlayerInformation= (ArrayList<String>) objectCurrentPlayerInformation;
                     GUI.getUpperLabel().setText(currentPlayerInformation.get(0).toLowerCase() + " is playing with god " + currentPlayerInformation.get(1).toLowerCase());
-                    GUI.updateGodBar("Your opponent's card is: ", currentPlayerInformation.get(1).toLowerCase());
+                    GUI.updateGodBar("Your opponent's card is: ", currentPlayerInformation.get(1).toUpperCase());
                     SwingUtilities.updateComponentTreeUI(GUI.getMainFrame());
                     break;
                 case update:
@@ -193,7 +193,7 @@ public class GUIHandler {
                         GUI.getLowerLabel().setText("");
                         GUI.destroyGodsWindow(godsSize);
                         GUI.buildMainWindow();
-                        GUI.updateGodBar("Your card is: ", myGod.toLowerCase());
+                        GUI.updateGodBar("Your card is: ", myGod.toUpperCase());
                         SwingUtilities.updateComponentTreeUI(GUI.getMainFrame());
                         checkUpdate = true;
                     }
@@ -239,7 +239,7 @@ public class GUIHandler {
                             turnModelBoardintoGUIBoard(b);
                             checkSendCells=true;
                     }
-                    GUI.updateGodBar("Your card is: ", myGod.toLowerCase());
+                    GUI.updateGodBar("Your card is: ", myGod.toUpperCase());
                     SwingUtilities.updateComponentTreeUI(GUI.getMainFrame());
                     ready=false;
                     sendCells(movingPhase, cnh, VCEvent.Event.send_cells_move,evento);
@@ -366,14 +366,11 @@ public class GUIHandler {
                     GUI.getUpperLabel().setText("Select the god who prefer");
                     GUI.getLowerLabel().setText("");
                     Object objectSentGods = evento.getBox();
-                    //sentGods= (ArrayList<String>)  objectSentGods;
-                    sentGods = new ArrayList<String>();
-                    sentGods.add("Apollo.jpg");
-                    sentGods.add("Artemis.jpg");
+                    sentGods= (ArrayList<String>)  objectSentGods;
                     godsSize = sentGods.size();
                     if(godsSize==1){
                         myGod=sentGods.get(0);
-                        GUI.buildJDialogForFirstPlayer(myGod.toLowerCase());
+                        GUI.buildJDialogForFirstPlayer(myGod.toUpperCase());
                         buildEvent(cnh, myGod, VCEvent.Event.send_chosen_cards);
                     }else{
                         ready=false;
@@ -436,11 +433,6 @@ public class GUIHandler {
     private void turnModelBoardintoGUIBoard(Board b){
         for(int i=0;i<Board.DIM;i++) {
             for (int j = 0; j < Board.DIM; j++) {
-                /*if (b.getBoardWorker(i, j) == null) {
-                    GUI.getBoard()[i][j].setText("Worker: null" + "    Height:" + b.getBoardHeight(i, j));
-                } else {
-                    GUI.getBoard()[i][j].setText("Worker: " + b.getBoardWorker(i, j) + "    Height:" + b.getBoardHeight(i, j));
-                }*/
                 Color worker = null;
                 if (b.getBoardWorker(i, j) != null) {
                     worker = (b.getBoardWorker(i, j)).getColor();
@@ -449,11 +441,11 @@ public class GUIHandler {
                     case 0:
                         if (b.getBoardWorker(i, j) != null) {
                             if (worker.equals(Model.Color.ANSI_YELLOW)) {
-                                updateSantoriniButton(i,j, "/blue.jpg");
+                                updateSantoriniButton(i,j, "/BLUE.jpg");
                             } else if (worker.equals(Model.Color.ANSI_WHITE)) {
-                                updateSantoriniButton(i,j, "/white.jpg");
+                                updateSantoriniButton(i,j, "/WHITE.jpg");
                             } else if (worker.equals(Model.Color.ANSI_PURPLE)) {
-                                updateSantoriniButton(i,j, "/brown.jpg");
+                                updateSantoriniButton(i,j, "/BROWN.jpg");
                             }
                         }else if(b.getBoardWorker(i, j) == null){
                             updateSantoriniButton(i,j, "/BoardCell.jpg");
@@ -462,44 +454,44 @@ public class GUIHandler {
                     case 1:
                         if (b.getBoardWorker(i, j) != null) {
                             if (worker.equals(Color.ANSI_YELLOW)) {
-                                updateSantoriniButton(i,j, "/blue1.jpg");
+                                updateSantoriniButton(i,j, "/BLUEUNO.jpg");
                             } else if (worker.equals(Color.ANSI_WHITE)) {
-                                updateSantoriniButton(i,j, "/white1.jpg");
+                                updateSantoriniButton(i,j, "/WHITEUNO.jpg");
                             } else if (worker.equals(Color.ANSI_PURPLE)) {
-                                updateSantoriniButton(i,j, "/brown1.jpg");
+                                updateSantoriniButton(i,j, "/BROWNUNO.jpg");
                              }
                         } else if (b.getBoardWorker(i, j) == null) {
-                            updateSantoriniButton(i,j, "/1.jpg");
+                            updateSantoriniButton(i,j, "/UNO.jpg");
                         }
                         break;
                     case 2:
                         if (b.getBoardWorker(i, j) != null) {
                             if (worker.equals(Color.ANSI_YELLOW)) {
-                                updateSantoriniButton(i,j, "/blue2.jpg");
+                                updateSantoriniButton(i,j, "/BLUEDUE.jpg");
                             } else if (worker.equals(Color.ANSI_WHITE)) {
-                                updateSantoriniButton(i,j, "/white2.jpg");
+                                updateSantoriniButton(i,j, "/WHITEDUE.jpg");
                             } else if (worker.equals(Color.ANSI_PURPLE)) {
-                                updateSantoriniButton(i,j, "/brown2.jpg");
+                                updateSantoriniButton(i,j, "/BROWNDUE.jpg");
                             }
                         } else if (b.getBoardWorker(i, j) == null) {
-                            updateSantoriniButton(i,j, "/2.jpg");
+                            updateSantoriniButton(i,j, "/DUE.jpg");
                         }
                         break;
                     case 3:
                         if (b.getBoardWorker(i, j) != null) {
                             if (worker.equals(Color.ANSI_YELLOW)) {
-                                updateSantoriniButton(i,j, "/blue3.jpg");
+                                updateSantoriniButton(i,j, "/BLUETRE.jpg");
                             } else if (worker.equals(Color.ANSI_WHITE)) {
-                                updateSantoriniButton(i,j, "/white3.jpg");
+                                updateSantoriniButton(i,j, "/WHITETRE.jpg");
                             } else if (worker.equals(Color.ANSI_PURPLE)) {
-                                updateSantoriniButton(i,j, "/brown3.jpg");
+                                updateSantoriniButton(i,j, "/BROWNTRE.jpg");
                             }
                         } else if (b.getBoardWorker(i, j) == null) {
-                            updateSantoriniButton(i,j, "/3.jpg");
+                            updateSantoriniButton(i,j, "/TRE.jpg");
                         }
                         break;
                     case 4:
-                        updateSantoriniButton(i,j, "/4.jpg");
+                        updateSantoriniButton(i,j, "/QUATTRO.jpg");
                         break;
                     default:
                         break;

@@ -4,7 +4,7 @@ import javax.swing.*;
 
 public class GodWorker extends SwingWorker {
     public GodWorker(String god){
-        GUIHandler.myGod=god;
+        GUIHandler.myGod=god.toUpperCase();
         GUIHandler.ready=true;
     }
 
