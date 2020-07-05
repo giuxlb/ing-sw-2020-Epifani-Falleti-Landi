@@ -336,9 +336,10 @@ public class ServerNetworkHandler  implements Runnable, ClientObserver {
     {
 
         for (int i = 0; i < this.numberOfPlayers ; i++) {
-
-            if (this.adapters[i].isFinishClientAdapter() == true) {
-                return true; // ancora non si è scollegato nessuno
+            if(this.adapters[i]!=null) {
+                if (this.adapters[i].isFinishClientAdapter() == true) {
+                    return true; // ancora non si è scollegato nessuno
+                }
             }
         }
 
