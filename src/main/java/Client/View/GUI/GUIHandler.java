@@ -48,6 +48,7 @@ public class GUIHandler {
     protected static Coordinates currentCoordinate;
     private BoardCellWorker[][] bcw;
     protected static int choose;
+    private boolean undoBool;
 
     public GUIHandler(GUI GUI,String ip){
         this.GUI = GUI;
@@ -60,6 +61,7 @@ public class GUIHandler {
         myGod = null;
         checkSendCells=false;
         checkUpdate=false;
+        undoBool=false;
     }
 
     public void launchConnection(){
@@ -251,8 +253,12 @@ public class GUIHandler {
                     sendCells(removePhase,cnh, VCEvent.Event.send_cells_remove,evento);
                     break;
                 case undo_request:
-                    GUI.buildUndoJDialog();
+                    if(!undoBool)  {
+                        GUI.buildUndoJDialog();
+                        undoBool=true;
+                    }
                     choose=-1;
+                    GUI.getUndoDialog().setVisible(true);
                     SwingUtilities.updateComponentTreeUI(GUI.getMainFrame());
                     UndoCustomListener uclYes = new UndoCustomListener(1);
                     GUI.getYes().addActionListener(uclYes);

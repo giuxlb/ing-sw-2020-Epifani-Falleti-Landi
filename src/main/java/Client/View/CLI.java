@@ -327,7 +327,7 @@ public class CLI {
                                 tmp=true;
                             }
                         }
-                    buildEvent(cnh, 0, VCEvent.Event.ask_for_divinity_activation);
+                    buildEvent(cnh, num, VCEvent.Event.ask_for_divinity_activation);
                     break;
                 case send_all_cards:
                     System.out.println("Hai a disposizione le seguenti divinità:");

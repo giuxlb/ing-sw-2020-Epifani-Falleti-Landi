@@ -744,7 +744,7 @@ public class GUI {
         undoDialog.setResizable(false);
         undoDialog.setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);
         undoDialog.setLocationRelativeTo(null);
-        undoDialog.setVisible(true);
+        undoDialog.setVisible(false);
     }
 
     public JDialog getUndoDialog() {
