@@ -6,11 +6,11 @@ import java.util.ArrayList;
 public class GodsWorker extends SwingWorker {
     private JLabel upperLabel;
 
-    public GodsWorker(String god, JLabel upperLabel){
-        if(GUIHandler.chosenGods.size()<=GUIHandler.playersNumber){
+    public GodsWorker(String god, JLabel upperLabel, int playersNumber){
+        if(GUIHandler.chosenGods.size()<=playersNumber){
             this.upperLabel = upperLabel;
             GUIHandler.chosenGods.add(god.toUpperCase());
-            upperLabel.setText("You have selected god " + god.toLowerCase() + ", You have to choose "+ (GUIHandler.playersNumber-GUIHandler.chosenGods.size()) + " god!");
+            upperLabel.setText("You have selected god " + god.toLowerCase() + ", You have to choose "+ (playersNumber-GUIHandler.chosenGods.size()) + " god!");
             GUIHandler.ready=true;
         }
 

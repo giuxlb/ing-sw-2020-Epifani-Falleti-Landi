@@ -122,9 +122,9 @@ public class ClientNetworkHandler implements Runnable, ServerObserver {
 
                     cli.updateGo();
                 }else if(this.gh!=null){
-                    System.out.println("Ho chiamato la update go di GH");
+                    System.out.println("Ho chiamato la update go di GH 1");
                     this.gh.updateGo();
-                    System.out.println("Ho chiamato la update go di GH");
+                    System.out.println("Ho chiamato la update go di GH 2");
                 }else{
                     System.out.println("Errore nella costruzione delle interfacce");
                 }

@@ -27,8 +27,10 @@ public class GUIHandler {
 
     //Support elements
     private String ip;
-    protected static int playersNumber;
+    private int playersNumber;
+    private Object playersNumberLock;
     private int playerID;
+    private Object lock;
     protected static boolean ready;
     private String myUsername;
     private Data myDate;
@@ -56,12 +58,15 @@ public class GUIHandler {
 
         //Initial settings
         playersNumber=0;
+        myUsername=null;
+       //playersNumberLock=new Object();
         playerID=0;
         godsCounter = 0;
         myGod = null;
         checkSendCells=false;
         checkUpdate=false;
         undoBool=false;
+        lock = new Object();
     }
 
     public void launchConnection(){
@@ -100,7 +105,7 @@ public class GUIHandler {
     }
 
 
-   private void checkEvent(ClientNetworkHandler cnh) {
+   private synchronized void checkEvent(ClientNetworkHandler cnh) {
        boolean endGame = false;
        Controller clientSideController = new Controller();
         // Board copy = new Board();
@@ -121,18 +126,24 @@ public class GUIHandler {
                     GUI.getUpperLabel().setText("Press button 2 if you want to play with another person or button 3 to play with two friends");
                     GUI.getLowerLabel().setText("Other options aren't allowed");
                     playerID=1;
-                    ready=false;
+                    playersNumber=-1;
                     GUI.destroyWaitingLabel();
                     GUI.buildNumberOfPlayersWindow();
                     SwingUtilities.updateComponentTreeUI(GUI.getMainFrame());
-                    CustomNumberOfPlayersListener twoListener = new CustomNumberOfPlayersListener(2);
+                    CustomNumberOfPlayersListener twoListener = new CustomNumberOfPlayersListener(this,2);
                     GUI.getTwo().addActionListener(twoListener);
-                    CustomNumberOfPlayersListener threeListener = new CustomNumberOfPlayersListener(3);
+                    CustomNumberOfPlayersListener threeListener = new CustomNumberOfPlayersListener(this,3);
                     GUI.getThree().addActionListener(threeListener);
-                    while(GUIHandler.ready==false){
-                        System.out.println("Attendo scelta...");
+                    synchronized (this){
+                        while(playersNumber==-1) {
+                            GUI.getLowerLabel().setText("Wait...");
+                                try {
+                                    wait();
+                                } catch (InterruptedException e) {
+                                    System.out.println("Errore nella wait del scelta del numero dei giocatori");
+                                }
+                            }
                     }
-                    GUI.getLowerLabel().setText("Wait...");
                     buildEvent(cnh, playersNumber, VCEvent.Event.setup_request);
                     break;
                 case username_request :
@@ -145,22 +156,26 @@ public class GUIHandler {
                     GUI.getLowerLabel().setText("Please remember that you can't insert an another player's username");
                     GUI.buildLoginWindow();
                     SwingUtilities.updateComponentTreeUI(GUI.getMainFrame());
-                    LoginNextButtonCustomActionListener usernameListener=new LoginNextButtonCustomActionListener();
+                    LoginNextButtonCustomActionListener usernameListener=new LoginNextButtonCustomActionListener(this, GUI.getUsernameTextField());
                     GUI.getLoginNextButton().addActionListener(usernameListener);
-                    while (usernameListener.getGoForward()==false){
-                        System.out.println("Attendo che il giocatore scelga il suo username");
+                    synchronized (this){
+                        while(myUsername==null){
+                            try{
+                                wait();
+                            }catch (InterruptedException e){
+                                System.out.println("Errore nella wait della scelta dello username del giocatore corrente");
+                            }
+                        }
                     }
+
                     GUI.getLowerLabel().setText("Wait...");
                     buildEvent(cnh, myUsername, VCEvent.Event.username_request);
                     break;
                 case wrong_username:
                     GUI.getLowerLabel().setText("This username has been already chosen. Insert a new one, please");
                     SwingUtilities.updateComponentTreeUI(GUI.getMainFrame());
-                    LoginNextButtonCustomActionListener wrongUsernameListener=new LoginNextButtonCustomActionListener();
+                    LoginNextButtonCustomActionListener wrongUsernameListener=new LoginNextButtonCustomActionListener(this, GUI.getUsernameTextField());
                     GUI.getLoginNextButton().addActionListener(wrongUsernameListener);
-                    while (wrongUsernameListener.getGoForward()==false){
-                        System.out.println("Attendo che il giocatore reinserisca il suo username");
-                    }
                     buildEvent(cnh, myUsername, VCEvent.Event.wrong_username);
                     GUI.getLowerLabel().setText("Wait...");
                     break;
@@ -532,35 +547,39 @@ public class GUIHandler {
     }
 
     class LoginNextButtonCustomActionListener implements ActionListener{
-        private boolean goForward;
+        private GUIHandler gh;
+        private JTextField usernameTextField;
 
-        public LoginNextButtonCustomActionListener(){
-            goForward=false;
+        public LoginNextButtonCustomActionListener(GUIHandler gh, JTextField usernameTextField){
+            this.gh=gh;
+            this.usernameTextField=usernameTextField;
         }
+
 
         @Override
         public void actionPerformed(ActionEvent e) {
-            myUsername=GUI.getUsernameTextField().getText();
-            goForward=true;
-        }
-
-        public boolean getGoForward(){
-            return goForward;
+            ThreadUsername tu = new ThreadUsername(gh, usernameTextField);
+            Thread t= new Thread(tu);
+            t.start();
         }
     }
 
 
 
     class CustomNumberOfPlayersListener implements ActionListener{
+        private GUIHandler gh;
         private int chosenNumberOfPlayers;
 
-        public CustomNumberOfPlayersListener(int chosenNumberOfPlayers){
+        public CustomNumberOfPlayersListener(GUIHandler gh, int chosenNumberOfPlayers){
+            this.gh=gh;
             this.chosenNumberOfPlayers=chosenNumberOfPlayers;
         }
 
         @Override
         public void actionPerformed(ActionEvent e) {
-            NumberOfPlayersWorker npw= new NumberOfPlayersWorker(chosenNumberOfPlayers);
+            ThreadOptionButton tob = new ThreadOptionButton(gh, chosenNumberOfPlayers);
+            Thread t = new Thread(tob);
+            t.start();
         }
     }
 
@@ -597,10 +616,12 @@ public class GUIHandler {
     class SentGodsMouseListener implements MouseListener {
         private String chosenGod;
         private JLabel lowerLabel;
+        private int playersNumber;
 
-        public SentGodsMouseListener(String chosenGod, JLabel lowerLabel) {
+        public SentGodsMouseListener(String chosenGod, JLabel lowerLabel, int playersNumber) {
             this.chosenGod = chosenGod;
             this.lowerLabel=lowerLabel;
+            this.playersNumber=playersNumber;
         }
 
         @Override
@@ -608,7 +629,7 @@ public class GUIHandler {
             if(checkIfGodisAlreadyChosen(chosenGods, chosenGod)==true){
                 lowerLabel.setText("Pay attention, you can't choose again this god. Select another one, please");
             }else {
-                gw[godsCounter] = new GodsWorker(chosenGod, GUI.getUpperLabel());
+                gw[godsCounter] = new GodsWorker(chosenGod, GUI.getUpperLabel(), this.playersNumber);
                 godsCounter++;
             }
         }
@@ -790,7 +811,7 @@ public class GUIHandler {
     private void createGodsListener(int size, ArrayList<String> sentGods, JButton[] godsButton, JLabel lowerLabel){
         for (int i=0;i<size;i++){
             System.out.println("Aggiungo al bottone il listener");
-            godsButton[i].addMouseListener(new SentGodsMouseListener(sentGods.get(i), lowerLabel));
+            godsButton[i].addMouseListener(new SentGodsMouseListener(sentGods.get(i), lowerLabel, playersNumber));
         }
     }
 
@@ -946,6 +967,27 @@ public class GUIHandler {
             UndoWorker uw= new UndoWorker(choose);
         }
 
+    }
+
+    public void setPlayersNumber(int playersNumber){
+        synchronized (this){
+            this.playersNumber=playersNumber;
+            notifyAll();
+        }
+    }
+
+    public void setUsername(JTextField usernameTextField){
+        synchronized (this){
+            myUsername=new String(usernameTextField.getText());
+            notifyAll();
+        }
+
+    }
+
+    public void setDate(){
+        synchronized (this){
+            notifyAll();
+        }
     }
 
 }
